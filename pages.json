@@ -1,0 +1,365 @@
+{
+	"pages": [{
+		"path": "pages/home/home",
+
+		"style": {
+			"navigationStyle": "custom",
+			"navigationBarTitleText": "君佳优选",
+			"enablePullDownRefresh": true,
+			"app-plus": {
+				"titleNView": false
+			}
+		}
+	}, {
+		"path": "pages/login/login",
+		"style": {
+			"navigationBarTitleText": "系统登录"
+		}
+	}, {
+		"path": "pages/mine/mine",
+		"style": {
+			"navigationBarTitleText": "个人中心",
+			"navigationStyle": "custom",
+			"app-plus": {
+				"titleNView": false
+			}
+		}
+	}, {
+		"path": "pages/recommend/recommend",
+		"style": {
+			"navigationBarTitleText": "掌柜推荐"
+		}
+	}, {
+		"path": "pages/classify/classify",
+		"style": {
+			"navigationBarTitleText": "全部分类"
+		}
+	}, {
+		"path": "pages/find/find",
+		"style": {
+			"navigationBarTitleText": "发现"
+		}
+	}, {
+		"path": "pages/shopCar/shopCar",
+		"style": {
+			"navigationBarTitleText": "购物车"
+		}
+	}, {
+		"path": "pages/mine/set",
+		"style": {
+			"navigationBarTitleText": "设置"
+		}
+	}, {
+		"path": "pages/mine/setEditPhone",
+		"style": {
+			"navigationBarTitleText": "修改手机号"
+		}
+	}, {
+		"path": "pages/home/msg",
+		"style": {
+			"navigationBarTitleText": "消息结果",
+			"navigationStyle": "custom",
+			"app-plus": {
+				"titleNView": false
+			}
+		}
+	}, {
+		"path": "pages/detail/detail",
+		"style": {
+			"navigationBarTitleText": "商品详情",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/order/order",
+		"style": {	
+			"navigationBarTitleText": "订单",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom",
+			"app-plus": {
+				"titleNView": false
+			}
+		}
+
+	}, {
+		"path": "pages/order/orderDetail",
+		"style": {
+			"navigationBarTitleText": "订单详情",
+			"enablePullDownRefresh": false
+		}
+	}    ,{
+            "path" : "pages/order/orderPay",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "确认支付",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/home/search",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "搜索",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/home/searchResult",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "搜索结果",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/detail/allRate",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "所有评价",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/mineMsg",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "个人信息",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/recommend/noTimeRecommend",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "限时抢购",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/youhuiquan",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "优惠券",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		{
+		    "path" : "pages/mine/address",
+		    "style" :                                                                                    
+		    {
+				"navigationStyle": "custom",
+		        "navigationBarTitleText": "地址管理",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+        ,{
+            "path" : "pages/mine/addAddress",
+            "style" :                                                                                    
+            {
+				"navigationStyle": "custom",
+                "navigationBarTitleText": "新增配送地址",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/pingjia",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的评价",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/jifen",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的积分",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/fapiao",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "发票",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/fanwei",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "配送范围",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/aboutMine",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "关于我们",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/ideaFor",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "意见反馈",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/setXieyi",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "用户协议",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/login/yinsi",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "隐私协议",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/xiaoxi",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "消息",
+                "enablePullDownRefresh": true
+            }
+            
+        }
+        ,{
+            "path" : "pages/shopCar/huangou",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "查看换购商品",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/shopCar/coudan",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "换购凑单专区",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/find/xinrenzhuanshu",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "新人专属",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/fapiaoShuoming",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "发票说明",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/fapiaoLishi",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "开票历史",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/order/orderTrue",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "确认订单",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/mine/fapiaoAdd",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "填写发票",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/find/findDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "菜谱详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "君佳优选",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#31C5AF",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+			"pagePath": "pages/home/home",
+			"iconPath": "static/img/bar/syh.png",
+			"selectedIconPath": "static/img/bar/syl.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/classify/classify",
+			"iconPath": "static/img/bar/fenlh.png",
+			"selectedIconPath": "static/img/bar/fenll.png",
+			"text": "分类"
+		}, {
+			"pagePath": "pages/find/find",
+			"iconPath": "static/img/bar/faxh.png",
+			"selectedIconPath": "static/img/bar/faxl.png",
+			"text": "发现"
+		}, {
+			"pagePath": "pages/shopCar/shopCar",
+			"iconPath": "static/img/bar/gouwch.png",
+			"selectedIconPath": "static/img/bar/gouwcl.png",
+			"text": "购物车"
+		}, {
+			"pagePath": "pages/mine/mine",
+			"iconPath": "static/img/bar/wdh.png",
+			"selectedIconPath": "static/img/bar/wdl.png",
+			"text": "我的"
+		}]
+	}
+}

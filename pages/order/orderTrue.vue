@@ -1,0 +1,535 @@
+<template>
+	<view class="order_true">
+		<view class="sel_address">
+			<image src="../../static/img/icon-dingddz.png" class="add_img" mode=""></image>
+			<view class="title" v-if="!address" @click="selItem('dizhi')">
+				请选择地址
+			</view>
+			<view class="user_info" v-if="address" @click="selItem('dizhi')">
+				<view class="pt1">
+					<view class="name">
+						{{address.name}}
+					</view>
+					<view class="phone">
+						{{address.phone}}
+					</view>
+				</view>
+				<view class="pt2">
+					{{address.receive_address}}{{address.address}}
+				</view>
+			</view>
+			<view class="iconfont iconjiantou"></view>
+		</view>
+		<uni-list>
+			<sy-list-item title="送达时间" note="" @click="selItem('time')">
+				<template v-slot:right="">
+					<picker mode="multiSelector" @columnchange="bindMultiPickerColumnChange" :value="multiIndex" :range="multiArray">
+						<view class="peisong_timje">{{timeText}}</view>
+					</picker>
+				</template>
+			</sy-list-item>
+		</uni-list>
+		<view class="h20"></view>
+		<view class="order_msg">
+			<view class="title">
+				<view class="left">
+					商品
+				</view>
+				<view class="num">
+					4件
+				</view>
+			</view>
+			<view class="i_item" v-for="i in 4">
+				<view class="left">
+					<image src="../../static/img/order/dingd4.png" class="img_m" mode=""></image>
+					<view class="info_cc">
+						<view class="in1 shengluehao">
+							地瓜才450g地瓜才450g
+						</view>
+						<view class="in2">
+							x <text>7.9</text> 
+						</view>
+					</view>
+				</view>
+				<view class="right">
+					x1
+				</view>
+			</view>
+			<view class="last_calc">
+				共4件商品 小计￥:<text class="num">23.88</text>
+			</view>
+		</view>
+		<view class="h20"></view>
+		<uni-list>
+			<sy-list-item title="优惠券" note="" @click="selItem('youhuiquan')">
+				<template v-slot:right="">
+					<view class="list_youhuiquan">
+						请选择优惠券
+					</view>
+				</template>
+			</sy-list-item>
+			<sy-list-item title="备注" note="" @click="selItem('beizhu')" :showArrow="false">
+				<template v-slot:right="">
+				
+						<input type="text" class="beizhu_input_text" v-model="beizhuC" placeholder="请填写备注"/>
+					
+				</template>
+			</sy-list-item>
+		</uni-list>
+		<view class="h20">
+			
+		</view>
+		<view class="">
+			<uni-list>
+				<sy-list-item title="支付方式" :showArrow="false"></sy-list-item>
+			</uni-list>
+			<radio-group class="block" @change="RadioChange">
+				<label class="cu-form-group">
+					<view class="item">
+						<image style="width: 44rpx;height: 44rpx;" src="../../static/img/weixin.png" mode=""></image><text class="margin-left-xs">微信支付</text>
+					</view>
+					<radio :class="radio=='A'?'checked':''" :checked="radio=='A'?true:false" value="A" class="radio" :color="'#18B357'"></radio>
+				</label>
+				<label class="cu-form-group">
+					<view class="item">
+						<image style="width: 44rpx;height: 44rpx;" src="../../static/img/zhifb.png" mode=""></image><text class="margin-left-xs">支付宝支付</text>
+					</view>
+					<view>
+						<radio :class="radio=='B'?'checked':''" :checked="radio=='C'?true:false" value="B" class="radio" :color="'#18B357'"></radio>
+					</view>
+				</label>
+		
+			</radio-group>
+			<view class="dikou" @click="isDikouC">
+				<view class="iconfont " :class="isDikou?'iconyduizhengqueshixin':'iconyk_yuanquan'" ></view>
+				<view class="">
+					使用金币抵扣
+				</view>
+			</view>
+		</view>
+		
+		<view class="h20"></view>
+		<uni-list>
+			<uni-list-item title="总价" note="" :rightText="'￥'+money" :showArrow="false"></uni-list-item>
+			<uni-list-item title="配送费" note="" :rightText="'￥'+peisongM" :showArrow="false"></uni-list-item>
+			<uni-list-item title="合计" note="" :rightText="'￥'+allMoney" :showArrow="false"></uni-list-item>
+		</uni-list>
+		<view class="h20"></view>
+		<view class="tishi">
+			订单满28元免配送费
+		</view>
+		<view class="h120">
+			
+		</view>
+		<view class="bottom_btn_zu_sy">
+			<view class="btn1">
+				<view>合计 :</view>
+				<view class="red">
+					￥<text class="big">23.88</text>
+				</view>
+			</view>
+			<view class="btn_b bl" @click="toNav('pay')">
+				去支付
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import {
+		mapState,
+		mapMutations
+	} from "vuex";
+	import _ from "../../until/lodash";
+	export default {
+		data() {
+			return {
+				beizhuC:"",
+				radio: "A",
+				money:23.88,
+				peisongM:0,
+				allMoney:23.88,
+				isDikou:true,
+				multiArray: [
+					[],
+					[]
+				],
+				multiIndex: [0,0],
+				timeText:"",
+				order_id:"",
+				total_credit:""
+				
+			};
+		},
+		computed:{
+			...mapState(["address"]),
+		},
+		onShow() {
+			
+		},
+		onLoad(ph) {
+			if(ph.strCode){
+				this.$getApi("/App/Goods/create_order", {str:ph.strCode}, res => {
+					console.log(res,"1212")
+					this.order_id = res.data.order_id;
+					this.total_credit = res.data.total_credit;
+					// uni.navigateTo({
+					// 	url:"../order/orderTrue?strCode="+res.data
+					// })
+				})
+			}
+		},
+		mounted() {
+			let newD = new Date();
+			let toData =  newD.setTime(newD.getTime()+24*60*60*1000);
+			let newTime ="今天-"+this.$getDate("","月-号");
+			let tomorrowTime ="明天-"+ this.$getDate(toData,"月-号")
+			this.multiArray = [[newTime,tomorrowTime],["尽快送达","13:30-14:00","14:00-14:30"]]
+			this.timeTextM();
+		},
+		methods:{
+			timeTextM(){
+				console.log(this.multiIndex,"ccc")
+				if(this.multiArray[1][this.multiIndex[1]] == '尽快送达'){
+					this.timeText =  "尽快送达 预计14:58送达"
+				}else{
+					this.timeText = this.multiArray[0][this.multiIndex[0]]+" "+this.multiArray[1][this.multiIndex[1]]
+				}
+			},
+			isDikouC(){	
+				if(this.isDikou){
+					this.isDikou = false
+				}else{
+					this.isDikou = true
+				}
+			},
+			selItem(el){
+				// 'dizhi'
+				console.log(el)
+				if(el == 'dizhi'){
+					uni.navigateTo({
+						url:"../mine/address?title=地址选择"
+					})
+				}
+				if(el == 'time'){
+					// this.$refs.songTime.open()
+				}
+			},
+			RadioChange(el){
+				console.log(el)
+				this.radio = el.detail.value
+			},
+			toNav(el){
+				if(el == 'pay'){
+					let dataL = {
+						id:this.order_id,
+						remark:this.beizhuC,
+						user_name:this.address.name,
+						user_phone:this.address.phone,
+						user_address:this.address.receive_address+this.address.address,
+						receive_time:this.timeText,
+						coupon_id:"",
+						credit:this.total_credit
+					}
+					this.$getApi("/App/Goods/editOrder", dataL, res => {
+						console.log(res,"1212")
+						let payType = this.radio == "A" ? 1 : 2;
+						let dataPay = {
+							type:payType,
+							total_credit:this.total_credit,
+							id:this.order_id
+						}
+						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
+							console.log(resbuy,"payOrder1111")
+							let thisPayType = ""
+							if(this.radio == "A"){
+								thisPayType = "wepay"
+							}else
+							if(this.radio == "B"){
+								thisPayType = "alipay"
+							}else
+							if(this.radio == "C"){
+								thisPayType = "xxwepay"
+							}
+							if(thisPayType == "wepay") {
+								console.log("wepay")
+								uni.requestPayment({
+								    provider: 'wxpay',
+								    orderInfo: resbuy.data, //微信、支付宝订单数据
+								    success: function (res) {
+										this_.$store.commit('setQuan', {
+											name: "请选择优惠券"
+										})
+										uni.navigateTo({
+											url:"./orderPay?title=购买成功"
+										})
+										console.log(res)
+								        console.log('success:' + JSON.stringify(res));
+								    },
+								    fail: function (err) {
+								        console.log('fail:' + JSON.stringify(err));
+								    }
+								});
+							} else
+							if(thisPayType == "alipay") {
+								uni.requestPayment({
+								    provider: 'alipay',
+								    orderInfo: JSON.stringify(resbuy.data), //微信、支付宝订单数据
+								    success: function (res) {
+										this_.$store.commit('setQuan', {
+											name: "请选择优惠券"
+										})
+										uni.navigateTo({
+											url:"./orderPay?title=购买成功"
+										})
+										console.log(res)
+								        console.log('success:' + JSON.stringify(res));
+								    },
+								    fail: function (err) {
+								        console.log('fail:' + JSON.stringify(err));
+								    }
+								});
+							} else
+							if (thisPayType == "xxwepay") {
+								uni.requestPayment({
+									provider: 'wxpay',
+									timeStamp: resbuy.data.timeStamp,
+									nonceStr: resbuy.data.nonceStr,
+									package: resbuy.data.package,
+									signType: resbuy.data.signType,
+									paySign: resbuy.data.paySign,
+									success: function (res) {
+										this_.$getApi("/api/user/userinfo",{},resss=>{
+											this_.$store.commit('login',resss.data);
+										})
+										if(this_.$store.state.userInfo.groupid != 0){
+											uni.navigateTo({
+												url:"./orderPay?title=购买成功"
+											})
+										}else{
+											setTimeout(()=>{
+												uni.navigateTo({
+													url:"./orderPay?title=购买成功"
+												})
+											},600)
+										}
+									},
+									fail: function (err) {
+										console.log('fail:' + JSON.stringify(err));
+									}
+								});
+							}
+						})
+					})
+					
+					
+				}
+			},
+			bindMultiPickerColumnChange: function(el) {
+				console.log(el)
+				let newD = new Date();
+				let toData =  newD.setTime(newD.getTime()+24*60*60*1000);
+				let newTime ="今天-"+this.$getDate("","月-号");
+				let tomorrowTime ="明天-"+ this.$getDate(toData,"月-号")
+				
+				if(el.detail.column == 0 ){
+					this.multiIndex[0] = el.detail.value
+					if(el.detail.value == 0){
+						this.multiArray = [[newTime,tomorrowTime],["尽快送达","13:30-14:00","14:00-14:30"]]
+					}else
+					if(el.detail.value == 1){
+						this.multiArray = [[newTime,tomorrowTime],["13:30-14:00","14:00-14:30"]]
+					}
+				}else
+				if(el.detail.column == 1 ){
+					console.log("cccccccccccccc")
+					this.multiIndex[1] = el.detail.value;
+					console.log(this.multiIndex)
+					this.timeTextM()
+				}
+			},
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+.order_true{
+	.sel_address{
+		display: flex;
+		align-items: center;
+		padding: 6upx 62upx 6upx 32upx;
+		.add_img{
+			width: 54upx;
+			height: 54upx;
+			flex-shrink: 0;
+		}
+		.title{
+			font-size: 34upx;
+			color: #666;
+			flex:1;
+			padding-left: 20upx;
+		}
+		.user_info{
+			flex:1;
+			padding-left: 20upx;
+			color: #666;
+			.pt1{
+				display: flex;
+				align-items: center;
+				margin-bottom: 6upx;
+				.name{
+					font-size: 32upx;
+					font-weight: bold;
+				}
+				.phone{
+					font-size: 32upx;
+					margin-left: 30upx;
+				}
+			}
+			.pt2{
+				font-size: 28upx;
+				
+			}
+		}
+		.iconjiantou{
+			color: #ccc;
+			width: 12upx;
+			flex-shrink: 0;
+			font-size: 44upx;
+		}
+	}
+	.h120{
+		height: 120upx;
+		background-color: #f0f0f0;
+	}
+	.bottom_btn_zu_sy{
+		display: flex;
+		position:fixed;
+		bottom: 0;
+		left: 0;
+		width: 750upx;
+		align-items: center;
+		.btn1{
+			flex:1;
+			display: inline-flex;
+			padding-left: 26upx;
+			align-items: center;
+			color: #666;
+			.big{
+				font-size: 36upx;
+			}
+		}
+		.btn_b{
+			width: 230upx;
+			color: #fff;
+			text-align: center;
+			font-size: 34upx;
+			padding: 30upx 0;
+			&.or{
+				background-color: $uni-or;
+			}
+			&.bl{
+				background-color: $uni-bl;
+			}
+		}
+	}
+	.peisong_timje{
+		background-color: $uni-bl;
+		color: #fff;
+		padding: 0 20upx 3upx;
+		border-radius: 20upx;
+	}
+	.dikou{
+		display: flex;
+		color: #666;
+		background-color: #f0f0f0;
+		padding: 10upx 26upx;
+		.iconyduizhengqueshixin{
+			color: $uni-bl;
+			margin-right: 10upx;
+		}
+		.iconyk_yuanquan{
+			color: #666;
+			margin-right: 10upx;
+		}
+	}
+	.list_youhuiquan{
+		color: #666;
+		font-size: 30upx;
+	}
+	.beizhu_input_text{
+		text-align: right;
+	}
+	.tishi{
+		background-color: $uni-or;
+		padding: 10upx 26upx;
+		color: #fff;
+	}
+	.order_msg{
+		background-color: #fff;
+		margin-top: 20upx;
+		padding: 20upx 26upx;
+		.last_calc{
+			text-align: right;
+			color: #666;
+			.num{
+				font-size: 32upx;
+			}
+		}
+		.title{
+			display: flex;
+			justify-content: space-between;
+			font-size: 32upx;
+			color: #333;
+			margin-bottom: 10upx;
+		}
+		.i_item{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			color: #666;
+			padding: 20upx 0;
+			.left{
+				display: inline-flex;
+				align-items: center;
+				.img_m{
+					width: 90upx;
+					height: 90upx;
+				}
+				.info_cc{
+					margin-left: 20upx;
+					display: inline-flex;
+					flex-direction: column;
+					justify-content: space-between;
+					.in1{
+						width: 540upx;
+						margin-bottom: 10upx;
+					}
+				}
+			}
+		}
+	}
+	.cu-form-group {
+		display: flex;
+		justify-content: space-between;
+		padding: 16upx 26upx;
+		background-color: #fff;
+		border-top: 1upx solid #f0f0f0;
+	
+		.item {
+			display: inline-flex;
+			align-items: center;
+	
+			.margin-left-xs {
+				margin-left: 10upx;
+				font-size: 28upx;
+				color: #666;
+			}
+		}
+	
+		.radio {
+			transform: scale(.8);
+		}
+	}
+}
+</style>
