@@ -45,7 +45,7 @@
 		</view>
 		<!-- 头部 end-->
 		<view class="home_nav2 m26">
-			<view class="item" v-for="item in classifyList" @click="toClassify(item)">
+			<view class="item" v-for="item in firstNavList1" @click="toClassify(item)">
 				<image :src="item.icon" class="nav2_img"></image>
 				<view class="text">
 					{{item.name}}
@@ -55,12 +55,8 @@
 		<!-- 二级菜单 -->
 		<view class="nav_first_sy">
 			<view class="nav_box">
-				<view v-for="item in erjiNav" class="item" :style="'background:'+item.bg+';'"  @click="toClassify(item)">
-					<image src="../../static/img/dj.png" class="nav_img" mode=""></image>
-					<view class="text">
-						{{item.text}}
-					</view>
-
+				<view v-for="item in firstNavList2" @click="toClassify(item)" class="item">
+					<image :src="item.icon_small" class="nav_img" mode=""></image>
 				</view>
 			</view>
 		</view>
@@ -298,27 +294,7 @@
 				
 				isFixed:false,
 				bobaoText:"平台上线了,快来下单吧",
-				classifyList: [{
-					name: "水果1"
-				}, {
-					name: "水果2"
-				}, {
-					name: "水果3"
-				}, {
-					name: "水果水果4"
-				}, {
-					name: "水果5"
-				}, {
-					name: "水果6"
-				}, {
-					name: "水果7"
-				}, {
-					name: "水果8"
-				}, {
-					name: "水果9"
-				}, {
-					name: "水果10"
-				}],
+				classifyList: [],
 				shuiguoList: [],
 				shucaiList:[],
 				shopList2: [{
@@ -434,7 +410,15 @@
 		computed: {
 			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar", "location"]),
 
-
+			firstNavList1(){
+				return _.take(this.classifyList,10)
+			},
+			firstNavList2(){
+				return _.slice(this.classifyList,10)
+			},
+			firstNavList2(){
+				
+			},
 			SystemInfoL() {
 				// #ifdef MP
 				return JSON.parse(this.SystemInfo)
@@ -462,6 +446,9 @@
 		},
 		mounted() {
 			// this.init();
+			// #ifdef MP
+			this.weappLogin()
+			// #endif
 		},
 		onShow() {
 			this.init();
@@ -517,6 +504,21 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar", "setLocation","setClassify"]),
+			weappLogin(){
+				console.log("quanxian")
+				// uni.authorize({
+				//     scope: 'scope.userInfo',
+				//     success() {
+				       
+				//     }
+				// })
+				uni.login({
+				  provider: 'weixin',
+				  success: function (loginRes) {
+				    console.log(loginRes,"微信权限信息");
+				  }
+				});
+			},
 			init(){
 				let this_ = this;
 				this.$getApi("/App/lincoupon/get_coupon_lists", {}, res => {
@@ -696,7 +698,7 @@
 				}
 				if (item.name == '新鲜水果') {
 					uni.navigateTo({
-						url:"./searchResult?searchName=水果&fromType=home"
+						url:"./searchResult?searchName=新鲜水果&fromType=home"
 					})
 				}
 				if (item.name == '买一送一') {
@@ -1030,7 +1032,7 @@
 				border-radius: 12upx;
 
 				.nav_img {
-					width: 48upx;
+					width: 160upx;
 					height: 48upx;
 				}
 

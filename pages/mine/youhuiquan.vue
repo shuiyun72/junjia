@@ -5,7 +5,7 @@
 		</view>
 		<view class="bg10_f"></view>
 		<view class="coupon">
-			<view class="item_card" v-for="item in juan1ListType">
+			<view class="item_card" v-for="item in juan1ListType" @click="selYHQ(item)">
 				<image src="../../static/img/mine/youhj.png" mode="widthFix" class="img" v-show="tabSel == 0"></image>
 				<image src="../../static/img/mine/youhjh.png" mode="widthFix" class="img" v-show="tabSel != 0"></image>
 				<view class="info_img">
@@ -81,6 +81,13 @@
 				this.tabSel = i;
 				this.getInit(el.type);
 			},
+			selYHQ(item){
+				console.log(item)
+				this.$store.commit("setYouhuiquan",item)
+				uni.navigateBack({
+					delta:1
+				})
+			}
 		}
 	}
 </script>

@@ -1,14 +1,14 @@
 <template>
 	<view class="mine_msg">
 		<uni-list>
-			<sy-list-item title="头像" note=""  :showArrow="false">
+			<sy-list-item title="头像"   :showArrow="false">
 				 <template v-slot:right="">
 					<image class="slot-image" :src="userInfo.avatar" mode="widthFix"></image>
 				</template>
 			</sy-list-item>
-			<sy-list-item title="昵称" note="" :rightText="userInfo.nickname" :showArrow="false"></sy-list-item>
-			<sy-list-item title="手机号" note="" :rightText="userInfo.phone" :showArrow="false"></sy-list-item>
-			<!-- <sy-list-item title="昵称" note="" :rightText="userInfo.name2" :showArrow="false"></sy-list-item> -->
+			<sy-list-item title="昵称"  :rightText="userInfo.nickname" :showArrow="false"></sy-list-item>
+			<sy-list-item title="手机号"  :rightText="userInfo.phone" :showArrow="false"></sy-list-item>
+			<!-- <sy-list-item title="昵称"  :rightText="userInfo.name2" :showArrow="false"></sy-list-item> -->
 		</uni-list>
 	</view>
 </template>

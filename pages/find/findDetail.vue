@@ -33,10 +33,10 @@
 			相关食材
 		</view>
 		<uni-list>
-			<uni-list-item title="大米" note="" rightText="100克" :showArrow="false"></uni-list-item>
-			<uni-list-item title="皮蛋" note="" rightText="2个,切块" :showArrow="false"></uni-list-item>
-			<uni-list-item title="瘦肉" note="" rightText="50克,切油条" :showArrow="false"></uni-list-item>
-			<uni-list-item title="盐" note="" rightText="3克" :showArrow="false"></uni-list-item>
+			<uni-list-item title="大米"  rightText="100克" :showArrow="false"></uni-list-item>
+			<uni-list-item title="皮蛋"  rightText="2个,切块" :showArrow="false"></uni-list-item>
+			<uni-list-item title="瘦肉"  rightText="50克,切油条" :showArrow="false"></uni-list-item>
+			<uni-list-item title="盐"  rightText="3克" :showArrow="false"></uni-list-item>
 		</uni-list>
 		<view class="h20"></view>
 		<view class="title_bc">

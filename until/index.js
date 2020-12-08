@@ -1,10 +1,9 @@
+
 import Vue from 'vue';
 import store from '../store';
 // let apiUrl = "http://39.100.62.29:9922";
 let apiUrl = 'http://39.100.227.2';
 import './lodash';
-import lodash from './lodash';
-Vue.prototype._ = lodash;
 
 // import Qs from "qs";
 Vue.prototype.$getApi = function(url, data, callsuc, token,err) {

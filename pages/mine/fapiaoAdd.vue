@@ -2,12 +2,12 @@
 	<view class="return_msg">
 		<view class="re_title">普通发票</view>
 		<uni-list>
-			<sy-list-item title="发票抬头" note="" :showArrow="false">
+			<sy-list-item title="发票抬头"  :showArrow="false">
 				<template v-slot:right="">
 					<input type="text" v-model="taitou" placeholder="营业执照上的法定名称" class="addr_input" />
 				</template>
 			</sy-list-item>
-			<sy-list-item title="税号" note="" :showArrow="false">
+			<sy-list-item title="税号"  :showArrow="false">
 				<template v-slot:right="">
 					<input type="text" v-model="shuihao" placeholder="纳税人识别号" class="addr_input" />
 				</template>
@@ -15,7 +15,7 @@
 		</uni-list>
 		<view class="re_title">收件人邮箱<text class="sm">电子发票会发送到您的邮箱中</text></view>
 		<uni-list>
-			<sy-list-item title="邮箱" note="" :showArrow="false">
+			<sy-list-item title="邮箱"  :showArrow="false">
 				<template v-slot:right="">
 					<input type="text" v-model="youxiang" placeholder="请填写邮箱" class="addr_input" />
 				</template>

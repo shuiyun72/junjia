@@ -13,7 +13,7 @@
 			
 		</view>
 		<uni-list>
-			<uni-list-item title="商务合作电话" note="" rightText="400-888888" :showArrow="false"></uni-list-item>
+			<uni-list-item title="商务合作电话"  rightText="400-888888" :showArrow="false"></uni-list-item>
 		</uni-list>
 	</view>
 </template>

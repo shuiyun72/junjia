@@ -44,11 +44,11 @@
 							</view>
 							<view class="text">
 								<view class="title">
-									<view>{{item.name}}</view>
+									<view>{{itemHg.name}}</view>
 								</view>
 								<view class="money_num">
 									<view class="money or">
-										换购价 : ￥<text class="price">{{itemHg.price}}</text>
+										换购价 : ￥<text class="price">{{itemHg.change_price}}</text>
 									</view>
 									<view class="num_add_sy">
 										<view class="n">x1</view>
@@ -216,7 +216,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(["jiaCar", "jianCar", "delCar"]),
+			...mapMutations(["jiaCar", "jianCar", "delCar","setOrderTrueFoot"]),
 			initShopCar() {
 				let numb = 0;
 				_.map(this.shopCar, item => {
@@ -246,6 +246,7 @@
 				let selFoot = _.filter(this.shopList, item => {
 					return item.sel == 1
 				})
+				this.setOrderTrueFoot(selFoot)
 				console.log(selFoot)
 				let order_car = [];
 				this.$getApi("/App/Goods/shop_car", {}, resCar => {

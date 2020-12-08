@@ -88,6 +88,15 @@
 				
 			}
 			if(ph.fromType == 'home'){
+				if(ph.searchName == '新鲜水果'){
+					
+					this.$getApi("/App/Goods/getGoodsListByCate", {keyword:ph.searchName}, res => {
+						console.log(res.data,"新鲜水果新列表")
+						this.clacCar(res.data)
+						// this.shopList  = res.data;
+						// this.calcList();
+					})
+				}
 				uni.setNavigationBarTitle({
 					title: ph.searchName
 				})

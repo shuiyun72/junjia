@@ -56,25 +56,30 @@
 			}
 		},
 		mounted() {
-			this.$getApi("/App/Goods/getCategory", {}, res => {
-				console.log(res.data,"获取一级菜单")
-				this.classifyList  =res.data;
-				let classifySelindex = _.findIndex(this.classifyList, item => {
-					return item.name == this.classify.name
-				})
-				console.log(classifySelindex)
-				console.log(this.classify,this.classify.id)
-				if (classifySelindex > -1) {
 					
-					this.classifySel = classifySelindex;
-					this.getSecondList(this.classify.id)
-				}
-			})
-			
 		},
 		onShow() {
 			this.initShopCar()
 			console.log(this.classify)
+			this.$getApi("/App/Goods/getCategory", {}, res => {
+				console.log(res.data,"获取一级菜单")
+				this.classifyList  =res.data;
+				if(this.classify){
+					let classifySelindex = _.findIndex(this.classifyList, item => {
+						return item.name == this.classify.name
+					})
+					console.log(classifySelindex)
+					console.log(this.classify,this.classify.id)
+					if (classifySelindex > -1) {
+						this.classifySel = classifySelindex;
+						this.getSecondList(this.classify.id)
+					}
+				}else{
+					this.classifySel = 0;
+					this.getSecondList(this.classifyList[0].id)
+				}
+				
+			})
 			
 		},
 		data() {

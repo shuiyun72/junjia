@@ -21,7 +21,7 @@
 			<view class="iconfont iconjiantou"></view>
 		</view>
 		<uni-list>
-			<sy-list-item title="送达时间" note="" @click="selItem('time')">
+			<sy-list-item title="送达时间"  @click="selItem('time')">
 				<template v-slot:right="">
 					<picker mode="multiSelector" @columnchange="bindMultiPickerColumnChange" :value="multiIndex" :range="multiArray">
 						<view class="peisong_timje">{{timeText}}</view>
@@ -36,39 +36,39 @@
 					商品
 				</view>
 				<view class="num">
-					4件
+					{{orderTrueFoot.length}}件
 				</view>
 			</view>
-			<view class="i_item" v-for="i in 4">
+			<view class="i_item" v-for="item in orderTrueFoot">
 				<view class="left">
 					<image src="../../static/img/order/dingd4.png" class="img_m" mode=""></image>
 					<view class="info_cc">
 						<view class="in1 shengluehao">
-							地瓜才450g地瓜才450g
+							{{item.name}}
 						</view>
 						<view class="in2">
-							x <text>7.9</text> 
+							x <text>{{item.price}}</text> 
 						</view>
 					</view>
 				</view>
 				<view class="right">
-					x1
+					x{{item.num}}
 				</view>
 			</view>
 			<view class="last_calc">
-				共4件商品 小计￥:<text class="num">23.88</text>
+				共{{allFootsCalc}}件商品 小计￥:<text class="num">23.88</text>
 			</view>
 		</view>
 		<view class="h20"></view>
 		<uni-list>
-			<sy-list-item title="优惠券" note="" @click="selItem('youhuiquan')">
+			<sy-list-item title="优惠券" @click="selItem('youhuiquan')">
 				<template v-slot:right="">
 					<view class="list_youhuiquan">
-						请选择优惠券
+						{{youhuiquan.coupon_id?youhuiquan.title:'请选择优惠券'}}
 					</view>
 				</template>
 			</sy-list-item>
-			<sy-list-item title="备注" note="" @click="selItem('beizhu')" :showArrow="false">
+			<sy-list-item title="备注" @click="selItem('beizhu')" :showArrow="false">
 				<template v-slot:right="">
 				
 						<input type="text" class="beizhu_input_text" v-model="beizhuC" placeholder="请填写备注"/>
@@ -110,9 +110,9 @@
 		
 		<view class="h20"></view>
 		<uni-list>
-			<uni-list-item title="总价" note="" :rightText="'￥'+money" :showArrow="false"></uni-list-item>
-			<uni-list-item title="配送费" note="" :rightText="'￥'+peisongM" :showArrow="false"></uni-list-item>
-			<uni-list-item title="合计" note="" :rightText="'￥'+allMoney" :showArrow="false"></uni-list-item>
+			<uni-list-item title="总价"  :rightText="'￥'+money" :showArrow="false"></uni-list-item>
+			<uni-list-item title="配送费"  :rightText="'￥'+peisongM" :showArrow="false"></uni-list-item>
+			<uni-list-item title="合计"  :rightText="'￥'+allMoney" :showArrow="false"></uni-list-item>
 		</uni-list>
 		<view class="h20"></view>
 		<view class="tishi">
@@ -162,15 +162,23 @@
 			};
 		},
 		computed:{
-			...mapState(["address"]),
+			...mapState(["address","orderTrueFoot","youhuiquan"]),
+			allFootsCalc(){
+				let numL = 0;
+				_.map(this.orderTrueFoot,item=>{
+					numL = numL + Number(item.num)
+				})
+				return numL
+			},
 		},
 		onShow() {
-			
+			console.log("orderTrueFoot",this.orderTrueFoot)
 		},
 		onLoad(ph) {
 			if(ph.strCode){
 				this.$getApi("/App/Goods/create_order", {str:ph.strCode}, res => {
 					console.log(res,"1212")
+					this.$store.commit('clearCar')
 					this.order_id = res.data.order_id;
 					this.total_credit = res.data.total_credit;
 					// uni.navigateTo({
@@ -214,6 +222,11 @@
 				if(el == 'time'){
 					// this.$refs.songTime.open()
 				}
+				if(el == 'youhuiquan'){
+					uni.navigateTo({
+						url:"../mine/youhuiquan?fromOrder=1"
+					})
+				}
 			},
 			RadioChange(el){
 				console.log(el)
@@ -221,6 +234,10 @@
 			},
 			toNav(el){
 				if(el == 'pay'){
+					if(!this.address.name){
+						this.$msg('请选择地址')
+						return false;
+					};
 					let dataL = {
 						id:this.order_id,
 						remark:this.beizhuC,
@@ -409,6 +426,7 @@
 		left: 0;
 		width: 750upx;
 		align-items: center;
+		background-color: #fff;
 		.btn1{
 			flex:1;
 			display: inline-flex;

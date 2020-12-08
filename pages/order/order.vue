@@ -40,7 +40,7 @@
 					</view>
 				</view>
 				<view class="btn_box" v-if="parent.text == '等待支付'">
-					<view class="btn blue sm round" @click.stop="toNav('quzhifu')">
+					<view class="btn blue sm round" @click.stop="toNav('quzhifu',parent)">
 						去支付
 					</view>
 				</view>
@@ -58,7 +58,7 @@
 					<view class="btn blue_n sm round">
 						再来一单
 					</view>
-					<view class="btn blue sm round">
+					<view class="btn blue sm round" @click.stop="toNav('pingjia',parent)">
 						去评价
 					</view>
 				</view>
@@ -142,10 +142,15 @@
 					url:"../home/home"
 				})
 			},
-			toNav(el){
+			toNav(el,parentOrder){
 				if(el == 'quzhifu'){
 					uni.navigateTo({
 						url:'./orderPay'
+					})
+				}
+				if(el == 'pingjia'){
+					uni.navigateTo({
+						url:'./appraise'
 					})
 				}
 			},

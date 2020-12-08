@@ -2,15 +2,15 @@
 	<view class="detail" v-if="itemDetail.comment_list">
 		<view class="swiper_box">
 			<swiper :autoplay="false" :interval="3000" :duration="1000" class="h_lunbo" @change="detailSw">
-				<swiper-item v-for="item in itemFoot.imgs">
+				<swiper-item v-for="item in itemDetail.pic">
 					<view class="swiper-item">
-						<image src="../../static/img/car/gouwc2.png" mode="" class="img"></image>
+						<image :src="item" mode="" class="img_lub"></image>
 					</view>
 				</swiper-item>
 			</swiper>
 			<view class="show_bi_num">
 				<view class="cbc">
-					{{imgsIndex+1}}/{{itemFoot.imgs.length}}
+					{{imgsIndex+1}}/{{itemDetail.pic.length}}
 				</view>
 			</view>
 		</view>
@@ -38,7 +38,7 @@
 		</view>
 		<view class="bgf20"></view>
 		<uni-list>
-			<uni-list-item :title="'商品评价('+itemDetail.comment_list.length+')'" note="" rightText="查看全部" @click="showAllRate"></uni-list-item>
+			<uni-list-item :title="'商品评价('+itemDetail.comment_list.length+')'"  rightText="查看全部" @click="showAllRate"></uni-list-item>
 		</uni-list>
 		<view class="" v-if="itemDetail.comment_list.length > 0">
 		<view class="pingjia_box_sy">
@@ -118,10 +118,10 @@
 		</view>
 		<view class="bottom_btn_group_sy">
 			<view class="left">
-				<view class="item shoucao" :class="itemDetail.goodsKeep == 'yes'?'active':''" @click="handleC('shoucang')">
+				<view class="item shoucao" :class="isShoucang?'active':''" @click="handleC('shoucang')">
 					<view class="iconfont iconshoucang"></view>
 					<view class="text">
-						收藏
+						{{isShoucang?'已收藏':'收藏'}}
 					</view>
 				</view>
 				<view class="item car" @click="handleC('car')">
@@ -206,16 +206,22 @@
 					}]
 				},
 				imgsIndex: 0,
-				itemDetail:{}
+				itemDetail:{},
+				isShoucang:false
 			};
 		},
 		onLoad(ph) {
 			this.itemId = ph.itemId;
-			
-			this.$getApi("/App/Goods/goodsInfo", {id:26}, res => {
+			// this.$getApi("/App/Goods/del_car", {ids:26}, res => {
+			// 	console.log(res.data,"商品详情")
+			// })
+			// return false;
+			this.$getApi("/App/Goods/goodsInfo", {id:3}, res => {
 				console.log(res.data,"商品详情")
 				let itemDetail = res.data;
+				this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
 				itemDetail.num = 0;
+				itemDetail.sel = 1;
 				this.itemDetail  = itemDetail
 			})
 		},
@@ -237,6 +243,11 @@
 				if(el == 'shoucang'){	
 					this.$getApi("/App/Goods/collect", {tid:this.itemDetail.id}, res => {
 						console.log(res.data,"shoucang")
+						if(res.data.state == 1){
+							this.isShoucang = true
+						}else{
+							this.isShoucang = false
+						}
 					})
 				}
 				if(el == 'car'){
@@ -514,7 +525,7 @@
 			.swiper-item {
 				text-align: center;
 
-				.img {
+				.img_lub {
 					width: 700upx;
 					height: 700upx;
 				}

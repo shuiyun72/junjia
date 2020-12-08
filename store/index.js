@@ -20,7 +20,10 @@ const store = new Vuex.Store({
 		SystemInfo: "",
 		shopCar: shopCar,
 		itemHg:"",
-		classify:""
+		classify:"",
+		orderTrueFoot:[],
+		address:"",
+		youhuiquan:{}
 	},
 	mutations: {
 		login(state, provider) {
@@ -31,6 +34,20 @@ const store = new Vuex.Store({
 				key: 'userInfo',
 				data: provider
 			})
+		},
+		setInit(state){
+			state.shopCar = [];
+			uni.setStorageSync('shopCar',state.shopCar)
+			state.youhuiquan = {};
+		},
+		setYouhuiquan(state,items){
+			state.youhuiquan = items
+		},
+		setAddress(state,items){
+			state.address = items
+		},
+		setOrderTrueFoot(state,items){
+			state.orderTrueFoot = items
 		},
 		setItemHg(state,item){
 			state.itemHg = item
@@ -77,6 +94,10 @@ const store = new Vuex.Store({
 			
 			console.log(index,"51")
 			_.uniq(state.shopCar);
+			uni.setStorageSync('shopCar',state.shopCar)
+		},
+		clearCar(state, data) {
+			state.shopCar = [];
 			uni.setStorageSync('shopCar',state.shopCar)
 		},
 		logout(state) {
