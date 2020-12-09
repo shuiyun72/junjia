@@ -61,6 +61,9 @@
 			</view>
 			<!-- 购物车商品 -->
 			<view class="shop_list">
+				<view v-if="shopList.length > 0">
+					
+				
 				<view class="for_item_box" v-for="(item,index) in shopList" @click="selItem(item,index)">
 					<view class="item_box" >
 						<view class="iconfont sel_s" :class="item.sel == 1?'iconyduizhengqueshixin':'sel_c'"></view>
@@ -105,7 +108,15 @@
 						
 					</view>
 				</view>
+				</view>
+				<view class="no_foot" v-if="shopList.length == 0">
+					<image src="../../static/img/none.png" class="no_img" mode=""></image>
+					<view class="no_text">
+						暂无商品
+					</view>
+				</view>
 			</view>
+			
 		</view>
 		<view class="car_pay_sy">
 			<view class="part1">
@@ -358,6 +369,20 @@
 </script>
 
 <style lang="scss" scoped>
+	.no_foot{
+		text-align: center;
+		font-size: 40upx;
+		padding-top: 100upx;
+		.no_img{
+			width: 500upx;
+			height: 500upx;
+		}
+		.no_text{
+			font-size: 40upx;
+			color: #999;
+			padding-top: 60upx;
+		}
+	}
 	.car_pay_sy {
 		display: flex;
 		align-items: center;

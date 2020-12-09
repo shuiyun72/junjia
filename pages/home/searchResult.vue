@@ -24,8 +24,8 @@
 				</view>
 			</view>
 			<view class="">
-				<view class="rec_body_sy">
-					<view v-if="shopList.length > 0">
+				<view class="rec_body_sy" v-if="shopList.length > 0">
+					<view >
 						<sy-foot2 v-for="(item,index) in shopList" :item="item" @click="foot2Click" :isPaihang="isPaihang" :itemIndex="index">
 							<view class="num_add_sy" v-if="item.state != 3">
 								{{item.id}}<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
@@ -37,12 +37,13 @@
 							</view>
 						</sy-foot2>
 					</view>
-					
-					<view class="no_foot" v-if="shopList.length == 0">
-						无商品
+				</view>
+				<view class="no_foot" v-if="shopList.length == 0">
+					<image src="../../static/img/none.png" class="no_img" mode=""></image>
+					<view class="no_text">
+						暂无商品
 					</view>
 				</view>
-				
 			</view>
 		</view>
 	</view>
@@ -345,10 +346,17 @@
 <style lang="scss" scoped>
 	.no_foot{
 		text-align: center;
-		height: 300upx;
-		line-height: 300upx;
-		color: #999;
 		font-size: 40upx;
+		padding-top: 100upx;
+		.no_img{
+			width: 500upx;
+			height: 500upx;
+		}
+		.no_text{
+			font-size: 40upx;
+			color: #999;
+			padding-top: 60upx;
+		}
 	}
 	.search_box_sy{
 		padding: 0 0 20upx;

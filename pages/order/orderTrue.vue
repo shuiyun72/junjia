@@ -56,7 +56,7 @@
 				</view>
 			</view>
 			<view class="last_calc">
-				共{{allFootsCalc}}件商品 小计￥:<text class="num">23.88</text>
+				共{{allFootsCalc}}件商品 小计￥:<text class="num">{{allMoneyFootsCalc}}元</text>
 			</view>
 		</view>
 		<view class="h20"></view>
@@ -125,7 +125,7 @@
 			<view class="btn1">
 				<view>合计 :</view>
 				<view class="red">
-					￥<text class="big">23.88</text>
+					￥<text class="big">{{allMoneyFootsCalc}}元</text>
 				</view>
 			</view>
 			<view class="btn_b bl" @click="toNav('pay')">
@@ -169,6 +169,13 @@
 					numL = numL + Number(item.num)
 				})
 				return numL
+			},
+			allMoneyFootsCalc(){
+				let numL = 0;
+				_.map(this.orderTrueFoot,item=>{
+					numL = numL + Number(item.num)*(Number(item.price)*100)
+				})
+				return numL/100
 			},
 		},
 		onShow() {
