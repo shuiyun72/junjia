@@ -39,7 +39,7 @@
 			return {
 				arrtL: [],
 				arrtR: [],
-				footPb: [{
+				footList: [{
 					id: 1001,
 					title: "1新品推荐新品",
 					num: 0,
@@ -64,28 +64,24 @@
 		},
 		mounted() {
 			
-			this.footPbL()
+			
 			
 		},
 		onLoad(ph) {
-			if(ph.title){
+			if(ph.title == "新人专属"){
 				uni.setNavigationBarTitle({
 					title:ph.title
 				})
-				this.pageTitle = ph.title
+				this.pageTitle = ph.title;
+				this.$getApi('/App/Goods/getGoodsList',{new_one:1},res=>{
+					console.log(res)
+					this.getFootList(res.data)
+					// let allClass = [{name:"全部"}]
+					// this.findList = allClass.concat(res.data)
+				})
 			}
 		},
 		onShow() {
-			_.map(this.footPb, itemL => {
-				_.map(this.shopCar, (itemC, index) => {
-					if (itemL.id == itemC.id) {
-						// this.shopList[index].num = itemC.num
-						this.$set(this.footPb[index], "num", itemC.num)
-					}
-				})
-			})
-		},
-		beforeDestroy() {
 			
 		},
 		computed:{
@@ -100,10 +96,22 @@
 		},
 		methods:{
 			...mapMutations(["jiaCar", "jianCar", "setLocation","setClassify"]),
-			footPbL(type) {
+			getFootList(footList){
+				_.map(footList, itemL => {
+					_.map(this.shopCar, (itemC, index) => {
+						if (itemL.id == itemC.id) {
+							// this.shopList[index].num = itemC.num
+							this.$set(footList[index], "num", itemC.num)
+						}
+					})
+				})
+				this.footList = footList;
+				this.footPbL(this.footList)
+			},
+			footPbL(footList) {
 				let arrtL = [];
 				let arrtR = [];
-				_.map(this.footPb, (item, index) => {
+				_.map(footList, (item, index) => {
 					console.log(item, index)
 					if (index % 2 == 0) {
 						arrtL.push(item)
@@ -123,23 +131,14 @@
 				})
 			},
 			foot2JianJs(item) {
-				this.foot2JianItem(item, 3)
+				this.foot2JianItem(item)
 			},
 			foot2JiaJs(item) {
-				this.foot2JiaItem(item, 3)
+				console.log(item)
+				this.foot2JiaItem(item)
 			},
-			foot2JiaItem(item, el) {
-				let list = [];
-				if (el == 1) {
-					list = this.shopList
-				} else
-				if (el == 2) {
-					list = this.shopList2
-				}else
-				if (el == 3) {
-					list = this.footPb
-				}
-				_.map(list, fil => {
+			foot2JiaItem(item) {
+				_.map(this.footList, fil => {
 					if (fil.id == item.id) {
 						item.num++;
 						this.jiaCar(item)
@@ -161,18 +160,8 @@
 					})
 				}
 			},
-			foot2JianItem(item, el) {
-				let list = [];
-				if (el == 1) {
-					list = this.shopList
-				} else
-				if (el == 2) {
-					list = this.shopList2
-				}else
-				if (el == 3) {
-					list = this.footPb
-				}
-				_.map(list, fil => {
+			foot2JianItem(item) {
+				_.map(this.footList, fil => {
 					if (fil.id == item.id) {
 						item.num--;
 						this.jianCar(item)

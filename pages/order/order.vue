@@ -8,18 +8,18 @@
 		<view class="order_list">
 			<view class="order_box" v-for="parent in orderList" @click="toDetail(parent)">
 				<view class="title_c">
-					<view class="left" :class="parent.text == '等待支付'?'or':parent.text == '备货中'?'blue':parent.text == '配送中'?'blue2':''">
-						{{parent.text}}
+					<view class="left" :class="parent.status == -1 ?'or':parent.status == 1?'blue':parent.status == 2 ?'blue2':''">
+						{{orderText(parent.status)}}
 					</view>
 					<view class="right">
 						2020-10-21 14:31
 					</view>
 				</view>
-				<view class="o_item" v-for="item in parent.items">
+				<view class="o_item" v-for="item in parent.goods_list">
 					<view class="left">
-						<image src="../../static/img/order/dingd4.png" class="img_c" mode=""></image>
+						<image :src="item.goods_thumb" class="img_c" mode=""></image>
 						<view class="title shengluehao">
-							荻花白擦荻花白擦荻花白擦荻花白擦荻花白擦荻花白擦荻花白擦荻花白擦荻花白擦
+							{{item.goods_name}}
 						</view>
 					</view>
 					<view class="right">
@@ -32,29 +32,32 @@
 					</view>
 					<view class="right">
 						<view class="sm">
-							共4件 实付 :
+							共{{parent.goods_list.length}}件 实付 :
 						</view>
 						<view class="money">
-							<text class="red">23.88</text> 元
+							<text class="red">{{parent.credit}}</text> 元
 						</view>
 					</view>
 				</view>
-				<view class="btn_box" v-if="parent.text == '等待支付'">
+				<view class="btn_box" v-if="parent.status == -1">
 					<view class="btn blue sm round" @click.stop="toNav('quzhifu',parent)">
 						去支付
 					</view>
 				</view>
-				<view class="btn_box" v-if="parent.text == '备货中'">
+				<!-- 备货中 -->
+				<view class="btn_box" v-if="parent.status == 0">
 					<view class="btn blue sm round">
 						再来一单
 					</view>
 				</view>
-				<view class="btn_box" v-if="parent.text == '配送中'">
+				<!-- 配送中 -->
+				<view class="btn_box" v-if="parent.text == 1">
 					<view class="btn blue sm round">
 						再来一单
 					</view>
 				</view>
-				<view class="btn_box" v-if="parent.text == '待评价'">
+				<!-- 待评价 -->
+				<view class="btn_box" v-if="parent.text == 2">
 					<view class="btn blue_n sm round">
 						再来一单
 					</view>
@@ -135,11 +138,45 @@
 		},
 		onLoad(ph) {
 			this.tabSel = ph.ins;
+			console.log(ph.ins)
+			
+			
+			this.getOrederList(this.tabSel)
 		},
 		methods: {
 			back(){
 				uni.switchTab({
 					url:"../home/home"
+				})
+			},
+			orderText(num){
+				if(num == -1){
+					return "等待支付"
+				}
+				if(num == 1){
+					return "配送中"
+				}
+				if(num == 2){
+					return "待评价"
+				}
+			},
+			getOrederList(fromNum){
+				let getState  = ""
+				if(fromNum == 0){
+					getState = ""
+				}
+				if(fromNum == 1){
+					getState = -1
+				}
+				if(fromNum == 2){
+					getState = 1
+				}
+				if(fromNum == 3){
+					getState = 2
+				}
+				this.$getApi("/App/User/userOrder", {status:getState}, res => {
+					console.log(res.data,"ccccc3161")
+					this.orderList  = res.data
 				})
 			},
 			toNav(el,parentOrder){
@@ -161,7 +198,7 @@
 			},
 			selectTab(el, i) {
 				this.tabSel = i;
-				// this.getOrder(el.type);
+				this.getOrederList(i)
 			},
 		}
 	}

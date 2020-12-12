@@ -142,7 +142,7 @@
 			</view>
 			<sy-scroll-x class="p26">
 				<view class="weke_box_item" v-for="item in benzhouList" @click="itemClick(item)">
-					<image src="../../static/img/car/gouwc1.png" class="t_img" mode=""></image>
+					<image src="../../static/img/img-sp17.png" class="t_img" mode=""></image>
 					<view class="title1 shengluehao">
 						{{item.name}}
 					</view>
@@ -390,13 +390,17 @@
 				benzhouList:[],
 				shuiguoId:"",
 				shucaiId:"",
+				footPbNum:1
 			};
 		},
 		
 		onReachBottom() { //上拉触底函数
 			console.log("more")
-			this.footPb = [...this.footPb, ...this.footPb];
+			
+			// this.footPb = [...this.footPb, ...this.footPb];
+			this.jingxuanFoot()
 			this.footPbL();
+			this.loadStatus = "false"
 		},
 		watch:{
 			shopCar: {
@@ -489,8 +493,10 @@
 			})
 		},
 		onPullDownRefresh() {
+			let this_ = this;
 			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
 			setTimeout(function() {
+				
 				uni.stopPullDownRefresh(); //停止下拉刷新动画
 			}, 1000);
 		},
@@ -512,10 +518,53 @@
 				       
 				//     }
 				// })
+				let this_ = this;
+				
+				uni.getSetting({
+				   success(res) {
+					console.log("授权：",res);
+					 if (!res.authSetting['scope.userInfo']) {
+						//这里调用授权
+						console.log("当前未授权");
+					 } else {
+						//用户已经授权过了
+						console.log("当前已授权");
+						// 弹出正在登录的弹框
+						uni.showLoading({
+							mask:true,
+							title: '正在登录···',
+							complete:()=>{}
+						});
+					}
+					}
+				})
+											
+				uni.getUserInfo({
+				  provider: 'weixin',
+				  success: function (infoRes) {
+				    console.log(infoRes,"45450000000000000000000000000000000000");
+				  },
+				  fail: function (infoRes) {
+				    console.log(infoRes,"4545000000000erroe");
+				  },
+				});
+				
 				uni.login({
 				  provider: 'weixin',
 				  success: function (loginRes) {
 				    console.log(loginRes,"微信权限信息");
+					
+					this_.$getApi("/App/Public/getOpenid", {code:loginRes.code}, res => {
+						console.log(res,"ccccc")
+						// 获取用户信息
+						    
+						// this_.$getApi("/App/Public/thirdLogin", {code:loginRes.code}, res => {
+						// 	console.log(res,"ccccc")
+							
+						// })
+						
+					})
+					
 				  }
 				});
 			},
@@ -524,9 +573,8 @@
 				this.$getApi("/App/lincoupon/get_coupon_lists", {}, res => {
 					console.log(res,"优惠券")
 					this.youhuiquanList  = res.data;
+					// this.openP();
 				})
-				// this.openP();
-				
 				// 轮播图
 				this_.$getApi("/App/Index/banner", {}, res => {
 					console.log(res.data,"ccccc")
@@ -559,9 +607,12 @@
 					// this_.classifyList  =res.data
 				})
 				// 获取系统配置信息
-				this_.$getApi("/App/Index/getSysConfig", {type:"hot_report"}, res => {
+				this_.$getApi("/App/Index/getSysConfig", {}, res => {
 					console.log(res,"获取系统配置信息")
-					this_.bobaoText  =res.data
+					this_.bobaoText  =  _.filter(res.data,item=>{
+						return item.remark.includes('热点播报')
+					})[0].value;
+					console.log(this_.bobaoText,'热点播报')
 				})
 				
 				
@@ -571,7 +622,15 @@
 					// this.benzhouList = res.data ? res.data : []
 					// this_.shuiguoList  = res.data.slice(0,3)
 				})
-				
+				this.jingxuanFoot()
+			},
+			jingxuanFoot(){
+				this.$getApi("/App/Goods/getGoodsList", {p:this.footPbNum,recommend:1}, res => {
+					console.log(res.data,"精选好物")
+					this.footPbNum++
+					// this.benzhouList = res.data ? res.data : []
+					// this_.shuiguoList  = res.data.slice(0,3)
+				})
 			},
 			nShareAppMessage: function(e) {
 				let title = '君佳优选'
@@ -678,11 +737,14 @@
 			startTime() {
 				let this_ = this;
 				this_.toLastTime()
-				if (this.toTime != '00:00:00' && !this.stopTimeout){
-					this_.timer = setTimeout(() => {
-						this_.startTime()
-					}, 1000)
-				}
+				
+				this_.timer = setInterval(() => {
+					if (this.toTime != '00:00:00' && !this.stopTimeout){
+					
+							this_.startTime()
+						
+					}
+				}, 1000)
 			},
 			toLastTime() {
 				let toTime = "2020-11-18 16:00:00";

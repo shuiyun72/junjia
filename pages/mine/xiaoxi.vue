@@ -8,27 +8,32 @@
 						{{titleName}}
 					</view> -->
 					<view class="xiaoxi_list" v-if="titleName == '到货提醒'">
+						<view v-if="xiaoxiListCC.length>0">
+							
+						
 						<view class="item_daohuo" v-for="item in xiaoxiListCC">
 							<view class="time">
-								{{getDateL(item.time)}}
+								{{getDateL(item.create_time)}}
 							</view>
 							<view class="box">
 								<view class="c_title">
-									{{item.title}}
+									<!-- {{item.goods_info}} -->
+									商品已到货
 								</view>
 								<view class="content_flex">
-									<image src="../../static/img/img-sp19.png" class="c_img" mode=""></image>
+									<image :src="item.goods_info.thumb" class="c_img" mode=""></image>
 									<view class="content">
-										{{item.content}}
+										{{item.goods_info.name}}
 									</view>
 								</view>
 							</view>
+						</view>
 						</view>
 					</view>
 					<view class="xiaoxi_list" v-if="titleName == '系统消息' || titleName == '订单消息'">
 						<view class="item" v-for="item in xiaoxiListCC">
 							<view class="time">
-								{{getDateL(item.time)}}
+								{{getDateL(item.create_time)}}
 							</view>
 							<view class="box">
 								<view class="c_title">
@@ -56,37 +61,13 @@
 					time: "2020-05-17",
 					title: "订单退款已受理 : 99854456564658474",
 					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}, {
-					time: "2020-05-17",
-					title: "订单已受理 : 99854456564658474",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}, {
-					time: "2020-05-17",
-					title: "订单配送中 : 99854456564658474",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
 				}],
 				xiaoxiListDH: [{  //到货消息
 					time: "2020-05-17",
 					title: "商品已到货",
 					content: "南非进口橙子17:50到货南非进口橙子17:50到货南非进口橙子17:50到货"
-				}, {
-					time: "2020-05-17",
-					title: "商品已到货",
-					content: "南非进口橙子17:50到货南非进口橙子17:50到货南非进口橙子17:50到货"
 				}],
 				xiaoxiListXT: [{  //系统消息
-					time: "2020-05-17",
-					title: "系统消息",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}, {
-					time: "2020-05-17",
-					title: "系统消息",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}, {
-					time: "2020-05-17",
-					title: "系统消息",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}, {
 					time: "2020-05-17",
 					title: "系统消息",
 					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
@@ -101,7 +82,7 @@
 						content: '手风琴效果',
 						animation: true,
 						thumb: "../../static/img/mine/dingdxx.png",
-						number: 1
+						number: 0
 					},
 					{
 						id: 2,
@@ -109,7 +90,7 @@
 						content: '手风琴效果',
 						animation: true,
 						thumb: "../../static/img/mine/daohtx.png",
-						number: 2
+						number: 0
 					},
 					{
 						id: 3,
@@ -117,14 +98,19 @@
 						content: '手风琴效果',
 						animation: true,
 						thumb: "../../static/img/mine/daohtx.png",
-						number: 6
+						number: 0
 					}
 				],
-				titleName:""
+				titleName:"",
+				weiduMsg:{}
 			};
 		},
 		mounted() {
 			this.changeItem([2]);
+		},
+		onShow() {
+			
+			this.getMsgNum();
 		},
 		onPullDownRefresh() {
 			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
@@ -147,17 +133,36 @@
 				console.log(el)
 				if(el[0] == 0){
 					this.titleName = "订单消息"
-					this.xiaoxiListCC = this.xiaoxiListDD
+					// this.xiaoxiListCC = this.xiaoxiListDD
+					this.getMsg(2)
 				}else
 				if(el[0] == 1){
 					this.titleName = "到货提醒"
-					this.xiaoxiListCC = this.xiaoxiListDH
+					// this.xiaoxiListCC = this.xiaoxiListDH
+					this.getMsg(3)
 				}else
 				if(el[0] == 2){
 					this.titleName = "系统消息"
-					this.xiaoxiListCC = this.xiaoxiListXT
+					// this.xiaoxiListCC = this.xiaoxiListXT
+					this.getMsg(1)
 				}
 				
+			},
+			getMsgNum(){
+				this.$getApi('/App/Index/msgNum',{},res=>{
+					console.log(res)
+					this.weiduMsg = res.data
+					console.log(this.weiduMsg)
+					this.accordion[2].number = Number(this.weiduMsg.num1);
+					this.accordion[0].number = Number(this.weiduMsg.num2);
+					this.accordion[1].number = Number(this.weiduMsg.num3);
+				})
+			},
+			getMsg(type){
+				this.$getApi('/App/Index/myMessage',{type:type},res=>{
+					console.log(res)
+					this.xiaoxiListCC = res.data;
+				})
 			},
 			getDateL(date){
 				return this.$getDate(date,'年-月-日')

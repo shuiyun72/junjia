@@ -89,7 +89,7 @@
 			</view>
 			<sy-scroll-x class="p26">
 				<view class="weke_box_item" v-for="item in 10" @click="itemClick(item)">
-					<image src="../../static/img/car/gouwc1.png" class="t_img" mode=""></image>
+					<image src="../../static/img/img-sp17.png" class="t_img" mode=""></image>
 					<view class="title1 shengluehao">
 						陆地枸杞9打开拉肚肚
 					</view>
@@ -176,27 +176,28 @@
 					}, {
 						img: "gouwc2.png"
 					}],
-					imgs2: [{
-						img: "sp-czxq1.png"
-					}, {
-						img: "sp-czxq2.png"
-					}, {
-						img: "sp-czxq3.png"
-					}, {
-						img: "sp-czxq4.png"
-					}, {
-						img: "sp-czxq5.png"
-					}, {
-						img: "sp-czxq6.png"
-					}, {
-						img: "sp-czxq7.png"
-					}, {
-						img: "sp-czxq8.png"
-					}, {
-						img: "sp-czxq9.png"
-					}, {
-						img: "sp-czxq10.png"
-					}],
+					imgs2:[],
+					// imgs2: [{
+					// 	img: "sp-czxq1.png"
+					// }, {
+					// 	img: "sp-czxq2.png"
+					// }, {
+					// 	img: "sp-czxq3.png"
+					// }, {
+					// 	img: "sp-czxq4.png"
+					// }, {
+					// 	img: "sp-czxq5.png"
+					// }, {
+					// 	img: "sp-czxq6.png"
+					// }, {
+					// 	img: "sp-czxq7.png"
+					// }, {
+					// 	img: "sp-czxq8.png"
+					// }, {
+					// 	img: "sp-czxq9.png"
+					// }, {
+					// 	img: "sp-czxq10.png"
+					// }],
 					pingjiaImg:[{
 						img: "img-pingj1.png"
 					}, {

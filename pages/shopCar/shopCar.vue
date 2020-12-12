@@ -391,15 +391,8 @@
 		width: 750upx;
 		background-color: #fff;
 		left: 0;
-		bottom: 100upx;
-		/* #ifdef MP */
 		bottom: 0upx;
-		/* #endif */
-		/* #ifndef MP */
-		bottom: 100upx;
-		/* #endif */
 		z-index: 1000;
-
 		.part1 {
 			display: inline-flex;
 			align-items: center;

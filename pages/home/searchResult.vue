@@ -214,7 +214,7 @@
 					//团购商品
 					if(item.group_buy == 1){
 						item.state = 5
-					}
+					}else
 					if(item.on_sale == 1){
 						item.state = 4
 					}else{

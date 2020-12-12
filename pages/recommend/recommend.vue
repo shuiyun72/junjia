@@ -7,18 +7,21 @@
 		</view>
 		<view class="posi_img">
 			<image src="../../static/img/img-zhut3.png" mode="" class="img"></image>
-
 		</view>
-		<view class="scroll_fixed" :class="{'fixed':isFixed}">
-			<view class="classify_nav">
-				<view class="item" v-for="(item,index) in classifyNav" :class="{'active':index == classifyIndex}" @click="erNav(item,index)">
+		<view class="classi_fixed" :class="{'istop':isTop}" :style="{top:classTop+'px'}" @click.stop="stopStop">
+			<view class="classify_nav" :class="{'fixed':isFixed}">
+				<view class="item" v-for="(item,index) in classifyNav" :class="{'active':index == classifyIndex}" @click.stop="erNav(item,index)">
 					{{item.name}}
 				</view>
 			</view>
-			<view class="scroll_foots" ref="scrollFoots" :style="{'height':isFixed?'1140upx':'920upx'}">
-				<view v-for="t in ceshi">
+		</view>
+
+		<view class="scroll_fixed">
+
+			<view class="scroll_foots">
+				<view v-for="(t,index) in ceshi">
 					<view class="title_recommend">
-						<view class="text_query_ng" ref="titleName">
+						<view class="text_query_ng" :id="'query'+index" ref="titleName">
 							{{t==1?'水果':t==2?'蔬菜':'肉禽'}}
 						</view>
 					</view>
@@ -49,11 +52,21 @@
 				uni.setNavigationBarTitle({
 					title: ph.title
 				})
+				// this.firstClassifyType = 
+				this.$getApi('/App/Goods/getActCate', {type:1}, res => {
+					console.log(res,"新品推荐")
+					
+				})
 			}
 			if (ph.title == '本周上新') {
 				uni.setNavigationBarTitle({
 					title: ph.title
 				})
+				this.$getApi('/App/Goods/getNewGoods', {}, res => {
+					console.log(res)
+					this.shopList = res.data
+				})
+
 			}
 			if (ph.title == '买一送一') {
 				uni.setNavigationBarTitle({
@@ -68,9 +81,11 @@
 		},
 		data() {
 			return {
-				ceshi:[1,2,3],
-				itddd:0,
-				isFixed:false,
+				isTop: false,
+				classTop: 0,
+				ceshi: [1, 2, 3],
+				itddd: 0,
+				isFixed: false,
 				classifyNav: [{
 						name: "水果"
 					},
@@ -93,37 +108,53 @@
 						price: 7.9,
 						num: 0,
 						sel: 1
-					},
-					{
-						id: 2,
-						price: 7.9,
-						num: 0,
-						sel: 1
-					},
-					{
-						id: 3,
-						price: 7.9,
-						num: 0,
-						sel: 1
 					}
-				]
+				],
+				firstClassifyType:0
 			};
 		},
-		watch:{
-			itddd:{
-				handle:function(){
+		watch: {
+			itddd: {
+				handle: function() {
 					console.log(this.$refs.itddd)
 				},
-				deep:true
+				deep: true
 			}
 		},
 		onPageScroll(res) {
-			// console.log(res.scrollTop)
-			if(res.scrollTop>115){
-				this.isFixed = true;
-			}else{
-				this.isFixed = false;
+			console.log(res.scrollTop)
+			// #ifndef MP
+			if (res.scrollTop <= 112) {
+				this.classTop = 157 - res.scrollTop;
+				this.isTop = false;
+			} else {
+				this.classTop = 45;
+				this.isTop = true;
 			}
+			// #endif
+			// #ifdef MP
+			if (res.scrollTop <= 112) {
+				this.classTop = 112 - res.scrollTop;
+				this.isTop = false;
+			} else {
+				this.classTop = 0
+				this.isTop = true;
+			}
+			// #endif
+
+			if (res.scrollTop > 115) {
+
+			} else {
+
+			}
+		},
+		beforeMount() {
+			// #ifndef MP
+			this.classTop = 160;
+			// #endif
+			// #ifdef MP
+			this.classTop = 115;
+			// #endif
 		},
 		computed: {
 			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar"]),
@@ -146,33 +177,39 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
-			erNav(item,index){
+			stopStop() {},
+			erNav(item, index) {
+				console.log(item, index)
+				let this_ = this;
 				this.classifyIndex = index;
-				console.log(item.name)
-				console.log(this.$refs.titleName)
-				document.getElementsByClassName("")
+
+				// #ifdef MP
+				let query = wx.createSelectorQuery();
+				let parentTop = 0;
+				query.select(".recommend").boundingClientRect((res1) => {
+					parentTop  = res1.top
+
+				}).exec();
+				query.select("#query" + index).boundingClientRect((res) => {
+					uni.pageScrollTo({
+						duration: 0,
+						scrollTop: res.top - 53 - parentTop,
+					})
+				}).exec();
+				// #endif
+				// #ifndef MP
 				let titleNames = this.$refs.titleName;
-				_.map(titleNames,itemL=>{
-					if(item.name == itemL.$el.innerText){
+				_.map(titleNames, itemL => {
+					if (item.name == itemL.$el.innerText) {
 						console.log(itemL.$el.offsetTop)
-						this.$refs.scrollFoots.$el.scrollTop = itemL.$el.offsetTop-56
+						uni.pageScrollTo({
+							duration: 0,
+							scrollTop: itemL.$el.offsetTop - 53,
+						})
 					}
 				})
-				return false;
-				let this_ = this;
-				let query =  wx.createSelectorQuery();
-				query.selectAll(".text_query_ng").boundingClientRect();
-				query.exec(function(res){
-					console.log(this_.$refs.scrollFoots)
-					// this_.$refs.scrollFoots.$el.scrollTop = res[0][index].top-167
-					// for(let i;i<res[0].length;i++){
-					// 	if(item.name == res[0][i].innerText){
-					// 		this_.$refs.scrollFoots.$el.scrollTop = res[0][i].top-167
-					// 	}
-						
-					// }
-				})
-			
+				// #endif
+
 			},
 			toShopCar() {
 				uni.switchTab({
@@ -255,7 +292,8 @@
 		text-align: center;
 		line-height: 120upx;
 		border-radius: 50%;
-		z-index:10;
+		z-index: 10;
+
 		.text {
 			background-color: $uni-or;
 			position: absolute;
@@ -272,51 +310,77 @@
 
 	.recommend {
 		background-color: #f0f0f0;
-		min-height: 100vh;
+		// min-height: 100vh;
 		padding-bottom: 200upx;
-		.scroll_fixed{
-			padding: 0 26upx;
-			position: relative;
-			top:-60upx;
+
+		.classi_fixed {
+			z-index: 20;
+			width: 750upx;
+			display: flex;
+			justify-content: center;
+			position: fixed;
+			left: 0;
+			background-color: rgba(255, 255, 255, 0);
+			transition: .1s all;
+			border-top: 1upx solid rgba(255, 255, 255, 0);
+			border-bottom: 1upx solid rgba(255, 255, 255, 0);
+
+			&.istop {
+				background-color: rgba(255, 255, 255, 1);
+				border-top: 1upx solid rgba(240, 240, 240, 1);
+				border-bottom: 1upx solid rgba(240, 240, 240, 1);
+			}
+
+			.classify_nav {
+				display: flex;
+				justify-content: space-between;
+				background-color: rgba(255, 255, 255, .9);
+				padding: 26upx 10upx 26upx;
+				border-radius: 30upx 30upx 0 0;
+				box-sizing: border-box;
+				margin: 0 auto;
+				width: 698upx;
+				box-sizing: border-box;
+
+				.item {
+					padding: 4upx 30upx 8upx;
+					border-radius: 20upx;
+
+					&.active {
+						background-color: $uni-bl;
+						color: #fff;
+					}
+				}
+			}
+		}
+
+		.scroll_fixed {
+			padding: 40upx 26upx 20upx;
 			width: 698upx;
-			&.fixed{
+
+			&.fixed {
 				position: fixed;
 				top: 100upx;
 				left: 0;
 			}
-			.scroll_foots{
+
+			.scroll_foots {
 				overflow-y: auto;
 				// max-height: calc( 100vh - 400upx );
 			}
 		}
+
 		.posi_img {
 			width: 750upx;
 			height: 290upx;
-			
+
 			.img {
 				width: 750upx;
 				height: 290upx;
 			}
 		}
 
-		.classify_nav {
-			display: flex;
-			justify-content: space-between;
-			background-color: rgba(255, 255, 255, .9);
-			padding: 26upx 10upx 26upx;
-			border-radius: 30upx 30upx 0 0;
-			box-sizing: border-box;
 
-			.item {
-				padding: 4upx 30upx 8upx;
-				border-radius: 20upx;
-
-				&.active {
-					background-color: $uni-bl;
-					color: #fff;
-				}
-			}
-		}
 
 		.title_recommend {
 			display: flex;

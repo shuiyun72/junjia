@@ -35,11 +35,11 @@
 				<view class="js">
 					{{item.introduction}}
 				</view>
-				<view class="case zhekou" v-if="item.sale_rate">
+				<view class="case zhekou" v-if="item.state == 1 || item.state == 5">
 					{{item.sale_rate}} 折
 				</view>
-				<view class="case jian" v-if="item.jian">
-					已减 {{item.jian}} 元
+				<view class="case jian" v-if="item.state == 2">
+					已减 {{Number(item.old_price) - Number(item.price)}} 元
 				</view>
 				<view class="yu" v-if="item.zong">
 					<view class="jindutiao">
@@ -55,7 +55,7 @@
 
 			<view class="ctrl">
 				<view class="money">
-					<text class="c1" v-if="item.group_buy == '1'">团购价</text>
+					<text class="c1" v-if="item.state == 5">团购价</text>
 					<text class="c1">￥</text>
 					<text class='c2'>{{item.price}}</text>
 					<text class='c3'>￥{{item.old_price}}</text>

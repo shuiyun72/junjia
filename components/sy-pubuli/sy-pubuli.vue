@@ -7,18 +7,21 @@
 			<image src="../../static/img/home/or.png" class="img" mode=""></image>
 		</view>
 		<view class="title">
-			{{item.title}}
+			{{item.name}}
 		</view>
 		<view class="t2">
-			打算的撒都是
+			{{item.introduction}}
 		</view>
+		<!-- <view class="red">
+			<text class="red" v-if="moneyText">{{moneyText}}</text>
+		</view> -->
 		<view class="ctrl">
 			<view class="left">
 				<view class="m1 red">
-					<text v-if="moneyText">{{moneyText}}</text>￥<text class="m">16.9</text>
+					￥<text class="m">{{item.price}}</text>
 				</view>
 				<view class="m2">
-					￥<text>18.9</text>
+					￥<text>{{item.old_price}}</text>
 				</view>
 			</view>
 			<slot></slot>

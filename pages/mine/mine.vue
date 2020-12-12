@@ -9,7 +9,7 @@
 					<!-- #endif -->
 
 					<view class="left_info" @click="navsTo('mineMsg')">
-						<image src="../../static/img/car/gouwc3.png" class="user_img" mode=""></image>
+						<image src="../../static/img/img-sp17.png" class="user_img" mode=""></image>
 						<view class="name_c">
 							<view class="name">俏皮女王</view>
 							<view class="name2">我爱买买买></view>
@@ -25,7 +25,7 @@
 							<view class="">
 								我的订单
 							</view>
-							<view class="iconfont iconjiantou"></view>
+							<!-- <view class="iconfont iconjiantou"></view> -->
 						</view>
 						<view class="o_box">
 							<view class="item" v-for="item in orderList" @click="toOrder(item.ins)">
@@ -44,7 +44,7 @@
 				</view>
 			</view>
 			<view class="mine_body">
-				<image src="../../static/img/mine/yaoqhy.png" class="mine_img" mode=""></image>
+				<image src="../../static/img/mine/yaoqhy.png" class="mine_img" mode="" @click="navsTo('fenxiang')"></image>
 				<view class="mine_serve">
 					<view class="title">
 						我的服务
@@ -203,6 +203,12 @@
 						url: './xiaoxi'
 					})
 				}
+				if (item == "fenxiang") {
+					uni.navigateTo({
+						url: './fenxiang'
+					})
+				}
+				
 			},
 			navTo(text) {
 				if (text == '优惠券') {
@@ -270,7 +276,11 @@
 		}
 	};
 </script>
-
+<style>
+	page{
+		background-color: #f0f0f0;
+	}
+</style>
 <style lang="scss" scoped>
 	page {
 		background-color: #f0f0f0;

@@ -68,6 +68,8 @@ export default {
 		},
 		upImg(){
 			let this_ = this;
+			
+			
 			uni.chooseImage({
 			    count: 3, //默认9
 			    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
@@ -75,9 +77,33 @@ export default {
 			    success: function (resImg) {
 					console.log(resImg);
 			        console.log(JSON.stringify(resImg.tempFilePaths));
-					this_.$getApi("/App/Goods/saveFiles", {file:resImg.tempFiles}, res => {
-						console.log(res,"图片返回");
-					},"false")
+	
+					let beiyongLIst = resImg.tempFilePaths;
+					console.log(beiyongLIst,beiyongLIst.length)
+										
+					
+					for(let i=0;i< beiyongLIst.length;i++){
+						console.log(beiyongLIst[i])
+						uni.uploadFile({
+							url:this_.$apiUrl + '/App/Goods/saveFiles',
+							filePath: beiyongLIst[i],
+							name: 'file',
+							success(res1) {
+								console.log(res1)
+								this_.$msg("图片上传成功")
+								// 显示上传信息
+								// console.log("890",beiyongLIst[i])
+								// this_.imageList.push(beiyongLIst[i]);
+								// this_.upimageList.push(JSON.parse(res1.data).data)
+								// if(this_.upimageList.length > 5){
+								// 	this_.upimageList = this_.upimageList.slice(0,5)
+								// 	this_.imageList = this_.imageList.slice(0,5)
+								// }
+								// console.log(this_.imageList,this_.upimageList,"1653A")
+								// this_.isTrueImg = true;
+							}
+						});
+					}
 			    }
 			});
 		}

@@ -2,9 +2,9 @@
 import Vue from 'vue';
 import store from '../store';
 // let apiUrl = "http://39.100.62.29:9922";
-let apiUrl = 'http://39.100.227.2';
+let apiUrl = 'https://www.junjiayouxuan.com';
 import './lodash';
-
+Vue.prototype.$apiUrl = apiUrl;
 // import Qs from "qs";
 Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 	// url = 'System/Login?loginContent=admin&password=123456'
@@ -69,7 +69,58 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 		}
 	});
 }
-
+Vue.prototype.$postApi = function(url, data, callsuc) {
+	// console.log("data", data)
+	// uni.showLoading({
+	//     title: '加载中'
+	// });
+	uni.request({
+		url: apiUrl + url,
+		method: 'post',
+		data:data,
+		header: {
+			'content-type': 'multipart/form-data'
+		},
+		// multipart/form-data
+		success: (res) => {
+			// uni.hideLoading();
+			console.log(res)
+			if (res.data.status == 1) {
+				callsuc instanceof Function && callsuc(res.data)
+			} else
+			if (res.data.status == 0) {
+				this.$msg(res.data.msg)
+				return false
+			} else
+			if (res.data.status == 401) {
+				this.$msg("请重新登录")
+				// #ifndef MP
+					this.$store.commit("logout");
+					uni.reLaunch({
+						url: '../login/login',
+						success(){
+							// location.reload()
+						} 
+					})
+				// #endif
+				// #ifdef MP
+					this.$store.commit("logout");
+					setTimeout(()=>{
+						uni.reLaunch({
+							url: '../home/home',
+							success(){
+								// location.reload() 
+							}
+						})
+					},1000)
+				// #endif
+			} 
+		},
+		fail: (err) => {
+			this.$msg("网络请求出错")
+		}
+	});
+}
 Vue.prototype.$getApiTime = function(url, data, callsuc, token) {
 	token = token == "false" ? false : true;
 	data = data ? data : {};

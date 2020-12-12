@@ -158,7 +158,7 @@
 				height: calc(100vh);
 				/* #endif */
 				/* #ifndef MP */
-				height: calc(100vh - 310upx);
+				height: calc(100vh - 100upx);
 				/* #endif */
 				overflow-y: auto;
 				width: 180upx;
@@ -195,7 +195,7 @@
 				height: calc(100vh);
 				/* #endif */
 				/* #ifndef MP */
-				height: calc(100vh - 310upx);
+				height: calc(100vh - 100upx);
 				/* #endif */
 				overflow-y: auto;
 				box-sizing: border-box;

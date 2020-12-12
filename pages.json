@@ -332,6 +332,19 @@
             }
             
         }
+        ,{
+            "path" : "pages/mine/fenxiang",
+            "style" :                                                                                    
+            {
+                "navigationStyle": "custom",
+                "navigationBarTitleText": "分享好友",
+                "enablePullDownRefresh": false,
+                "app-plus": {
+                	"titleNView": false
+                }
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

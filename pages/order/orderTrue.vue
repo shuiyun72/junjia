@@ -90,6 +90,7 @@
 					</view>
 					<radio :class="radio=='A'?'checked':''" :checked="radio=='A'?true:false" value="A" class="radio" :color="'#18B357'"></radio>
 				</label>
+				<!-- #ifndef MP -->
 				<label class="cu-form-group">
 					<view class="item">
 						<image style="width: 44rpx;height: 44rpx;" src="../../static/img/zhifb.png" mode=""></image><text class="margin-left-xs">支付宝支付</text>
@@ -98,7 +99,7 @@
 						<radio :class="radio=='B'?'checked':''" :checked="radio=='C'?true:false" value="B" class="radio" :color="'#18B357'"></radio>
 					</view>
 				</label>
-		
+				<!-- #endif -->
 			</radio-group>
 			<view class="dikou" @click="isDikouC">
 				<view class="iconfont " :class="isDikou?'iconyduizhengqueshixin':'iconyk_yuanquan'" ></view>
@@ -257,7 +258,13 @@
 					}
 					this.$getApi("/App/Goods/editOrder", dataL, res => {
 						console.log(res,"1212")
-						let payType = this.radio == "A" ? 1 : 2;
+						let payType = 0;
+						// #ifndef MP
+						payType = this.radio == "A" ? 1 : 2;
+						// #endif
+						// #ifdef MP
+						payType = 3;
+						// #endif
 						let dataPay = {
 							type:payType,
 							total_credit:this.total_credit,
@@ -265,7 +272,15 @@
 						}
 						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
 							console.log(resbuy,"payOrder1111")
+							// appId: "wxbbed14c0e3edbe37"
+							// nonceStr: "t3oJsI7tEWa63s0L"
+							// package: "prepay_id=wx12211942917603bdb167711c99e7120000"
+							// paySign: "89F562BCC76472BF21DA3612531269F8"
+							// signType: "MD5"
+							// timeStamp: "1607779182",
 							let thisPayType = ""
+							
+							// #ifndef MP
 							if(this.radio == "A"){
 								thisPayType = "wepay"
 							}else
@@ -275,20 +290,37 @@
 							if(this.radio == "C"){
 								thisPayType = "xxwepay"
 							}
+							let orderMsgL = {
+								appId: resbuy.data.appid,
+								nonceStr: resbuy.data.noncestr,
+								package: resbuy.data.package,
+								partnerId: resbuy.data.partnerid,
+								prepayId: resbuy.data.prepayid,
+								paySign: resbuy.data.sign,
+								signType: "MD5",
+								timeStamp: resbuy.data.timestamp.toString()
+							}
+							console.log(JSON.stringify(orderMsgL))
+							// #endif
+							// #ifdef MP
+							thisPayType = "xxwepay"
+							// #endif	
+							
 							if(thisPayType == "wepay") {
 								console.log("wepay")
+								console.log(JSON.stringify(orderMsgL))
 								uni.requestPayment({
 								    provider: 'wxpay',
-								    orderInfo: resbuy.data, //微信、支付宝订单数据
+								    orderInfo: orderMsgL, //微信、支付宝订单数据
 								    success: function (res) {
-										this_.$store.commit('setQuan', {
-											name: "请选择优惠券"
-										})
-										uni.navigateTo({
-											url:"./orderPay?title=购买成功"
-										})
-										console.log(res)
-								        console.log('success:' + JSON.stringify(res));
+										// this_.$store.commit('setQuan', {
+										// 	name: "请选择优惠券"
+										// })
+										// uni.navigateTo({
+										// 	url:"./orderPay?title=购买成功"
+										// })
+										// console.log(res)
+								  //       console.log('success:' + JSON.stringify(res));
 								    },
 								    fail: function (err) {
 								        console.log('fail:' + JSON.stringify(err));
@@ -298,7 +330,7 @@
 							if(thisPayType == "alipay") {
 								uni.requestPayment({
 								    provider: 'alipay',
-								    orderInfo: JSON.stringify(resbuy.data), //微信、支付宝订单数据
+								    orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
 								    success: function (res) {
 										this_.$store.commit('setQuan', {
 											name: "请选择优惠券"
@@ -315,9 +347,10 @@
 								});
 							} else
 							if (thisPayType == "xxwepay") {
+								let timeStamp = resbuy.data.timeStamp.toString()
 								uni.requestPayment({
 									provider: 'wxpay',
-									timeStamp: resbuy.data.timeStamp,
+									timeStamp:timeStamp,
 									nonceStr: resbuy.data.nonceStr,
 									package: resbuy.data.package,
 									signType: resbuy.data.signType,
