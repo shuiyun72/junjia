@@ -101,7 +101,7 @@
 
 <style lang="scss" scoped>
 .fenxiang_bg{
-	background: url(../../static/img/yaoqhyy.png) no-repeat center top;
+	background: url(../../static/img/yaoqhyy.jpg) no-repeat center top;
 	height: 150vh;
 	background-size: 750upx auto;
 	position:relative;

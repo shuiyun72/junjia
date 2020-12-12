@@ -3,7 +3,7 @@
 		<view class="pingjia_box_sy2" v-for="ic in 6">
 			<view class="pingjia_user">
 				<view class="left">
-					<image src="../../static/img/liucheng/sp-pjtx.png" class="img" mode=""></image>
+					<image src="../../static/img/toux.png" class="img" mode=""></image>
 					<view class="left2">
 						<view class="name shengluehao">
 							dsadsadd

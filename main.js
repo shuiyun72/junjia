@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import 'until/index.js'
-import './static/img/icon/iconfont.css'
+// import './static/img/icon/iconfont.css'
 //引入vuex
 import store from './store'
 Vue.prototype.$store = store
