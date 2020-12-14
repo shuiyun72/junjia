@@ -48,7 +48,9 @@
 				name: "",
 				phone: "",
 				fromTitle: "",
-				editItem:""
+				editItem:"",
+				lat:"",
+				lng:""
 			};
 		},
 		onLoad(ph) {
@@ -90,7 +92,9 @@
 				uni.chooseLocation({
 					success: (res) => {
 						console.log(res)
-						this_.address1 = res.address
+						this_.address1 = res.address;
+						this_.lat = res.latitude;
+						this_.lng = res.longitude;
 						// this.setLocation(res)
 						// this.location = formatLocation(res.longitude, res.latitude),
 						// this.locationAddress = res.address
@@ -107,7 +111,9 @@
 					phone: this.phone,
 					receive_address: this.address1,
 					address: this.address2,
-					status: 1
+					status: 1,
+					lat:this.lat,
+					lng:this.lng
 				}
 				if (this.fromTitle == '地址选择') {
 					if (this.pageTitle == "编辑配送地址") {

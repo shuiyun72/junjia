@@ -53,13 +53,7 @@
 		data() {
 			return {
 				dataSel:0,
-				dataList: [{
-					province_name:"郑州高新区",
-					city_name:"升龙又一城D区5号楼5号楼5号楼"
-				},{
-					province_name:"郑州高新区",
-					city_name:"升龙又一城D区5号楼5号楼5号楼"
-				}],
+				dataList: [],
 				item:{},
 				pageTitle:"地址管理",
 				formC:""

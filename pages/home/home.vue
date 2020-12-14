@@ -1,6 +1,6 @@
 <template>
 	<view class="home">
-		
+
 		<view class="guodu_header" :style="{'padding-top':SystemInfoL.menu.top+75+'px',
 					'background-image':'linear-gradient(to bottom, '+lunboList[lunboIndex].color+' 0%, '+lunboList[lunboIndex].color+' 30%, #fff 100%)'}">
 			<view class="h_fixed" :class="{'fixed':isFixed}" :style="{'padding-top':SystemInfoL.menu.top+'px'}">
@@ -9,12 +9,12 @@
 						<button type="primary" @tap="chooseLocation" class="address_text shengluehao"><text class="iconfont icondingwei1"></text>{{location.address}}</button>
 						<view class="iconfont iconjiantou"></view>
 					</view>
-				</view>				
+				</view>
 				<view class="fuceng">
 					<view class="trans">
-						<view class="home_search_sy zindex10" @click="toSearch"  :style="{ 'line-height': (SystemInfoL.menu.bottom - SystemInfoL.menu.top -4) + 'px'}">
-						
-						
+						<view class="home_search_sy zindex10" @click="toSearch" :style="{ 'line-height': (SystemInfoL.menu.bottom - SystemInfoL.menu.top -4) + 'px'}">
+
+
 							<view class="placeholder_no">
 								<view class="iconfont iconsousuo"></view>
 								<view class="">
@@ -26,12 +26,12 @@
 				</view>
 			</view>
 			<!-- 新品推荐一级菜单 -->
-			<view class="home_nav1 zindex10" >
+			<view class="home_nav1 zindex10">
 				<view class="item" v-for="item in homeNav1" @click="turnTo(item)">
 					{{item.name}}
 				</view>
 			</view>
-		
+
 			<view class="bt_img zindex10">
 				<swiper :autoplay="true" :circular="true" :interval="4000" :duration="1000" @change="changeLunbo">
 					<swiper-item v-for="item in lunboList">
@@ -61,8 +61,8 @@
 			</view>
 		</view>
 		<view class="mine_title m26">
-				<image src="../../static/img/ts1.png" class="left_bobao_img" mode=""></image>
-			<uni-notice-bar :scrollable="true" :single="true" :text="bobaoText" class="bobao_text" background-color="#fff" color="#333"/>
+			<image src="../../static/img/ts1.png" class="left_bobao_img" mode=""></image>
+			<uni-notice-bar :scrollable="true" :single="true" :text="bobaoText" class="bobao_text" background-color="#fff" color="#333" />
 		</view>
 		<!-- 酒水区 -->
 		<view class="jiushui_qu_sy">
@@ -164,7 +164,7 @@
 			</view>
 
 			<view class="hont_find2 m26">
-				<sy-header1 @click="turnTo({name:'团购产品'})":item="title2"></sy-header1>
+				<sy-header1 @click="turnTo({name:'团购产品'})" :item="title2"></sy-header1>
 				<view class="shop_case_box">
 					<view class="shop_auto">
 						<sy-foot1 :isTuan='true' @click="part1Num" :item="item" v-for="item in tuangouList"></sy-foot1>
@@ -248,7 +248,7 @@
 		</view>
 		<uni-popup type="center" ref="showimage">
 			<view class="pop_youhui">
-				
+
 				<image src="../../static/img/ts3.png" class="quan_img1" mode=""></image>
 				<view class="quan_list">
 					<view class="list_body">
@@ -268,17 +268,17 @@
 							</view>
 						</view>
 					</view>
-					
+
 					<view class="quan_img2" @click="getPopup">
 						立即领取
 					</view>
 				</view>
-				
+
 				<view class="iconfont iconyduicuowushixin" @click="closePopup"></view>
 			</view>
 		</uni-popup>
 		<uni-load-more :status="loadStatus"></uni-load-more>
-		
+
 	</view>
 </template>
 
@@ -291,12 +291,12 @@
 	export default {
 		data() {
 			return {
-				
-				isFixed:false,
-				bobaoText:"平台上线了,快来下单吧",
+
+				isFixed: false,
+				bobaoText: "平台上线了,快来下单吧",
 				classifyList: [],
 				shuiguoList: [],
-				shucaiList:[],
+				shucaiList: [],
 				shopList2: [{
 						id: 101,
 						price: 7.9,
@@ -318,11 +318,10 @@
 				],
 				nav2dex: 0,
 				lunboList: [{
-						color: "#80ff80",
-						pic: "http://39.100.227.2/Uploads/admin/Guang/banner/2020-11-18/1605683223_13322805375fb4c817a4027.png",
-						url: "www.baidu.com"
-					}
-				],
+					color: "#80ff80",
+					pic: "http://39.100.227.2/Uploads/admin/Guang/banner/2020-11-18/1605683223_13322805375fb4c817a4027.png",
+					url: "www.baidu.com"
+				}],
 				lunboIndex: 0,
 				erjiNav: [{
 					img: "dj.png",
@@ -367,25 +366,25 @@
 					m2: "16.8",
 					id: "2"
 				},
-				youhuiquanList:[],
-				benzhouList:[],
-				shuiguoId:"",
-				shucaiId:"",
-				footPbNum:1,
-				qiaogouTimeList:[],
-				qiaogouTime:"",
-				maiyisongyiList:[],
-				tuangouList:[],
-				qiangouList:[]
+				youhuiquanList: [],
+				benzhouList: [],
+				shuiguoId: "",
+				shucaiId: "",
+				footPbNum: 1,
+				qiaogouTimeList: [],
+				qiaogouTime: "",
+				maiyisongyiList: [],
+				tuangouList: [],
+				qiangouList: []
 			};
 		},
-		
+
 		onReachBottom() { //上拉触底函数
 			console.log("more")
 			this.jingxuanFoot()
 			this.loadStatus = "false"
 		},
-		watch:{
+		watch: {
 			shopCar: {
 				handler: function(newVal, oldVal) {
 					this.initShopCar()
@@ -395,16 +394,16 @@
 			}
 		},
 		computed: {
-			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar", "location"]),
+			...mapState(["hasLogin","httpp", "SystemInfo", "userInfo", "shopCar", "location"]),
 
-			firstNavList1(){
-				return _.take(this.classifyList,10)
+			firstNavList1() {
+				return _.take(this.classifyList, 10)
 			},
-			firstNavList2(){
-				return _.slice(this.classifyList,10)
+			firstNavList2() {
+				return _.slice(this.classifyList, 10)
 			},
-			firstNavList2(){
-				
+			firstNavList2() {
+
 			},
 			SystemInfoL() {
 				// #ifdef MP
@@ -429,15 +428,28 @@
 		},
 		onHide() {
 			console.log("cccc")
+			this.closePopup();
 			clearInterval(this.timer)
 		},
 		mounted() {
-			// this.init();
-			// #ifdef MP
-			this.weappLogin()
-			// #endif
+			
 		},
 		onShow() {
+			let this_ = this;
+			if(!this.hasLogin){
+				// #ifdef MP
+				this.weappLogin()
+				// #endif
+				// #ifndef MP
+				this_.openP()
+				// #endif
+			}else{
+				if(this.userInfo.panduan){
+					this.openP()
+				}else{
+					this.closePopup();
+				}
+			}
 			this.init();
 			this.initShopCar();
 			this.startTime();
@@ -457,7 +469,7 @@
 					}
 				})
 			})
-			
+
 			_.map(this.shopList2, itemL => {
 				_.map(this.shopCar, (itemC, index) => {
 					if (itemL.id == itemC.id) {
@@ -465,161 +477,96 @@
 					}
 				})
 			})
-			
-			
+
+
 		},
 		onPullDownRefresh() {
 			let this_ = this;
 			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
 			setTimeout(function() {
-				
+
 				uni.stopPullDownRefresh(); //停止下拉刷新动画
 			}, 1000);
 		},
-		onPageScroll(res){
+		onPageScroll(res) {
 			// console.log(res.scrollTop)
-			if(res.scrollTop>6){
+			if (res.scrollTop > 6) {
 				this.isFixed = true;
-			}else{
+			} else {
 				this.isFixed = false;
 			}
 		},
 		methods: {
-			...mapMutations(["jiaCar", "jianCar", "setLocation","setClassify"]),
-			weappLogin(){
-				console.log("quanxian")
-				// uni.authorize({
-				//     scope: 'scope.userInfo',
-				//     success() {
-				       
-				//     }
-				// })
+			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify"]),
+			init() {
 				let this_ = this;
-				
-				uni.getSetting({
-				   success(resShouquan) {
-					console.log("授权：",resShouquan);
-					 if (!resShouquan.authSetting['scope.userInfo']) {
-						//这里调用授权
-						console.log("当前未授权");
-						
-					 } else {
-						//用户已经授权过了
-						console.log("当前已授权");
-						// 弹出正在登录的弹框
-						uni.showLoading({
-							mask:true,
-							title: '正在登录···',
-							complete:()=>{}
-						});
-						uni.login({
-						  provider: 'weixin',
-						  success: function (loginRes) {
-						    console.log(loginRes,"微信权限信息");
-							
-							this_.$getApi("/App/Public/getOpenid", {code:loginRes.code}, resOpen => {
-								console.log(resOpen,"ccccc")
-								
-								uni.getUserInfo({
-									provider: 'weixin',
-									success: (info) => {//这里请求接口
-										console.log(info,"527");	
-										let dataLogin = {
-											open_id:resOpen.data.openid,
-											nickname:info.userInfo.nickName,		
-											avatar:info.userInfo.avatarUrl
-										}
-										console.log(dataLogin)
-										this_.$getApi("/App/Public/thirdLogin",dataLogin, res => {
-											console.log(res,"登录")
-											this_.$store.commit("login",res.data)
-											uni.hideLoading();
-										})
-									},
-									fail: () => {
-										uni.showToast({title:"微信登录授权失败",icon:"none"});
-									}
-								})
-							})
-							
-						  }
-						});
-						// App/Public/thirdLogin
-						// open_id	
-						
-						// nickname	
-							
-						// avatar
-					}
-					}
-				})
-		
-				
-			},
-			init(){
-				let this_ = this;
-				this.$getApi("/App/lincoupon/get_coupon_lists", {}, res => {
-					console.log(res,"优惠券")
-					this.youhuiquanList  = res.data;
-					this.openP();
-				})
 				// 轮播图
 				this_.$getApi("/App/Index/banner", {}, res => {
-					console.log(res.data,"ccccc")
-					this_.lunboList  =res.data
-				})	
+					console.log(res.data, "ccccc")
+					this_.lunboList = res.data
+				})
 				// 获取一级菜单
 				this_.$getApi("/App/Goods/getCategory", {}, res => {
-					console.log(res.data,"获取一级菜单")
-					this_.classifyList  =res.data;
-					this_.shuiguoId = _.filter(this_.classifyList,item=>{
+					console.log(res.data, "获取一级菜单")
+					this_.classifyList = res.data;
+					this_.shuiguoId = _.filter(this_.classifyList, item => {
 						return item.name.includes('水果')
 					})[0].id;
 					// 获取水果
-					this_.$getApi("/App/Goods/getGoodsList", {category_id:this_.shuiguoId}, res => {
-						console.log(res.data,"获取水果")
-						this_.shuiguoList  = res.data.slice(0,3)
+					this_.$getApi("/App/Goods/getGoodsList", {
+						category_id: this_.shuiguoId
+					}, res => {
+						console.log(res.data, "获取水果")
+						this_.shuiguoList = res.data.slice(0, 3)
 					})
-					this_.shucaiId = _.filter(this_.classifyList,item=>{
+					this_.shucaiId = _.filter(this_.classifyList, item => {
 						return item.name.includes('蔬菜')
 					})[0].id;
 					// 获取蔬菜
-					this_.$getApi("/App/Goods/getGoodsList", {category_id:this_.shucaiId}, res => {
-						console.log(res.data,"获取蔬菜")
-						this_.shucaiList  = res.data.slice(0,3)
+					this_.$getApi("/App/Goods/getGoodsList", {
+						category_id: this_.shucaiId
+					}, res => {
+						console.log(res.data, "获取蔬菜")
+						this_.shucaiList = res.data.slice(0, 3)
 					})
-					
+
 				})
 				// 获取商品列表
 				this_.$getApi("/App/Goods/getGoodsList", {}, res => {
-					console.log(res.data,"ccccc3")
+					console.log(res.data, "ccccc3")
 					// this_.classifyList  =res.data
 				})
 				//maiyisongyiList
 				// 获取商品列表买一送一
-				this_.$getApi("/App/Goods/getGoodsList", {on_sale:1}, res => {
-					console.log(res.data,"买一送一")
-					this_.maiyisongyiList  =res.data
+				this_.$getApi("/App/Goods/getGoodsList", {
+					on_sale: 1
+				}, res => {
+					console.log(res.data, "买一送一")
+					this_.maiyisongyiList = res.data
 				})
 				// 获取商品列表团购
-				this_.$getApi("/App/Goods/getGoodsList", {group_buy:1}, res => {
-					console.log(res.data,"团购")
-					this_.tuangouList  =res.data
+				this_.$getApi("/App/Goods/getGoodsList", {
+					group_buy: 1
+				}, res => {
+					console.log(res.data, "团购")
+					this_.tuangouList = res.data
 				})
-					
+
 				// 获取系统配置信息
 				this_.$getApi("/App/Index/getSysConfig", {}, res => {
-					console.log(res,"获取系统配置信息")
-					this_.bobaoText  =  _.filter(res.data,item=>{
+					console.log(res, "获取系统配置信息")
+					this_.bobaoText = _.filter(res.data, item => {
 						return item.remark.includes('热点播报')
 					})[0].value;
-					console.log(this_.bobaoText,'热点播报')
+					console.log(this_.bobaoText, '热点播报')
 				})
-				
-				
+
+
 				// 本周新品
-				this_.$getApi("/App/Goods/getNewGoods", {category_id:1}, res => {
-					console.log(res.data,"本周新品")
+				this_.$getApi("/App/Goods/getNewGoods", {
+					category_id: 1
+				}, res => {
+					console.log(res.data, "本周新品")
 					this.benzhouList = res.data ? res.data : []
 					// this_.shuiguoList  = res.data.slice(0,3)
 				})
@@ -630,9 +577,12 @@
 				})
 				this.jingxuanFoot()
 			},
-			jingxuanFoot(){
-				this.$getApi("/App/Goods/getGoodsList", {p:this.footPbNum,recommend:1}, res => {
-					console.log(res.data,"精选好物")
+			jingxuanFoot() {
+				this.$getApi("/App/Goods/getGoodsList", {
+					p: this.footPbNum,
+					recommend: 1
+				}, res => {
+					console.log(res.data, "精选好物")
 					let resData = res.data ? res.data : [];
 					this.footPb = this.footPb.concat(resData)
 					_.map(this.footPb, itemL => {
@@ -653,14 +603,14 @@
 					path: 'pages/home/home'
 				}
 			},
-			toClassify(item){
+			toClassify(item) {
 				this.setClassify(item)
 				uni.switchTab({
-					url:'../classify/classify'
+					url: '../classify/classify'
 				})
-				
+
 			},
-			initShopCar(){
+			initShopCar() {
 				let numb = 0;
 				_.map(this.shopCar, item => {
 					numb += item.num
@@ -677,48 +627,167 @@
 					})
 				}
 			},
-			getPopup(){
+			async isNoLogin(){
+				if(!this.hasLogin){
+					// #ifndef APP-PLUS
+					this.closePopup();
+					uni.navigateTo({
+						url:"../login/login"
+					})
+					// #endif
+					// #ifdef MP
+					this.weappLogin('login')
+					// #endif
+					return false
+				}
+			},
+			weappLogin(isLoginC) {
+				console.log("quanxian")
 				let this_ = this;
-				
 				uni.getSetting({
-				   success(res) {
-					console.log("授权：",res);
-					 if (!res.authSetting['scope.userInfo']) {
-						//这里调用授权
-						console.log("当前未授权");
-						uni.navigateTo({
-							url:"../login/login"
-						})
-					 } else {
-						//用户已经授权过了
-						console.log("当前已授权");
-						// 弹出正在登录的弹框
-						
-						let youhuiArr = [];
-						_.map(this_.youhuiquanList,item=>{
-							youhuiArr.push(item.id)
-						})
-						let youhuiStr = youhuiArr.toString()
-						this_.$getApi("/App/lincoupon/user_draw_coupon", {coupon_id:youhuiStr}, res => {
-							console.log(res,"领取优惠券")
-							this_.$msg('领取成功')
-							this_.$refs.showimage.close()
-						})
-					}
+					success(resShouquan) {
+						console.log("授权：", resShouquan);
+						if (!resShouquan.authSetting['scope.userInfo']) {
+							//这里调用授权
+							console.log("当前未授权");
+							if(isLoginC == 'login'){
+								uni.navigateTo({
+									url:"../login/login"
+								})
+							}else{
+								this_.openP()
+							}
+							
+						} else {
+							//用户已经授权过了
+							console.log("当前已授权");
+							// 弹出正在登录的弹框
+							uni.showLoading({
+								mask: true,
+								title: '正在登录···',
+								complete: () => {}
+							});
+							uni.login({
+								provider: 'weixin',
+								success: function(loginRes) {
+									console.log(loginRes, "微信权限信息");
+									this_.$getApi("/App/Public/getOpenid", {
+										code: loginRes.code
+									}, resOpen => {
+										console.log(resOpen, "ccccc")
+			
+										uni.getUserInfo({
+											provider: 'weixin',
+											success: (info) => { //这里请求接口
+												console.log(info, "527");
+												let dataLogin = {
+													open_id: resOpen.data.openid,
+													nickname: info.userInfo.nickName,
+													avatar: info.userInfo.avatarUrl
+												}
+												console.log(dataLogin)
+												this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
+													console.log(res, "登录")
+													uni.hideLoading();
+													// 判断 this_.openP()
+													this_.$store.commit("login", res.data)
+													console.log(res.data)
+													if(res.data.panduan){
+														this_.openP()
+													}else{
+														this_.closePopup();
+													}
+													
+												})
+											},
+											fail: () => {
+												uni.showToast({
+													title: "微信登录授权失败",
+													icon: "none"
+												});
+											}
+										})
+									})
+			
+								}
+							});
+						}
 					}
 				})
+			},
+			getPopup() {
+				let this_ = this;
+				// #ifndef MP
+				if(!this.hasLogin){
+					this.closePopup();
+					uni.navigateTo({
+						url:"../login/login"
+					})
+				}else{
+					let youhuiArr = [];
+					_.map(this_.youhuiquanList, item => {
+						youhuiArr.push(item.id)
+					})
+					let youhuiStr = youhuiArr.toString()
+					this_.$getApi("/App/lincoupon/user_draw_coupon", {
+						coupon_id: youhuiStr
+					}, res => {
+						console.log(res, "领取优惠券")
+						this_.$msg('领取成功')
+						this_.closePopup()
+					})
+				}
+				// #endif
+				// #ifdef MP
+				uni.getSetting({
+					success(res) {
+						console.log("授权：", res);
+						if (!res.authSetting['scope.userInfo']) {
+							//这里调用授权
+							console.log("当前未授权");
+							uni.navigateTo({
+								url: "../login/login"
+							})
+						} else {
+							//用户已经授权过了
+							console.log("当前已授权");
+							// 弹出正在登录的弹框
+							let youhuiArr = [];
+							_.map(this_.youhuiquanList, item => {
+								youhuiArr.push(item.id)
+							})
+							let youhuiStr = youhuiArr.toString()
+							this_.$getApi("/App/lincoupon/user_draw_coupon", {
+								coupon_id: youhuiStr
+							}, res => {
+								console.log(res, "领取优惠券")
+								this_.$msg('领取成功')
+								this_.closePopup()
+							})
+						}
+					}
+				})
+				// #endif
+
+			},
+			closePopup() {
+				try{
+					this.$refs.showimage.close()
+				}catch(e){
+					//TODO handle the exception
+				}
 				
-				
 			},
-			closePopup(){
-				this.$refs.showimage.close()
+			openP() {
+				this.$getApi("/App/lincoupon/get_coupon_lists", {}, res => {
+					console.log(res, "优惠券")
+					this.youhuiquanList = res.data;
+					this.$refs.showimage.open()
+				})
 			},
-			openP(){
-				this.$refs.showimage.open()
-			},
-			toSearch(){
+			toSearch() {
 				uni.navigateTo({
-					url:"./search"
+					url: "./search"
 				})
 			},
 			chooseLocation() {
@@ -735,7 +804,7 @@
 						// this.location = formatLocation(res.longitude, res.latitude),
 						// this.locationAddress = res.address
 					}
-					
+
 				})
 			},
 			itemNav2(item, index) {
@@ -774,61 +843,63 @@
 				this_.toLastTime()
 				clearInterval(this_.timer)
 				this_.timer = setInterval(() => {
-					if (this.toTime != '00:00:00'){
-						this_.toLastTime()	
+					if (this.toTime != '00:00:00') {
+						this_.toLastTime()
 					}
 				}, 1000)
 			},
 			toLastTime() {
 				let this_ = this;
-				if(this.qiaogouTimeList.length > 0){
-					let timeDate = this.$getDate("","s-s-s")
+				if (this.qiaogouTimeList.length > 0) {
+					let timeDate = this.$getDate("", "s-s-s")
 					let thisDateTime = new Date().getTime();
-					for(let itTime = 0 ; itTime < this.qiaogouTimeList.length;itTime++) { 
+					for (let itTime = 0; itTime < this.qiaogouTimeList.length; itTime++) {
 						let startTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
 						let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
-						if(thisDateTime  < startTime &&  thisDateTime  < endTime) { 
-							
+						if (thisDateTime < startTime && thisDateTime < endTime) {
+
 							let stTime = this.qiaogouTimeList[itTime].start_time;
-							console.log(stTime,"121212")
+							console.log(stTime, "121212")
 							// 抢购商品
-							this_.$getApi("/App/Goods/getShoppingGoods", {time:stTime}, res => {
-								console.log(res.data,"抢购商品")
-								if(res.data.length > 0){
-									this.qiangouList = res.data.slice(0,8);
-								}else{
-									this.qiangouList =  []
+							this_.$getApi("/App/Goods/getShoppingGoods", {
+								time: stTime
+							}, res => {
+								console.log(res.data, "抢购商品")
+								if (res.data.length > 0) {
+									this.qiangouList = res.data.slice(0, 8);
+								} else {
+									this.qiangouList = []
 								}
 							})
 							this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
 							let toTime = timeDate + " " + this.qiaogouTime;
-							this.toTime = this.$lastDate(toTime, "s:s:s")	
-									
-							break; 
-						} 
-					} 
+							this.toTime = this.$lastDate(toTime, "s:s:s")
+
+							break;
+						}
+					}
 				}
 			},
 			turnTo(item) {
 				console.log(item)
 				if (item.name == '新品推荐') {
 					uni.navigateTo({
-						url: "../recommend/recommend?title="+item.name
+						url: "../recommend/recommend?title=" + item.name
 					})
 				}
 				if (item.name == '新鲜水果') {
 					uni.navigateTo({
-						url:"./searchResult?searchName=新鲜水果&fromType=home"
+						url: "./searchResult?searchName=新鲜水果&fromType=home"
 					})
 				}
 				if (item.name == '买一送一') {
 					uni.navigateTo({
-						url: "../recommend/recommend?title="+item.name
+						url: "../recommend/recommend?title=" + item.name
 					})
 				}
 				if (item.name == '本周上新') {
 					uni.navigateTo({
-						url: "../recommend/recommend?title="+item.name
+						url: "../recommend/recommend?title=" + item.name
 					})
 				}
 				if (item.name == '限时抢购') {
@@ -836,10 +907,10 @@
 						url: "../recommend/noTimeRecommend"
 					})
 				}
-				
+
 				if (item.name == '新人专属') {
 					uni.navigateTo({
-						url: "../find/xinrenzhuanshu?title="+item.name
+						url: "../find/xinrenzhuanshu?title=" + item.name
 					})
 				}
 			},
@@ -881,25 +952,31 @@
 				} else
 				if (el == 2) {
 					list = this.shopList2
-				}else
+				} else
 				if (el == 3) {
 					list = this.footPb
 				}
 				_.map(list, fil => {
 					if (fil.id == item.id) {
 						item.num++;
-						if(item.num == 1){
+						if (item.num == 1) {
 							// App/Goods/add_car
-							this.$getApi("/App/Goods/add_car", {goods_id:item.id,num:item.num}, resCar => {
+							this.$getApi("/App/Goods/add_car", {
+								goods_id: item.id,
+								num: item.num
+							}, resCar => {
 								this.jiaCar(item)
 							})
-						}else{
+						} else {
 							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								console.log(resCar.data,item.id,"item.id")
-								let carId = _.filter(resCar.data,itemC=>{
+								console.log(resCar.data, item.id, "item.id")
+								let carId = _.filter(resCar.data, itemC => {
 									return itemC.id == item.id
 								})[0].cart_id;
-								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+								this.$getApi("/App/Goods/change_car_num", {
+									id: carId,
+									num: item.num
+								}, res => {
 									this.jiaCar(item)
 								})
 							})
@@ -914,32 +991,37 @@
 				} else
 				if (el == 2) {
 					list = this.shopList2
-				}else
+				} else
 				if (el == 3) {
 					list = this.footPb
 				}
 				_.map(list, fil => {
 					if (fil.id == item.id) {
 						item.num--;
-						if(item.num == 0){
+						if (item.num == 0) {
 							// App/Goods/add_car
 							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								console.log(resCar,item,"1212")
-						
-								let carId = _.filter(resCar.data,itemC=>{
+								console.log(resCar, item, "1212")
+
+								let carId = _.filter(resCar.data, itemC => {
 									return itemC.id == item.id
 								})[0].cart_id;
-								
-								this.$getApi("/App/Goods/del_car", {ids:carId}, resCar => {
+
+								this.$getApi("/App/Goods/del_car", {
+									ids: carId
+								}, resCar => {
 									this.jianCar(item)
 								})
 							})
-						}else{
+						} else {
 							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								let carId = _.filter(resCar.data,itemC=>{
+								let carId = _.filter(resCar.data, itemC => {
 									return itemC.id == item.id
 								})[0].cart_id;
-								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+								this.$getApi("/App/Goods/change_car_num", {
+									id: carId,
+									num: item.num
+								}, res => {
 									this.jianCar(item)
 								})
 							})
@@ -965,18 +1047,21 @@
 	.pt26 {
 		padding-top: 26upx;
 	}
-	.h_fixed{
+
+	.h_fixed {
 		position: fixed;
 		width: 750upx;
 		left: 0;
 		top: 0;
-		background-color: rgba(24,179,87,0);
+		background-color: rgba(24, 179, 87, 0);
 		transition: all .5s;
-		&.fixed{
-			background-color: rgba(24,179,87,1);
-			z-index:10;
+
+		&.fixed {
+			background-color: rgba(24, 179, 87, 1);
+			z-index: 10;
 		}
 	}
+
 	.item_nav1 {
 		width: 170upx;
 		flex-shrink: 0;
@@ -1076,6 +1161,7 @@
 			flex-wrap: wrap;
 			padding: 0 12upx 20upx 12upx;
 			justify-content: space-around;
+
 			.item {
 				width: 23%;
 				background-color: #fff;
@@ -1206,13 +1292,15 @@
 		.mine_title {
 			display: flex;
 			align-items: center;
+
 			.left_bobao_img {
 				width: 140upx;
 				height: 26upx;
 				margin-bottom: 10px;
 			}
-			.bobao_text{
-				flex:1
+
+			.bobao_text {
+				flex: 1
 			}
 		}
 
@@ -1278,12 +1366,13 @@
 				}
 			}
 		}
-		
+
 		.home_nav1 {
 			display: flex;
 			justify-content: space-between;
 			padding: 26upx 26upx;
 			width: 698upx;
+
 			.item {
 				background-color: rgba(255, 255, 255, .2);
 				padding: 4upx 30upx;
@@ -1322,26 +1411,30 @@
 			}
 		}
 	}
-	.fuceng{
+
+	.fuceng {
 		height: 88upx;
 		width: 750upx;
-		position:relative;
-		.trans{
+		position: relative;
+
+		.trans {
 			width: 700upx;
-			position:absolute;
+			position: absolute;
 			top: 0;
 			left: 0;
-			z-index:10;
+			z-index: 10;
 			padding: 10upx 26upx;
-			
+
 		}
-		
+
 	}
+
 	.home_search_sy {
 		// border: 1upx solid $uni-bl;
 		border-radius: 40upx;
 		background-color: #fff;
 		transition: width 2s;
+
 		.placeholder_no {
 			color: #666;
 			display: flex;
@@ -1369,6 +1462,7 @@
 			align-items: center;
 			padding-bottom: 10upx;
 			margin: 20upx 26upx;
+
 			.left {
 				display: inline-flex;
 				align-items: center;
@@ -1535,56 +1629,67 @@
 			}
 		}
 	}
-	.pop_youhui{
+
+	.pop_youhui {
 		width: 580upx;
-		.quan_img1{
+
+		.quan_img1 {
 			width: 580upx;
 			height: 360upx;
 			vertical-align: bottom;
 		}
-		.quan_list{
+
+		.quan_list {
 			background-color: #FF2734;
 			height: 560upx;
-			position:relative;
+			position: relative;
 			overflow: hidden;
-			.list_body{
-				padding:0upx 40upx 0upx;
+
+			.list_body {
+				padding: 0upx 40upx 0upx;
 				height: 560upx;
 				overflow-y: auto;
-				.list_body_i{
-					padding:20upx 0upx 100upx;
-				.item{
-					background: url(../../static/img/youcc.png) no-repeat center center;
-					width: 500upx;
-					height: 160upx;
-					background-size: 500upx 160upx;
-					margin-bottom: 20upx;
-					display: flex;
-					align-items: center;
-					.left{
-						width: 166upx;
-						text-align: center;
-						.money{
-							font-size: 42upx;
+
+				.list_body_i {
+					padding: 20upx 0upx 100upx;
+
+					.item {
+						background: url(../../static/img/youcc.png) no-repeat center center;
+						width: 500upx;
+						height: 160upx;
+						background-size: 500upx 160upx;
+						margin-bottom: 20upx;
+						display: flex;
+						align-items: center;
+
+						.left {
+							width: 166upx;
+							text-align: center;
+
+							.money {
+								font-size: 42upx;
+							}
+						}
+
+						.right {
+							.t1_l {
+								font-size: 32upx;
+								color: #333;
+							}
+
+							.t2_l {
+								margin-top: 10upx;
+								color: #999;
+							}
 						}
 					}
-					.right{
-						.t1_l{
-							font-size: 32upx;
-							color: #333;
-						}
-						.t2_l{
-							margin-top: 10upx;
-							color: #999;
-						}
-					}
-				}
 				}
 			}
-			.quan_img2{
+
+			.quan_img2 {
 				background: url(../../static/img/ts4.png) no-repeat center center;
 				background-size: 580upx 120upx;
-				position:absolute;
+				position: absolute;
 				bottom: -2upx;
 				left: 0;
 				width: 580upx;
@@ -1595,7 +1700,8 @@
 				color: #fff;
 			}
 		}
-		.iconyduicuowushixin{
+
+		.iconyduicuowushixin {
 			margin: 20upx 0;
 			text-align: center;
 			font-size: 60upx;

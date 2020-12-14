@@ -40,35 +40,96 @@
 		},
 		methods: {
 			loginIn() {
+				let this_ = this;
 				 uni.getProvider({
 				  service: 'oauth',
 				  success: function (res) {
 					if (~res.provider.indexOf('weixin')) {
+						// #ifndef MP
+						// 弹出正在登录的弹框
+						uni.showLoading({
+							mask:true,
+							title: '正在登录···',
+							complete:()=>{}
+						});
 						uni.login({
 							provider: 'weixin',
-							success: (res2) => {
+							success: (loginRes) => {
 								
 								uni.getUserInfo({
 									provider: 'weixin',
 									success: (info) => {//这里请求接口
-										console.log(res2);
+										console.log(loginRes);
 										console.log(info);
-										uni.switchTab({
-											url:"../home/home"
-										})
-										
+										let dataLogin = {
+											open_id:info.userInfo.openId,
+											nickname:info.userInfo.nickName,		
+											avatar:info.userInfo.avatarUrl
+										}
+										console.log(dataLogin)
+										this_.$getApi("/App/Public/thirdLogin",dataLogin, res => {
+											console.log(res,"登录")
+											this_.$store.commit("login",res.data)
+											uni.switchTab({
+												url:"../home/home"
+											})
+											uni.hideLoading();
+										},"false")
 									},
 									fail: () => {
 										uni.showToast({title:"微信登录授权失败",icon:"none"});
-									}
+									},
 								})
-						
+								
 							},
 							fail: () => {
 								uni.showToast({title:"微信登录授权失败",icon:"none"});
 							}
 						})
-						
+						// #endif
+						// #ifdef MP
+						uni.login({
+							provider: 'weixin',
+							success: function(loginRes) {
+								console.log(loginRes, "微信权限信息");
+								this_.$getApi("/App/Public/getOpenid", {
+									code: loginRes.code
+								}, resOpen => {
+									console.log(resOpen, "ccccc")
+									uni.getUserInfo({
+										provider: 'weixin',
+										success: (info) => { //这里请求接口
+											console.log(info, "527");
+											let dataLogin = {
+												open_id: resOpen.data.openid,
+												nickname: info.userInfo.nickName,
+												avatar: info.userInfo.avatarUrl
+											}
+											console.log(dataLogin)
+											this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
+												console.log(res, "登录")
+												
+												// 判断 this_.openP()
+												this_.$store.commit("login", res.data)
+												console.log(res.data)
+												uni.switchTab({
+													url:"../home/home"
+												})
+												uni.hideLoading();
+											})
+										},
+										fail: () => {
+											uni.showToast({
+												title: "微信登录授权失败",
+												icon: "none"
+											});
+										}
+									})
+								})
+									
+							}
+						});						
+						// #endif
 					}else{
 						uni.showToast({
 							title: '请先安装微信或升级版本',

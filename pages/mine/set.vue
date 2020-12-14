@@ -65,6 +65,7 @@
 				}
 			},
 			loginOut(){
+				this.$store.commit('logout');
 				uni.reLaunch({
 					url:'../login/login'
 				})

@@ -392,6 +392,10 @@
 		background-color: #fff;
 		left: 0;
 		bottom: 0upx;
+		/* #ifdef H5 */
+		bottom: 100upx;
+		/* #endif */
+		
 		z-index: 1000;
 		.part1 {
 			display: inline-flex;

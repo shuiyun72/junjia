@@ -41,7 +41,7 @@
 			</view>
 			<view class="i_item" v-for="item in orderTrueFoot">
 				<view class="left">
-					<image src="../../static/img/order/dingd4.png" class="img_m" mode=""></image>
+					<image :src="item.thumb" class="img_m" mode=""></image>
 					<view class="info_cc">
 						<view class="in1 shengluehao">
 							{{item.name}}
