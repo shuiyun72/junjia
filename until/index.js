@@ -13,15 +13,8 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 	// console.log("token", token);
 	let userInfo = uni.getStorageSync('userInfo');
 	if (token && userInfo) {
-		data.uid = 1;
-		// data.page = 1;
-		// data.paginate = 200;
+		data.uid = userInfo.id;
 	}
-	data.uid = 1;
-	// console.log("data", data)
-	// uni.showLoading({
-	//     title: '加载中'
-	// });
 	uni.request({
 		// url: apiUrl +'/api/'+ url +'?'+Qs.stringify(data), //仅为示例，并非真实接口地址。
 		url: apiUrl + url,
@@ -32,7 +25,7 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 		},
 		success: (res) => {
 			// uni.hideLoading();
-			console.log(res)
+			// console.log(res)
 			if (res.data.status == 1) {
 				callsuc instanceof Function && callsuc(res.data)
 			} else

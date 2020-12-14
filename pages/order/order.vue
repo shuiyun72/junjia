@@ -45,20 +45,20 @@
 					</view>
 				</view>
 				<!-- 备货中 -->
-				<view class="btn_box" v-if="parent.status == 0">
+				<!-- <view class="btn_box" v-if="parent.status == 1">
 					<view class="btn blue sm round">
 						再来一单
 					</view>
-				</view>
+				</view> -->
 				<!-- 配送中 -->
-				<view class="btn_box" v-if="parent.text == 1">
-					<view class="btn blue sm round">
+				<view class="btn_box" v-if="parent.status == 1" >
+					<view class="btn blue sm round" @click.stop="toNav('zailaiyidan',parent)">
 						再来一单
 					</view>
 				</view>
 				<!-- 待评价 -->
-				<view class="btn_box" v-if="parent.text == 2">
-					<view class="btn blue_n sm round">
+				<view class="btn_box" v-if="parent.status == 2"  >
+					<view class="btn blue_n sm round" @click.stop="toNav('zailaiyidan',parent)">
 						再来一单
 					</view>
 					<view class="btn blue sm round" @click.stop="toNav('pingjia',parent)">
@@ -81,43 +81,7 @@
 		data() {
 			return {
 				barTitle:"订单",
-				orderList:[
-					{
-						text:"等待支付",
-						state:1,
-						items:[
-							{num:3},{num:2},{num:1}
-						]
-					},
-					{
-						text:"备货中",
-						state:2,
-						items:[
-							{num:1},{num:2},{num:1}
-						]
-					},
-					{
-						text:"配送中",
-						state:3,
-						items:[
-							{num:1},{num:2},{num:1}
-						]
-					},
-					{
-						text:"待评价",
-						state:4,
-						items:[
-							{num:1},{num:2},{num:1}
-						]
-					},
-					{
-						text:"订单已取消",
-						state:5,
-						items:[
-							{num:1},{num:2},{num:1}
-						]
-					}
-				],
+				orderList:[],
 				tabSel: 1,
 				tabList: [{
 						text: "全部",
@@ -159,6 +123,9 @@
 				if(num == 2){
 					return "待评价"
 				}
+				if(num == 3){
+					return "已完成"
+				}
 			},
 			getOrederList(fromNum){
 				let getState  = ""
@@ -180,6 +147,7 @@
 				})
 			},
 			toNav(el,parentOrder){
+				console.log(parentOrder)
 				if(el == 'quzhifu'){
 					uni.navigateTo({
 						url:'./orderPay'
@@ -187,9 +155,15 @@
 				}
 				if(el == 'pingjia'){
 					uni.navigateTo({
-						url:'./appraise'
+						url:'./appraise?orderItem='+JSON.stringify(parentOrder)
 					})
 				}
+				if(el == 'zailaiyidan'){
+					uni.navigateTo({
+						url:'./orderTrue?orderId='+parentOrder.id
+					})
+				}
+				
 			},
 			toDetail(items){
 				uni.navigateTo({

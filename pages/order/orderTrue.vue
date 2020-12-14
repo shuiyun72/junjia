@@ -111,9 +111,9 @@
 		
 		<view class="h20"></view>
 		<uni-list>
-			<uni-list-item title="总价"  :rightText="'￥'+money" :showArrow="false"></uni-list-item>
-			<uni-list-item title="配送费"  :rightText="'￥'+peisongM" :showArrow="false"></uni-list-item>
-			<uni-list-item title="合计"  :rightText="'￥'+allMoney" :showArrow="false"></uni-list-item>
+			<uni-list-item title="总价"  :rightText="'￥'+allMoneyFootsCalc" :showArrow="false"></uni-list-item>
+			<uni-list-item title="配送费"  :rightText="'￥'+peisong" :showArrow="false"></uni-list-item>
+			<uni-list-item title="合计"  :rightText="'￥'+allMoneyFootsCalcPS" :showArrow="false"></uni-list-item>
 		</uni-list>
 		<view class="h20"></view>
 		<view class="tishi">
@@ -148,7 +148,6 @@
 				beizhuC:"",
 				radio: "A",
 				money:23.88,
-				peisongM:0,
 				allMoney:23.88,
 				isDikou:true,
 				multiArray: [
@@ -158,7 +157,8 @@
 				multiIndex: [0,0],
 				timeText:"",
 				order_id:"",
-				total_credit:""
+				total_credit:"",
+				peisong:0
 				
 			};
 		},
@@ -176,11 +176,23 @@
 				_.map(this.orderTrueFoot,item=>{
 					numL = numL + Number(item.num)*(Number(item.price)*100)
 				})
+				console.log(this.peisong) 
+				console.log()
 				return numL/100
 			},
+			allMoneyFootsCalcPS(){
+				console.log(this.allMoneyFootsCalc,this.peisong)
+				if(this.allMoneyFootsCalc <= 28){
+					this.peisong = this.peisong
+				}else{
+					this.peisong = 0
+				}
+				return Number(this.allMoneyFootsCalc) + Number(this.peisong);
+			}
 		},
 		onShow() {
 			console.log("orderTrueFoot",this.orderTrueFoot)
+			console.log(this.address)
 		},
 		onLoad(ph) {
 			if(ph.strCode){
@@ -189,9 +201,23 @@
 					this.$store.commit('clearCar')
 					this.order_id = res.data.order_id;
 					this.total_credit = res.data.total_credit;
-					// uni.navigateTo({
-					// 	url:"../order/orderTrue?strCode="+res.data
-					// })
+				})
+			}
+			if(ph.orderId){
+				this.order_id = ph.orderId;
+				this.$getApi("/App/Goods/orderDetail", {id:ph.orderId}, res => {
+					console.log(res.data[0],"1212")
+					let rItem = res.data[0];
+					let addressItem = {
+						address: rItem.user_address.split(" ")[1],
+						name:rItem.user_name,
+						phone: rItem.user_phone,
+						receive_address: rItem.user_address.split(" ")[0]
+					}
+					this.$store.commit("setAddress",addressItem)
+					this.timeText = rItem.receive_time;
+					this.$store.commit("setOrderTrueFoot",rItem.goods_list)
+					this.beizhuC = rItem.remark;
 				})
 			}
 		},
@@ -202,6 +228,18 @@
 			let tomorrowTime ="明天-"+ this.$getDate(toData,"月-号")
 			this.multiArray = [[newTime,tomorrowTime],["尽快送达","13:30-14:00","14:00-14:30"]]
 			this.timeTextM();
+			let this_ = this;
+			// 获取系统配置信息
+			this_.$getApi("/App/Index/getSysConfig", {}, res => {
+				console.log(res,"获取系统配置信息")
+				this_.peisong  =  _.filter(res.data,item=>{
+					return item.remark.includes('配送费')
+				})[0].value;
+				console.log(this_.peisong,'配送费')
+			
+				
+				
+			})
 		},
 		methods:{
 			timeTextM(){
@@ -241,6 +279,7 @@
 				this.radio = el.detail.value
 			},
 			toNav(el){
+				let this_ = this;
 				if(el == 'pay'){
 					if(!this.address.name){
 						this.$msg('请选择地址')
@@ -290,6 +329,7 @@
 							if(this.radio == "C"){
 								thisPayType = "xxwepay"
 							}
+							
 							let orderMsgL = {
 								appId: resbuy.data.appid,
 								nonceStr: resbuy.data.noncestr,
@@ -300,6 +340,16 @@
 								signType: "MD5",
 								timeStamp: resbuy.data.timestamp.toString()
 							}
+							// let orderMsgL = {
+							// 	appId: resbuy.data.appId,
+							// 	nonceStr: resbuy.data.nonceStr,
+							// 	package: resbuy.data.package,
+							// 	partnerId: resbuy.data.partnerId,
+							// 	prepayId: resbuy.data.prepayId,
+							// 	paySign: resbuy.data.paySign,
+							// 	signType: "MD5",
+							// 	timeStamp: resbuy.data.timeStamp.toString()
+							// }
 							console.log(JSON.stringify(orderMsgL))
 							// #endif
 							// #ifdef MP
@@ -313,32 +363,22 @@
 								    provider: 'wxpay',
 								    orderInfo: orderMsgL, //微信、支付宝订单数据
 								    success: function (res) {
-										// this_.$store.commit('setQuan', {
-										// 	name: "请选择优惠券"
-										// })
-										// uni.navigateTo({
-										// 	url:"./orderPay?title=购买成功"
-										// })
-										// console.log(res)
-								  //       console.log('success:' + JSON.stringify(res));
+										this_.$msg(JSON.stringify(res))
+				
 								    },
 								    fail: function (err) {
-								        console.log('fail:' + JSON.stringify(err));
+										console.log('fail:' + JSON.stringify(err));
+										this_.$msg(JSON.stringify(err))
 								    }
 								});
 							} else
 							if(thisPayType == "alipay") {
+								console.log(orderMsgL,"cccc")
 								uni.requestPayment({
 								    provider: 'alipay',
 								    orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
 								    success: function (res) {
-										this_.$store.commit('setQuan', {
-											name: "请选择优惠券"
-										})
-										uni.navigateTo({
-											url:"./orderPay?title=购买成功"
-										})
-										console.log(res)
+										
 								        console.log('success:' + JSON.stringify(res));
 								    },
 								    fail: function (err) {

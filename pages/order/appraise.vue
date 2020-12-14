@@ -27,7 +27,9 @@
 						添加图片
 					</view>
 				</view>
-				<view class="item_l" :style="'background-image: url(../../static/img/bar/faxh.png);'">
+				<view v-for="item in imgList">
+					<view class="item_l" :style="'background-image: url('+httpp+item+');'">
+				</view>
 				</view>
 			</view>
 		</view>
@@ -44,9 +46,18 @@
 export default {
 	data() {
 		return {
-			star:1,
-			textT:""
+			star:5,
+			textT:"",
+			orderItem:"",
+			imgList:[],
+			httpp:""
 		};
+	},
+	onLoad(ph) {
+		this.orderItem = JSON.parse(ph.orderItem)
+		console.log(this.orderItem)
+		this.httpp = this.$apiUrl;
+		console.log(this.httpp)
 	},
 	methods:{
 		calcNum(num) {
@@ -61,10 +72,23 @@ export default {
 			this.star = star+1
 		},
 		nativeTo(){
+			let data = {
+				order_id:this.orderItem.id,
+				goods_id:this.orderItem.goods_list[0].goods_id,
+				content:this.textT,
+				pic:this.imgList.toString(),
+				star:this.star
+			}
+			this.$getApi("/App/Goods/addComment", data, res => {
+				console.log(res.data,"ccccc3161")
+				setTimeout(()=>{
+					uni.navigateTo({
+						url:"../home/msg?title=评价成功"
+					})
+				},1000)
+				
+			})
 			
-			// uni.navigateTo({
-			// 	url:'./msg?pageType=2&tabSel=2'
-			// })
 		},
 		upImg(){
 			let this_ = this;
@@ -90,17 +114,10 @@ export default {
 							name: 'file',
 							success(res1) {
 								console.log(res1)
+								console.log(JSON.parse(res1.data).data)
+								this_.imgList.push(JSON.parse(res1.data).data)
+								this_.imgList = this_.imgList.slice(0,3)
 								this_.$msg("图片上传成功")
-								// 显示上传信息
-								// console.log("890",beiyongLIst[i])
-								// this_.imageList.push(beiyongLIst[i]);
-								// this_.upimageList.push(JSON.parse(res1.data).data)
-								// if(this_.upimageList.length > 5){
-								// 	this_.upimageList = this_.upimageList.slice(0,5)
-								// 	this_.imageList = this_.imageList.slice(0,5)
-								// }
-								// console.log(this_.imageList,this_.upimageList,"1653A")
-								// this_.isTrueImg = true;
 							}
 						});
 					}

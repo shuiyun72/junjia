@@ -1,21 +1,28 @@
 <template>
 	<view class="case_item_sy" @click="handleClick(item)">
 		<view class="t_center">
-			<image :src="'../../static/img/home/'+item.img" class="img_c" mode=""></image>
+			<image :src="item.thumb" class="img_c" mode=""></image>
 		</view>
 		<view class="text_l">
-			{{item.t1}}
+			{{item.name}}
 		</view>
 		<view class="ctrl">
+			<!-- item: {
+				t1: "绿地枸杞9900从萨达",
+				img: "or.png",
+				m1: "12.8",
+				m2: "16.8",
+				id: "2"
+			}, -->
 			<view class="">
 				<view class="red">
-					￥<text>{{item.m1}}</text>
+					￥<text>{{item.price}}</text>
 				</view>
 				<view class="red sc9" v-if="isTuan">
 					团购价
 				</view>
 				<view class="del" v-if="!isTuan">
-					￥<text>{{item.m2}}</text>
+					￥<text>{{item.old_price}}</text>
 				</view>
 			</view>
 			<view class="iconfont iconjia1"></view>
@@ -27,8 +34,11 @@
 	export default {
 		data() {
 			return {
-			
+				httpp:""
 			};
+		},
+		beforeMount() {
+			this.httpp = this.$apiUrl
 		},
 		props:["item","isTuan"],
 		methods:{

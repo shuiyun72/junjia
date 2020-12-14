@@ -12,7 +12,8 @@
 			<image src="../../static/img/logo.png" class="mine_logo" mode="widthFix"></image>
 		</view>
 		<view class="sub_top">
-			<button class="btn blue ms round vx_login" @click="loginIn">
+			
+			<button open-type="getUserInfo" lang="zh_CN" @getuserinfo="loginIn" class="btn blue ms round vx_login" @click="loginIn">
 				<image src="../../static/img/weixdl.png" mode="" class="vx_img"></image>
 				 <text>微信登录</text>
 				</button>
@@ -39,9 +40,44 @@
 		},
 		methods: {
 			loginIn() {
-				uni.switchTab({
-					url:"../home/home"
-				})
+				 uni.getProvider({
+				  service: 'oauth',
+				  success: function (res) {
+					if (~res.provider.indexOf('weixin')) {
+						uni.login({
+							provider: 'weixin',
+							success: (res2) => {
+								
+								uni.getUserInfo({
+									provider: 'weixin',
+									success: (info) => {//这里请求接口
+										console.log(res2);
+										console.log(info);
+										uni.switchTab({
+											url:"../home/home"
+										})
+										
+									},
+									fail: () => {
+										uni.showToast({title:"微信登录授权失败",icon:"none"});
+									}
+								})
+						
+							},
+							fail: () => {
+								uni.showToast({title:"微信登录授权失败",icon:"none"});
+							}
+						})
+						
+					}else{
+						uni.showToast({
+							title: '请先安装微信或升级版本',
+							icon:"none"
+						});
+					}
+				  }
+				});
+				
 			},
 			toNav(el){
 				if(el == 'xieyi'){

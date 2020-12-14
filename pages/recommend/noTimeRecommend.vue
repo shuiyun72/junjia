@@ -8,18 +8,19 @@
 		<view class="posi_img">
 			<image src="../../static/img/daojishi.png" mode="" class="img"></image>
 			<view class="no_time_q">
-				<view class="item" :class="{'active':index == noTimeSel}" v-for="(item,index) in qianggouTime">
+				<view class="item" :class="{'active':(index == noTimeSel && daojishi == 1)}" v-for="(item,index) in qiaogouTimeList">
 					<view class="time">
-						{{item.time}}
+						{{item.start_time}}
 					</view>
 					<view class="btn">
-						{{index == noTimeSel?'抢购中': index < noTimeSel ? '已结束' : '即将开始'}}
+						<!-- {{index == noTimeSel?'抢购中': index < noTimeSel ? '已结束' : '即将开始'}} -->
+						{{calcNavState(index,noTimeSel)}}
 					</view>
 				</view>
 			</view>
 		</view>
 		<view class="scroll_fixed" :class="{'fixed':isFixed}">
-			<view class="dao_jishi">
+			<view class="dao_jishi" v-if="daojishi == 1">
 				<view class="text">
 					离本场结束 :
 				</view>
@@ -37,6 +38,11 @@
 				</view>
 				<view class="btn_or">
 					{{haveTime.miao}}
+				</view>
+			</view>
+			<view class="dao_jishi" v-if="daojishi == 0">
+				<view class="text">
+					本场已结束
 				</view>
 			</view>
 			<view class="scroll_foots" ref="scrollFoots" :style="{'height':isFixed?'1140upx':'920upx'}">
@@ -78,20 +84,7 @@
 					miao: "00"
 				},
 				isStart: false,
-				noTimeSel: 2,
-				qianggouTime: [{
-					time: "14:00",
-					sel: 0
-				}, {
-					time: "16:00",
-					sel: 0
-				}, {
-					time: "18:00",
-					sel: 0
-				}, {
-					time: "20:00",
-					sel: 0
-				}],
+				
 				ceshi: [1, 2, 3],
 				itddd: 0,
 				isFixed: false,
@@ -113,7 +106,11 @@
 				],
 				classifyIndex: 0,
 				shopList: [],
-				timer:""
+				timer:"",
+				qiaogouTimeList:[],
+				qiaogouTime:"",
+				noTimeSel: -1,
+				daojishi:""
 			};
 		},
 		watch: {
@@ -143,10 +140,19 @@
 			}
 		},
 		onShow() {
-			this.$getApi("/App/Goods/getShoppingGoods", {}, res => {
-				console.log(res,"抢购")
-				this.shopList = res.data
-				// this.clacCar(res.data)
+			
+			//抢购时间
+			this.$getApi("/App/Goods/getShoppingTypes", {}, res => {
+				let qiaogouTimeList = res.data;
+				// let qiaogouTimeList = [
+				// {start_time:"02:42:00",end_time:"02:43:00"}
+				// ,{start_time:"02:43:20",end_time:"02:44:00"}
+				// ,{start_time:"02:44:30",end_time:"02:45:00"}
+				// ]
+				_.map(qiaogouTimeList,item=>{
+					item.sel = 0
+				})
+				this.qiaogouTimeList = qiaogouTimeList;
 			})
 			_.map(this.shopList, itemL => {
 				_.map(this.shopCar, itemC => {
@@ -174,45 +180,62 @@
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
 			calcTimeNo() {
-				let nowTime = new Date();
-				let newDate = this.$getDate(nowTime, "s-s-s");
-				let selTime = "";
-				let firstTime = new Date(newDate + " " + this.qianggouTime[0].time + ":00")
-				console.log(nowTime > firstTime)
-				
-				
-				for (let c = 0; c < this.qianggouTime.length; c++) {
-					let ccTime = new Date(newDate + " " + this.qianggouTime[c].time + ":00")
-					if (nowTime < ccTime) {
-						selTime = this.qianggouTime[c].time;
-						break;
-					}
-					
-				}
-				this.noTimeSel = _.findIndex(this.qianggouTime, item => {
-					return item.time == selTime
-				})
-
-				let haveTime = new Date(newDate + " " + selTime + ":00").getTime() - nowTime.getTime()
-				if(haveTime>0){
-				let second = Math.floor(haveTime / 1000);
-				let hr = Math.floor(second / 3600 % 24);
-				let min = Math.floor(second / 60 % 60);
-				let sec = Math.floor(second % 60);
-				hr = hr < 10 ? '0' + hr : hr;
-				min = min < 10 ? '0' + min : min;
-				sec = sec < 10 ? '0' + sec : sec;
-				this.haveTime = {
-					shi: hr,
-					fen: min,
-					miao: sec
-				}
-				}else{
-					this.haveTime = {
-						shi: "00",
-						fen: "00",
-						miao: "00"
-					}
+				if(this.qiaogouTimeList.length > 0){
+					let timeDate = this.$getDate("","s-s-s")
+					let thisDateTime = new Date().getTime();
+					for(let itTime = 0 ; itTime < this.qiaogouTimeList.length;itTime++) { 
+						let startTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
+						let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
+						let lastEndTime = new Date(timeDate + " " + this.qiaogouTimeList[this.qiaogouTimeList.length-1].end_time)
+						if(thisDateTime  > startTime &&  thisDateTime  < endTime) { 
+							this.qiaogouTime = this.qiaogouTimeList[itTime].end_time;
+							let toTime = timeDate + " " + this.qiaogouTime;
+							this.toTime = this.$lastDate(toTime, "s:s:s")	
+							if(itTime != this.noTimeSel){
+								this.$getApi("/App/Goods/getShoppingGoods", {time:this.qiaogouTime}, res => {
+									console.log(res,"抢购")
+									this.shopList = res.data
+									// this.clacCar(res.data)
+								})
+							}
+							this.noTimeSel = itTime;
+							let haveTime = endTime.getTime() - thisDateTime;
+							if(haveTime>0){
+								let second = Math.floor(haveTime / 1000);
+								let hr = Math.floor(second / 3600 % 24);
+								let min = Math.floor(second / 60 % 60);
+								let sec = Math.floor(second % 60);
+								hr = hr < 10 ? '0' + hr : hr;
+								min = min < 10 ? '0' + min : min;
+								sec = sec < 10 ? '0' + sec : sec;
+								this.haveTime = {
+									shi: hr,
+									fen: min,
+									miao: sec
+								}
+								this.daojishi = 1;
+							}else{
+								this.haveTime = {
+									shi: "00",
+									fen: "00",
+									miao: "00"
+								}
+								this.daojishi = 0;
+							}
+							break; 
+						}else
+						if(thisDateTime  < startTime){
+							console.log(startTime,itTime)
+							this.noTimeSel = itTime-1
+							this.daojishi = 0;
+							break; 
+						}else
+						if(thisDateTime  > lastEndTime){
+							this.noTimeSel = this.qiaogouTimeList.length + 2
+							this.daojishi = 0;
+							break; 
+						}
+					} 
 				}
 			},
 			erNav(item, index) {
@@ -227,20 +250,20 @@
 						this.$refs.scrollFoots.$el.scrollTop = itemL.$el.offsetTop - 56
 					}
 				})
-				return false;
-				let this_ = this;
-				let query = wx.createSelectorQuery();
-				query.selectAll(".text_query_ng").boundingClientRect();
-				query.exec(function(res) {
-					console.log(this_.$refs.scrollFoots)
-					// this_.$refs.scrollFoots.$el.scrollTop = res[0][index].top-167
-					// for(let i;i<res[0].length;i++){
-					// 	if(item.name == res[0][i].innerText){
-					// 		this_.$refs.scrollFoots.$el.scrollTop = res[0][i].top-167
-					// 	}
+				// return false;
+				// let this_ = this;
+				// let query = wx.createSelectorQuery();
+				// query.selectAll(".text_query_ng").boundingClientRect();
+				// query.exec(function(res) {
+				// 	console.log(this_.$refs.scrollFoots)
+				// 	// this_.$refs.scrollFoots.$el.scrollTop = res[0][index].top-167
+				// 	// for(let i;i<res[0].length;i++){
+				// 	// 	if(item.name == res[0][i].innerText){
+				// 	// 		this_.$refs.scrollFoots.$el.scrollTop = res[0][i].top-167
+				// 	// 	}
 
-					// }
-				})
+				// 	// }
+				// })
 
 			},
 			toShopCar() {
@@ -273,6 +296,21 @@
 						this.jianCar(item)
 					}
 				})
+			},
+			calcNavState(index,noTimeSel){
+				if(index == noTimeSel){
+					if(this.daojishi == 0 ){
+						return "已结束"
+					}else{
+						return "抢购中"
+					}
+					
+				}else
+				if(index < noTimeSel){
+					return "已结束"
+				}else{
+					return "即将开始"
+				}
 			}
 		}
 	}

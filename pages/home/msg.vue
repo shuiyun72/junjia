@@ -53,6 +53,19 @@
 				<button class="lg btn blue round" @click="toNav('fapiao')">返回发票中心</button>
 			</view>
 		</view>
+		<!-- 发票 -->
+		<view v-if="barTitle == '评价成功'">
+			<view class="msg_title">
+				评价提交成功
+			</view>
+			<view style="height:120upx">
+		
+			</view>
+			<view class="msg_btn">
+				<button class="lg btn blue round" @click="toNav('dingdan')">返回订单</button>
+			</view>
+		</view>
+		
 		
 
 	</view>
@@ -106,7 +119,12 @@
 					uni.navigateBack({
 						delta:2
 					})
-				}	
+				}
+				if(el == "dingdan"){
+					uni.navigateBack({
+						delta:2
+					})
+				}
 			},
 
 		}

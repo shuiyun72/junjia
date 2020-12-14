@@ -10,7 +10,7 @@
 		</view>
 		<view class="classi_fixed" :class="{'istop':isTop}" :style="{top:classTop+'px'}" @click.stop="stopStop">
 			<view class="classify_nav" :class="{'fixed':isFixed}">
-				<view class="item" v-for="(item,index) in classifyNav" :class="{'active':index == classifyIndex}" @click.stop="erNav(item,index)">
+				<view class="item" v-for="(item,index) in allClassList" :class="{'active':index == classifyIndex}" @click.stop="erNav(item,index)">
 					{{item.name}}
 				</view>
 			</view>
@@ -19,18 +19,18 @@
 		<view class="scroll_fixed">
 
 			<view class="scroll_foots">
-				<view v-for="(t,index) in ceshi">
+				<view v-for="(parent,pIndex) in allClassList">
 					<view class="title_recommend">
-						<view class="text_query_ng" :id="'query'+index" ref="titleName">
-							{{t==1?'水果':t==2?'蔬菜':'肉禽'}}
+						<view class="text_query_ng" :id="'query'+pIndex" ref="titleName">
+							{{parent.name}}
 						</view>
 					</view>
 					<view class="rec_body_sy">
-						<sy-foot2 v-for="item in shopList" :item="item" @click="foot2Click">
+						<sy-foot2 v-for="item in parent.list" :item="item" @click.stop="foot2Click">
 							<view class="num_add_sy">
-								<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
+								<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item,pIndex)"></view>
 								<view class="n" v-if="item.num > 0">{{ item.num }}</view>
-								<view class="iconfont iconjia show" @click.stop="foot2Jia(item)"></view>
+								<view class="iconfont iconjia show" @click.stop="foot2Jia(item,pIndex)"></view>
 							</view>
 						</sy-foot2>
 					</view>
@@ -52,19 +52,28 @@
 				uni.setNavigationBarTitle({
 					title: ph.title
 				})
-				// this.firstClassifyType = 
-				this.$getApi('/App/Goods/getActCate', {type:1}, res => {
-					console.log(res,"新品推荐")
+				this.$getApi('/App/Goods/getActCate', {type:2}, resLei => {
+					console.log(resLei,"新品推荐")
+					let allClassList = [];
+					_.map(resLei.data,itemClass=>{
+						 this.getOrderLits(itemClass)
+					})
 					
+					console.log(this.allClassList)
 				})
 			}
 			if (ph.title == '本周上新') {
 				uni.setNavigationBarTitle({
 					title: ph.title
 				})
-				this.$getApi('/App/Goods/getNewGoods', {}, res => {
-					console.log(res)
-					this.shopList = res.data
+				this.$getApi('/App/Goods/getActCate', {type:1}, resLei => {
+					console.log(resLei,"本周上新")
+					let allClassList = [];
+					_.map(resLei.data,itemClass=>{
+						 this.getOrderLits(itemClass)
+					})
+					
+					console.log(this.allClassList)
 				})
 
 			}
@@ -110,7 +119,8 @@
 						sel: 1
 					}
 				],
-				firstClassifyType:0
+				firstClassifyType:0,
+				allClassList:[]
 			};
 		},
 		watch: {
@@ -141,12 +151,6 @@
 				this.isTop = true;
 			}
 			// #endif
-
-			if (res.scrollTop > 115) {
-
-			} else {
-
-			}
 		},
 		beforeMount() {
 			// #ifndef MP
@@ -167,17 +171,29 @@
 			}
 		},
 		onShow() {
-			_.map(this.shopList, itemL => {
-				_.map(this.shopCar, itemC => {
-					if (itemL.id == itemC.id) {
-						itemL.num = itemC.num
-					}
-				})
-			})
+			
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
 			stopStop() {},
+			async getOrderLits(itemClass){
+				this.$getApi('/App/Goods/getGoodsList', {category_id:itemClass.id}, res => {
+					console.log(res)
+					let bingbingList = res.data
+					_.map(bingbingList, itemL => {
+						_.map(this.shopCar, itemC => {
+							if (itemL.id == itemC.id) {
+								itemL.num = itemC.num
+							}
+						})
+					})
+					
+					this.allClassList.push({
+						name:itemClass.name,
+						list: bingbingList
+					})
+				})
+			},
 			erNav(item, index) {
 				console.log(item, index)
 				let this_ = this;
@@ -222,23 +238,60 @@
 					url: "../detail/detail?id=" + item.id
 				})
 			},
-			foot2Jia(item) {
+			foot2Jia(item,pIndex) {
 				console.log("111111111")
-				_.map(this.shopList, fil => {
+				_.map(this.allClassList[pIndex].list, fil => {
 					console.log(item)
 					if (fil.id == item.id) {
 						item.num++;
-						this.jiaCar(item)
+						if(item.num == 1){
+							// App/Goods/add_car
+							this.$getApi("/App/Goods/add_car", {goods_id:item.id,num:item.num}, resCar => {
+								this.jiaCar(item)
+							})
+						}else{
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								console.log(resCar.data,item.id,"item.id")
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+									this.jiaCar(item)
+								})
+							})
+						}
 					}
 				})
 			},
-			foot2Jian(item) {
+			foot2Jian(item,pIndex) {
 				console.log("2222222222")
 				console.log(item)
-				_.map(this.shopList, fil => {
+				_.map(this.allClassList[pIndex].list, fil => {
 					if (fil.id == item.id) {
 						item.num--;
-						this.jianCar(item)
+						if(item.num == 0){
+							// App/Goods/add_car
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								console.log(resCar,item,"1212")
+						
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								
+								this.$getApi("/App/Goods/del_car", {ids:carId}, resCar => {
+									this.jianCar(item)
+								})
+							})
+						}else{
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+									this.jianCar(item)
+								})
+							})
+						}
 					}
 				})
 			}
@@ -341,11 +394,12 @@
 				margin: 0 auto;
 				width: 698upx;
 				box-sizing: border-box;
-
+				overflow-x: auto;
 				.item {
 					padding: 4upx 30upx 8upx;
 					border-radius: 20upx;
-
+					white-space: pre-wrap;
+					flex-shrink: 0;
 					&.active {
 						background-color: $uni-bl;
 						color: #fff;

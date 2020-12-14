@@ -95,6 +95,7 @@
 			selAddress(item,index){
 				this.dataSel = index;
 				if(this.pageTitle == '地址选择'){
+					console.log(item)
 					this.$store.commit("setAddress",item)
 					console.log(item,"ad")
 					uni.navigateBack({

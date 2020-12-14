@@ -24,7 +24,7 @@
 		<view class="caipu_foot">
 			<view class="shop_case_box">
 				<view class="shop_auto">
-					<sy-foot1 :isTuan='true' @click="part1Num" :item="item" v-for="i in 6"></sy-foot1>
+					<sy-foot1 :isTuan='true' @click="part1Num" :item="item" v-for="item in catryItem.goods_list"></sy-foot1>
 				</view>
 			</view>
 		</view>
@@ -65,13 +65,6 @@
 	export default {
 		data() {
 			return {
-				item: {
-					t1: "绿地枸杞9900从萨达",
-					img: "or.png",
-					m1: "12.8",
-					m2: "16.8",
-					id: "2"
-				},
 				catryItem:{}
 			};
 		},
@@ -88,7 +81,12 @@
 			})
 		},
 		methods: {
-
+			part1Num(item){
+				console.log(item)
+				uni.navigateTo({
+					url:"../detail/detail?id="+item.id
+				})
+			}
 		}
 	}
 </script>

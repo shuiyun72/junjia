@@ -212,12 +212,8 @@
 			};
 		},
 		onLoad(ph) {
-			this.itemId = ph.itemId;
-			// this.$getApi("/App/Goods/del_car", {ids:26}, res => {
-			// 	console.log(res.data,"商品详情")
-			// })
-			// return false;
-			this.$getApi("/App/Goods/goodsInfo", {id:3}, res => {
+			this.itemId = ph.id;
+			this.$getApi("/App/Goods/goodsInfo", {id:this.itemId}, res => {
 				console.log(res.data,"商品详情")
 				let itemDetail = res.data;
 				this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
@@ -231,6 +227,16 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
+			itemClick(item){
+				this.$getApi("/App/Goods/goodsInfo", {id:item.id}, res => {
+					console.log(res.data,"商品详情")
+					let itemDetail = res.data;
+					this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
+					itemDetail.num = 0;
+					itemDetail.sel = 1;
+					this.itemDetail  = itemDetail
+				})
+			},
 			detailSw(el) {
 				this.imgsIndex = el.detail.current;
 			},
