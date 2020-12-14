@@ -117,7 +117,7 @@
 		</uni-list>
 		<view class="h20"></view>
 		<view class="tishi">
-			订单满28元免配送费
+			订单满{{mianPeisong}}元免配送费
 		</view>
 		<view class="h120">
 			
@@ -126,7 +126,7 @@
 			<view class="btn1">
 				<view>合计 :</view>
 				<view class="red">
-					￥<text class="big">{{allMoneyFootsCalc}}元</text>
+					￥<text class="big">{{allMoneyFootsCalcPS}}元</text>
 				</view>
 			</view>
 			<view class="btn_b bl" @click="toNav('pay')">
@@ -158,7 +158,8 @@
 				timeText:"",
 				order_id:"",
 				total_credit:"",
-				peisong:0
+				peisong:0,
+				mianPeisong:28
 				
 			};
 		},
@@ -182,7 +183,7 @@
 			},
 			allMoneyFootsCalcPS(){
 				console.log(this.allMoneyFootsCalc,this.peisong)
-				if(this.allMoneyFootsCalc <= 28){
+				if(this.allMoneyFootsCalc <= this.mianPeisong){
 					this.peisong = this.peisong
 				}else{
 					this.peisong = 0
@@ -216,7 +217,14 @@
 					}
 					this.$store.commit("setAddress",addressItem)
 					this.timeText = rItem.receive_time;
-					this.$store.commit("setOrderTrueFoot",rItem.goods_list)
+					let goodsList = [];
+					_.map(rItem.goods_list,item=>{
+						item.thumb = item.goods_thumb;
+						item.id = item.goods_id;
+						item.name = item.goods_name;
+						goodsList.push(item)
+					})
+					this.$store.commit("setOrderTrueFoot",goodsList)
 					this.beizhuC = rItem.remark;
 				})
 			}
@@ -236,9 +244,6 @@
 					return item.remark.includes('配送费')
 				})[0].value;
 				console.log(this_.peisong,'配送费')
-			
-				
-				
 			})
 		},
 		methods:{
@@ -293,7 +298,9 @@
 						user_address:this.address.receive_address+this.address.address,
 						receive_time:this.timeText,
 						coupon_id:"",
-						credit:this.total_credit
+						credit:this.total_credit,
+						lat:this.address.lat,
+						lng:this.address.lng
 					}
 					this.$getApi("/App/Goods/editOrder", dataL, res => {
 						console.log(res,"1212")

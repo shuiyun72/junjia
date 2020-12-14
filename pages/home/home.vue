@@ -72,13 +72,13 @@
 			<swiper :autoplay="true" :interval="3000" :duration="1000" height="100">
 				<swiper-item>
 					<view class="jiushui_box">
-						<view class="item" v-for="i in 4" @click="itemClick(item)">
-							<image src="../../static/img/img-sp1.png" mode="" class="img"></image>
+						<view class="item" v-for="item in jiuleiList" @click="itemClick(item)">
+							<image :src="item.thumb" mode="" class="img"></image>
 							<view class="money">
-								￥<text class="num">7.9</text>
+								￥<text class="num">{{item.price}}</text>
 							</view>
 							<view class="text">
-								喜力啤酒
+								{{item.name}}
 							</view>
 						</view>
 					</view>
@@ -375,7 +375,8 @@
 				qiaogouTime: "",
 				maiyisongyiList: [],
 				tuangouList: [],
-				qiangouList: []
+				qiangouList: [],
+				jiuleiList:[]
 			};
 		},
 
@@ -432,7 +433,12 @@
 			clearInterval(this.timer)
 		},
 		mounted() {
-			
+			// 获取购物车
+			this.$getApi("/App/Goods/shop_car", {}, res => {
+				console.log(res.data, "获取购物车")
+				// this_.lunboList = res.data
+				this.$store.commit("setReCar",res.data)
+			})
 		},
 		onShow() {
 			let this_ = this;
@@ -575,6 +581,13 @@
 					this.qiaogouTimeList = res.data;
 					// this.qiaogouTimeList = [{start_time:"00:30",end_time:"00:40"}]
 				})
+				
+				// 酒类专区
+				this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"酒"}, res => {
+					console.log(res.data, "酒类专区")
+					this.jiuleiList = res.data;
+					// this.qiaogouTimeList = [{start_time:"00:30",end_time:"00:40"}]
+				},"false")
 				this.jingxuanFoot()
 			},
 			jingxuanFoot() {
@@ -585,13 +598,15 @@
 					console.log(res.data, "精选好物")
 					let resData = res.data ? res.data : [];
 					this.footPb = this.footPb.concat(resData)
-					_.map(this.footPb, itemL => {
-						_.map(this.shopCar, (itemC, index) => {
-							if (itemL.id == itemC.id) {
-								this.$set(this.footPb[index], "num", itemC.num)
-							}
+					if(this.footPb.length > 0 && this.shopCar.length>0){
+						_.map(this.footPb, (itemL,indexL) => {
+							_.map(this.shopCar, (itemC, index) => {
+								if (itemL.id == itemC.id) {
+									this.$set(this.footPb[indexL], "num", itemC.num)
+								}
+							})
 						})
-					})
+					}
 					this.footPbL(this.footPb);
 					this.footPbNum++
 				})
@@ -893,6 +908,11 @@
 					})
 				}
 				if (item.name == '买一送一') {
+					uni.navigateTo({
+						url: "../recommend/recommend?title=" + item.name
+					})
+				}
+				if (item.name == '团购产品') {
 					uni.navigateTo({
 						url: "../recommend/recommend?title=" + item.name
 					})

@@ -40,6 +40,10 @@ const store = new Vuex.Store({
 			uni.setStorageSync('shopCar',state.shopCar)
 			state.youhuiquan = {};
 		},
+		setReCar(state,items){
+			state.shopCar = items;
+			uni.setStorageSync('shopCar',items)
+		},
 		setYouhuiquan(state,items){
 			state.youhuiquan = items
 		},

@@ -3,7 +3,7 @@
 		
 		<view class="" v-if="isClassify" class="search_box_sy">
 			<view class="part1">
-				<view class="show_item" v-for="item in search1">
+				<view class="show_item" v-for="item in search1" @click="phandlePaixu(item)">
 					<view class="text">
 						{{item.name}}
 					</view>
@@ -28,7 +28,7 @@
 					<view >
 						<sy-foot2 v-for="(item,index) in shopList" :item="item" @click="foot2Click" :isPaihang="isPaihang" :itemIndex="index">
 							<view class="num_add_sy" v-if="item.state != 3">
-								{{item.id}}<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
+								<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
 								<view class="n" v-if="item.num > 0">{{ item.num }}</view>
 								<view class="iconfont iconjia show" @click.stop="foot2Jia(item)"></view>
 							</view>
@@ -65,7 +65,7 @@
 				})
 				this.isClassify = true;
 				this.footId = ph.footId;
-				this.$getApi("/App/Goods/getGoodsList", {category_id:ph.footId}, res => {
+				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:ph.searchName}, res => {
 					console.log(res.data,"ccccc3")
 					this.clacCar(res.data)
 				})
@@ -132,13 +132,7 @@
 					// ,
 					// {name:"筛选",ins:false}
 				],
-				search2:[
-					{name:"全部"},
-					{name:"桔"},
-					{name:"柠"},
-					{name:"柚"},
-					{name:"柠檬"}
-				],
+				search2:[],
 				search2Sel:0,
 				classifyNav: [{
 						name: "水果"
@@ -161,7 +155,8 @@
 				isClassify: false,
 				isClassifySearch:false,
 				isPaihang:false,
-				footId:""
+				footId:"",
+				qiehuan:true
 			};
 		},
 		onPageScroll() {
@@ -203,6 +198,9 @@
 		
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
+			phandlePaixu(item){
+				
+			},
 			clacCar(data){
 				let newList = [];
 				_.map(data,item=>{
@@ -259,15 +257,28 @@
 				})
 			},
 			search2Show(name,index2){
-				this.search2Sel = index2;
-				this.searchList(name);
+				let this_ = this;
+				console.log("121212--",this.qiehuan)
+				if(this.qiehuan == true){
+					this.qiehuan = false;
+					this.search2Sel = index2;
+					this.searchList(name);
+					setTimeout(()=>{
+						this_.qiehuan = true;
+					},1000)
+				}else{
+					this.$msg('商品正在加载中,请勿切换过快')
+				}
 			},
 			searchList(name){
-				name = name == '全部' ? "" :name;
-				this.$getApi("/App/Goods/getGoodsList", {category_id:this.footId,keyword:name}, res => {
-					console.log(res.data,"ccccc3")
-					this.clacCar(res.data)
-				})
+				
+					
+					name = name == '全部' ? "" :name;
+					this.$getApi("/App/Goods/getGoodsList", {category_id:this.footId,keyword:name}, res => {
+						console.log(res.data,"ccccc3")
+						this.clacCar(res.data)
+					})
+				
 			},
 			toShopCar() {
 				uni.switchTab({

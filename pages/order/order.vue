@@ -166,8 +166,9 @@
 				
 			},
 			toDetail(items){
+				console.log(items)
 				uni.navigateTo({
-					url:"./orderDetail"
+					url:"./orderDetail?orderId="+items.id
 				})
 			},
 			selectTab(el, i) {

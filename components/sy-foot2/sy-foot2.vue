@@ -1,14 +1,14 @@
 <template>
 	<view class="shop_item_sy" @click.stop="itemClick">
 		<view class="left_img" :class="{'n_c':isPaihang}">
-			<image :src="item.thumb" class="img" mode=""></image>
-			<view class="c1" v-if="item.state2 == 1 && !isPaihang">
+			<image :src="itemLC.thumb" class="img" mode=""></image>
+			<view class="c1" v-if="itemLC.state2 == 1 && !isPaihang">
 				折扣
 			</view>
-			<view class="c2" v-if="item.state2 == 2 && !isPaihang">
+			<view class="c2" v-if="itemLC.state2 == 2 && !isPaihang">
 				特价
 			</view>
-			<view class="c2" v-if="item.state2 == 3 && !isPaihang">
+			<view class="c2" v-if="itemLC.state2 == 3 && !isPaihang">
 				精选
 			</view>
 			<view class="c2 img_t2" v-if="isPaihang && itemIndex<3">
@@ -30,23 +30,23 @@
 		<view class="right_info">
 			<view class="">
 				<view class="title">
-					{{item.name}}
+					{{itemLC.name}}
 				</view>
 				<view class="js">
-					{{item.introduction}}
+					{{itemLC.introduction}}
 				</view>
-				<view class="case zhekou" v-if="item.state == 1 || item.state == 5">
-					{{item.sale_rate}} 折
+				<view class="case zhekou" v-if="itemLC.state == 1 || itemLC.state == 5">
+					{{itemLC.sale_rate}} 折
 				</view>
-				<view class="case jian" v-if="item.state == 2">
-					已减 {{Number(item.old_price) - Number(item.price)}} 元
+				<view class="case jian" v-if="itemLC.state == 2">
+					已减 {{Number(itemLC.old_price) - Number(itemLC.price)}} 元
 				</view>
-				<view class="yu" v-if="item.zong">
+				<view class="yu" v-if="itemLC.zong">
 					<view class="jindutiao">
-						<view class="jindu_bg" :style="'width:'+(item.chu/item.zong)*100+'%'">	
+						<view class="jindu_bg" :style="'width:'+(itemLC.chu/itemLC.zong)*100+'%'">	
 						</view>
 						<view class="jindu_text">
-							剩余{{clacJD(item.chu,item.zong)}}%
+							剩余{{clacJD(itemLC.chu,itemLC.zong)}}%
 						</view>
 						
 					</view>
@@ -55,10 +55,10 @@
 
 			<view class="ctrl">
 				<view class="money">
-					<text class="c1" v-if="item.state == 5">团购价</text>
+					<text class="c1" v-if="itemLC.state == 5">团购价</text>
 					<text class="c1">￥</text>
-					<text class='c2'>{{item.price}}</text>
-					<text class='c3'>￥{{item.old_price}}</text>
+					<text class='c2'>{{itemLC.price}}</text>
+					<text class='c3'>￥{{itemLC.old_price}}</text>
 				</view>
 				<slot></slot>
 			</view>
@@ -74,6 +74,38 @@
 			};
 		},
 		props: ["item","isPaihang","itemIndex"],
+		computed:{
+			itemLC(){
+				if(this.itemL.old_price == this.itemL.price){
+					this.itemL.state2 = 1
+				}else{
+					this.itemL.state2 = 2
+				}
+				//团购商品
+				if(this.itemL.group_buy == 1){
+					this.itemL.state = 5
+				}else
+				if(this.itemL.on_sale == 1){
+					this.itemL.state = 4
+				}else{
+					//团购折扣率
+					if(this.itemL.sale_rate == 0){
+						if(this.itemL.old_price != this.itemL.price){
+							this.itemL.state = 2
+						}else{
+							this.itemL.state = 6
+						}
+					}else
+					if(this.itemL.sale_rate && this.itemL.sale_rate != 0){
+						this.itemL.state = 1
+					}else{
+						this.itemL.state = 0
+					}
+				}
+				console.log(this.itemL)
+				return this.itemL;
+			}
+		},
 		methods: {
 			itemJian() {
 				this.$emit('clickJian', this.item)

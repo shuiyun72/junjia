@@ -7,7 +7,7 @@
 						全场换购
 					</view>
 					<view class="text">
-						全场商品满88元,可参与换购
+						全场商品满{{huangou}}元,可参与换购
 					</view>
 				</view>
 				<view class="r_pt1">
@@ -32,7 +32,7 @@
 						<view class="name">
 							已加购商品
 						</view>
-						<view class="btn" @click="deleteFoots">
+						<view class="btn">
 							去换购>
 						</view>
 					</view>
@@ -148,11 +148,21 @@
 		data() {
 			return {
 				shopList: [],
-				allItem: false
+				allItem: false,
+				xitongMsg:[],
+				huangou:0
 			};
 		},
 		mounted() {
 			console.log(this.SystemInfo)
+			this.$getApi('/App/Index/getSysConfig',{},res=>{
+				console.log(res.data,"获取系统配置信息")
+				this.xitongMsg = res.data;
+				this.huangou  = _.filter(this.xitongMsg,item=>{
+					return item.remark.indexOf("换购门槛") != -1
+				})[0].value;
+				console.log(this.huangou)
+			})
 		},
 		onShow() {
 			this.shopList = this.shopCar || [];
@@ -193,6 +203,9 @@
 				_.map(newShop, item => {
 					numb += item.num
 				})
+				if(this.itemHg && this.itemHg.change_price){
+					numb = numb+1
+				}
 				return numb;
 			},
 			SystemInfoL() {
@@ -223,11 +236,17 @@
 					}
 					console.log(money)
 				})
+				if(this.itemHg && this.itemHg.change_price){
+					money += Number(this.itemHg.change_price)*1000
+				}
+				if(this.huangou >  money / 1000){
+					this.setItemHg("")
+				}
 				return money / 1000
 			}
 		},
 		methods: {
-			...mapMutations(["jiaCar", "jianCar", "delCar","setOrderTrueFoot"]),
+			...mapMutations(["jiaCar", "jianCar", "delCar","setOrderTrueFoot","setItemHg"]),
 			initShopCar() {
 				let numb = 0;
 				_.map(this.shopCar, item => {
@@ -250,8 +269,28 @@
 				let noSelFoot = _.filter(this.shopList, item => {
 					return item.sel == 0
 				})
-				this.shopList = noSelFoot
-				this.delCar(this.shopList)
+				let delSelFoot = _.filter(this.shopList, item => {
+					return item.sel == 1
+				})
+				
+				this.$getApi("/App/Goods/shop_car", {}, resCar => {
+					console.log(resCar.data,"1212")
+					let delCar = []
+					_.map(resCar.data,itemRes=>{
+						_.map(delSelFoot,itemC=>{
+							if(itemRes.id == itemC.id){
+								delCar.push(itemRes.cart_id)
+							}
+						})
+					})		
+					this.$getApi("/App/Goods/del_car", {ids:delCar.toString()}, res => {
+						console.log(res,"1212")
+						this.shopList = noSelFoot
+						this.delCar(this.shopList)
+					})
+				})
+				
+				
 			},
 			payFoots() {
 				let selFoot = _.filter(this.shopList, item => {
@@ -271,7 +310,14 @@
 						})
 					})
 					console.log(order_car.toString())
-					this.$getApi("/App/Goods/shopping_cart", {shop_ids_num:order_car.toString()}, res => {
+					
+					let huanhouId = 0;
+					if(this.itemHg && this.itemHg.id){
+						huanhouId = this.itemHg.id
+					}else{
+						huanhouId = ""
+					}
+					this.$getApi("/App/Goods/shopping_cart", {shop_ids_num:order_car.toString(),change_goods_id:huanhouId}, res => {
 						console.log(res,"1212")
 						uni.navigateTo({
 							url:"../order/orderTrue?strCode="+res.data
@@ -312,6 +358,9 @@
 			},
 			foot2Click(item) {
 				console.log(item)
+				uni.navigateTo({
+					url: "../detail/detail?id=" + item.id
+				})
 			},
 			foot2Jia(item) {
 				console.log("111111111")
@@ -319,13 +368,19 @@
 					console.log(item)
 					if (fil.id == item.id) {
 						item.num++;
-						this.jiaCar(item)
+						this.$getApi("/App/Goods/shop_car", {}, resCar => {
+							console.log(resCar.data,item.id,"item.id")
+							let carId = _.filter(resCar.data,itemC=>{
+								return itemC.id == item.id
+							})[0].cart_id;
+							this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+								this.jiaCar(item)
+							})
+						})
 					}
-				})
-
+				})	
 			},
 			foot2Jian(item) {
-				console.log("2222222222")
 				console.log(item)
 				let this_ = this;
 				if (item.num == 1) {
@@ -337,7 +392,14 @@
 								_.map(this_.shopList, fil => {
 									if (fil.id == item.id) {
 										item.num--;
-										this_.jianCar(item)
+										this_.$getApi("/App/Goods/shop_car", {}, resCar => {		
+											let carId = _.filter(resCar.data,itemC=>{
+												return itemC.id == item.id
+											})[0].cart_id;
+											this_.$getApi("/App/Goods/del_car", {ids:carId}, resCar => {
+												this_.jianCar(item)
+											})
+										})
 									}
 								})
 
@@ -350,7 +412,14 @@
 					_.map(this_.shopList, fil => {
 						if (fil.id == item.id) {
 							item.num--;
-							this_.jianCar(item)
+							this_.$getApi("/App/Goods/shop_car", {}, resCar => {
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								this_.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+									this_.jianCar(item)
+								})
+							})
 						}
 					})
 
@@ -359,9 +428,14 @@
 			},
 			toNav(el){
 				if(el == 'huangou'){
-					uni.navigateTo({
-						url:"./huangou"
-					})
+					if(this.allMoney >= this.huangou){
+						uni.navigateTo({
+							url:"./huangou"
+						})
+					}else{
+						this.$msg('满'+this.huangou+'元,可参加换购商品')
+					}
+					
 				}
 			}
 		}

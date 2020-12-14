@@ -3,11 +3,11 @@
 		<view class="h_img">
 			<image src="../../static/img/mine/peiskd.png" mode="" class="img"></image>
 		</view>
-		<view class="t_name">
+<!-- 		<view class="t_name">
 			目前可配送范围
-		</view>
+		</view> -->
 		<view class="t_name2">
-			目前可配送郑州市三环以内,涵盖中原区,二七区,管城区,金水区,上街区,等五个街区
+			<rich-text type="text" :nodes="textHtml"></rich-text>
 		</view>
 	</view>
 </template>
@@ -16,8 +16,14 @@
 	export default {
 		data() {
 			return {
-				
+				textHtml:""
 			};
+		},
+		mounted() {
+			this.$getApi('/App/Public/getArticle', {type:4}, resLei => {
+				console.log(resLei.data.content,"配送范围")
+				this.textHtml = resLei.data.content
+			})
 		}
 	}
 </script>

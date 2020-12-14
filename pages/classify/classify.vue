@@ -85,7 +85,8 @@
 		data() {
 			return {
 				allFoot:{
-					name:"全部水果"
+					name:"全部水果",
+					id:""
 				},
 				secondList:{},
 				classifyList: [],
@@ -132,8 +133,9 @@
 				this.getSecondList(item.id)
 			},
 			toClassify(item){
+				console.log(item)
 				uni.navigateTo({
-					url:"../home/searchResult?searchName="+item.name+'&fromType=classify'+"&footId="+this.footListId
+					url:"../home/searchResult?searchName="+item.name+'&fromType=classify'+"&footId="+item.id
 				})
 			},
 			

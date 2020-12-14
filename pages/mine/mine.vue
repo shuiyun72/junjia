@@ -9,10 +9,10 @@
 					<!-- #endif -->
 
 					<view class="left_info" @click="navsTo('mineMsg')">
-						<image src="../../static/img/img-sp17.png" class="user_img" mode=""></image>
+						<image :src="userInfo.avatar" class="user_img" mode=""></image>
 						<view class="name_c">
-							<view class="name">俏皮女王</view>
-							<view class="name2">我爱买买买></view>
+							<view class="name">{{userInfo.nickname}}</view>
+							<view class="name2">我爱买买买</view>
 						</view>
 					</view>
 					<view class="right_set">
@@ -58,20 +58,22 @@
 								{{item.text}}
 							</view>
 						</view>
+						<!-- #ifndef MP -->
 						<view class="item" @click="navTo('联系客服')">
 							<view class="img_c">
 								<image src="../../static/img/mine/fw-lx.png" mode="" class="bg_img_c"></image>
 							</view>
-							<!-- #ifdef MP -->
 							<button  open-type="contact" class="kf_btn">联系客服</button>
-							<!-- #endif -->
-							<!-- #ifndef MP -->
-							<button  open-type="contact" class="kf_btn">联系客服</button>
-							<!-- <view class="">
-								联系客服
-							</view> -->
-							<!-- #endif -->
 						</view>
+						<!-- #endif -->
+						<!-- #ifdef MP -->
+						<view class="item" >
+							<view class="img_c" @click="navTo('联系客服')">
+								<image src="../../static/img/mine/fw-lx.png" mode="" class="bg_img_c"></image>
+							</view>
+							<button  open-type="contact" class="kf_btn">联系客服</button>
+						</view>
+						<!-- #endif -->
 					</view>
 				</view>
 			</view>
@@ -147,7 +149,8 @@
 						img: "fw-yj.png",
 						text: "意见反馈"
 					}
-				]
+				],
+				xitongMsg:[]
 			};
 		},
 		computed: {
@@ -179,6 +182,11 @@
 			// 	this.mineInfo = res.data
 			// })
 			console.log(this.SystemInfoL)
+			this.$getApi('/App/Index/getSysConfig',{},res=>{
+				console.log(res.data,"获取系统配置信息")
+				this.xitongMsg = res.data
+			})
+			
 		},
 		methods: {
 			toOrder(ins) {
@@ -257,20 +265,13 @@
 					})
 				} else
 				if (text == '联系客服') {
-					// #ifdef MP
-					console.log("1212")
-					// #endif
-					// #ifndef MP
+					let phoneL  = _.filter(this.xitongMsg,item=>{
+						return item.remark.indexOf("客服电话") != -1
+					})[0].value;
+					console.log(phoneL)
 					uni.makePhoneCall({
-						phoneNumber: "000-88888"
-					});
-					// #endif
-					// this.$getApi('/api/common/service',"",res=>{
-					// 	console.log(res)
-					// 	uni.makePhoneCall({
-					// 	    phoneNumber: res.data.mobile 
-					// 	});
-					// })
+						phoneNumber: phoneL
+					});	
 				} 
 			}
 		}

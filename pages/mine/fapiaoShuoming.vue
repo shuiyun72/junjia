@@ -32,6 +32,7 @@
 			请更新到最新版本的APP,在您的订单签收成功后，可以申
 			请开具电子发票。
 		</view>
+		<!-- <rich-text type="text" :nodes="textHtml"></rich-text> -->
 	</view>
 </template>
 
@@ -39,8 +40,14 @@
 	export default {
 		data() {
 			return {
-				
+				textHtml:""
 			};
+		},
+		mounted() {
+			this.$getApi('/App/Public/getArticle', {type:5}, resLei => {
+				console.log(resLei.data.content,"发票说明")
+				this.textHtml = resLei.data.content
+			})
 		}
 	}
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<view class="order_detail">
 		<view class="order_header">
-			<view class="deng1" v-if="orderState == 0">
+			<view class="deng1" v-if="orderItem.status == -1">
 				<view class="part1">
 					<text class="d_t1">等待支付 剩余</text>
 					<text class="d_t2">03:20</text>
@@ -10,12 +10,12 @@
 					逾期未支付订单将自动取消
 				</view>
 			</view>
-			<view class="deng1"  v-if="orderState == 1">
+			<view class="deng1"  v-if="orderItem.status == 1">
 				<view class="d_t3">
-					预计10-21 10:30-11:00送达
+					预计{{orderItem.receive_time}}送达
 				</view>
 			</view>
-			<view class="deng1" v-if="orderState == 2">
+			<view class="deng1" v-if="orderState == 0">
 				<view class="part1">
 					<text class="d_t1">订单已取消</text>
 				</view>
@@ -24,16 +24,16 @@
 				</view>
 			</view>
 			<view class="part3">
-				<view class="btn del round" v-if="orderState == 0 || orderState == 1" @click="quxiaoOrder">
+				<!-- <view class="btn del round" v-if="orderState == 0 || orderState == 1" @click="quxiaoOrder">
 					取消订单
-				</view>
-				<view class="btn blue round" v-if="orderState == 0">
+				</view> -->
+				<view class="btn blue round" v-if="orderItem.status == -1">
 					去支付
 				</view>
-				<view class="btn blue round" v-if="orderState == 1" @click="zailaiOrder">
+				<view class="btn blue round" v-if="orderItem.status == 1" @click="zailaiOrder">
 					再来一单
 				</view>
-				<view class="btn del round" v-if="orderState == 2">
+				<view class="btn del round" v-if="orderItem.status == 2 || orderItem.status == 3"  @click="zailaiOrder">
 					再来一单
 				</view>
 				<view  @click="lianxiKF" class="btn del round">
@@ -47,7 +47,7 @@
 					期望时间 :
 				</view>
 				<view class="value">
-					10-21 10:30 - 11:00
+					{{orderItem.receive_time}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -55,7 +55,15 @@
 					收件人 :
 				</view>
 				<view class="value">
-					张大大
+					{{orderItem.user_name}}
+				</view>
+			</view>
+			<view class="row_c">
+				<view class="attr">
+					收件人电话 :
+				</view>
+				<view class="value">
+					{{orderItem.user_phone}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -63,7 +71,7 @@
 					收货地址 :
 				</view>
 				<view class="value">
-					收货地址收货地址收货地址收货地址收货地址收货地址收货地址收货地址
+					{{orderItem.user_address}}
 				</view>
 			</view>
 		</view>
@@ -73,23 +81,23 @@
 					商品
 				</view>
 				<view class="num">
-					4件
+					{{orderItem.total_num}}件
 				</view>
 			</view>
-			<view class="i_item" v-for="i in 4">
+			<view class="i_item" v-for="item in orderItem.goods_list">
 				<view class="left">
-					<image src="../../static/img/order/dingd4.png" class="img_m" mode=""></image>
+					<image :src="item.goods_thumb" class="img_m" mode=""></image>
 					<view class="info_cc">
 						<view class="in1 shengluehao">
-							地瓜才450g地瓜才450g
+							{{item.goods_name}}
 						</view>
 						<view class="in2">
-							x <text>7.9</text> 
+							x <text>{{item.price}}</text> 
 						</view>
 					</view>
 				</view>
 				<view class="right">
-					x1
+					x{{item.num}}
 				</view>
 			</view>
 		</view>
@@ -105,7 +113,7 @@
 					订单总价 :
 				</view>
 				<view class="value">
-					23.88
+					{{Number(orderItem.credit)+ Number(orderItem.coupon_money)}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -113,7 +121,7 @@
 					优惠 :
 				</view>
 				<view class="value">
-					0
+					{{orderItem.coupon_money}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -121,7 +129,7 @@
 					配送费 :
 				</view>
 				<view class="value">
-					0
+					{{orderItem.credit >= peisongfei ?'0': peisongfei}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -129,7 +137,7 @@
 					实付 :
 				</view>
 				<view class="value">
-					23.88
+					{{orderItem.credit >= peisongfei ?'0': (Number(peisongfei) + Number(orderItem.credit))}}
 				</view>
 			</view>
 		</view>
@@ -145,7 +153,7 @@
 					订单编号 :
 				</view>
 				<view class="value">
-					12345645645645645
+					{{orderItem.order_num}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -161,7 +169,7 @@
 					备注信息 :
 				</view>
 				<view class="value">
-					备注备注备注备注备注备
+					{{orderItem.remark}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -198,8 +206,26 @@
 	export default {
 		data() {
 			return {
-				orderState:1
+				orderState:1,
+				orderItem:{},
+				peisongfei:0,
+				xitongMsg:[],
+				orderId:0
 			};
+		},
+		onLoad(ph) {
+			this.orderId = ph.orderId;
+			this.$getApi("/App/Goods/orderDetail",{id:ph.orderId}, res => {
+				console.log(res.data,"订单详情")
+				this.orderItem = res.data[0];
+			})
+			this.$getApi('/App/Index/getSysConfig',{},res=>{
+				console.log(res.data,"配送费")
+				this.xitongMsg = res.data;
+				this.peisongfei  = _.filter(this.xitongMsg,item=>{
+					return item.remark.indexOf("配送费") != -1
+				})[0].value;
+			})
 		},
 		methods:{
 			quxiaoOrder(){
@@ -216,13 +242,17 @@
 				});
 			},
 			lianxiKF(){
+				let phoneL  = _.filter(this.xitongMsg,item=>{
+					return item.remark.indexOf("客服电话") != -1
+				})[0].value;
+				console.log(phoneL)
 				uni.makePhoneCall({
-				    phoneNumber: '15225661000' //仅为示例
-				});
+					phoneNumber: phoneL
+				});	
 			},
 			zailaiOrder(){
 				uni.navigateTo({
-					url:"./orderTrue"
+					url:"./orderTrue?orderId="+this.orderId
 				})
 			}
 		}

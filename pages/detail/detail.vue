@@ -88,14 +88,14 @@
 				</view>
 			</view>
 			<sy-scroll-x class="p26">
-				<view class="weke_box_item" v-for="item in 10" @click="itemClick(item)">
-					<image src="../../static/img/img-sp17.png" class="t_img" mode=""></image>
+				<view class="weke_box_item" v-for="item in tuijianList" @click="itemClick(item)">
+					<image :src="item.thumb" class="t_img" mode=""></image>
 					<view class="title1 shengluehao">
-						陆地枸杞9打开拉肚肚
+						{{item.name}}
 					</view>
 					<view class="zhuijia">
 						<view class="money red">
-							￥<text class="m">12.8</text>
+							￥<text class="m">{{item.price}}</text>
 						</view>
 						<view class="iconfont iconjia1"></view>
 					</view>
@@ -128,6 +128,9 @@
 					<view class="iconfont icongouwuche"></view>
 					<view class="text">
 						购物车
+					</view>
+					<view class="sm_text" v-if="carShowNum>0">
+						{{carShowNum}}
 					</view>
 				</view>
 			</view>	
@@ -208,7 +211,8 @@
 				},
 				imgsIndex: 0,
 				itemDetail:{},
-				isShoucang:false
+				isShoucang:false,
+				tuijianList:[]
 			};
 		},
 		onLoad(ph) {
@@ -217,23 +221,50 @@
 				console.log(res.data,"商品详情")
 				let itemDetail = res.data;
 				this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
-				itemDetail.num = 0;
+				
 				itemDetail.sel = 1;
+				let isBuy = _.filter(this.shopCar,itemQ=>{
+					return itemQ.id == itemDetail.id
+				})
+				if(isBuy.length > 0){
+					itemDetail.num = isBuy[0].num;
+				}else{
+					itemDetail.num = 0;
+				}
 				this.itemDetail  = itemDetail
+			})
+			this.$getApi("/App/Goods/getSellingGoodData", {}, res => {
+				console.log(res.data,"大家经常买")
+				let itemDetail = res.data;
+				this.tuijianList  = itemDetail
 			})
 		},
 		computed:{
 			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar","classifyId"]),
+			carShowNum() {
+				let carShowNum = 0;
+				_.map(this.shopCar, itemC => {
+					carShowNum += itemC.num
+				})
+				return carShowNum;
+			}
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
 			itemClick(item){
 				this.$getApi("/App/Goods/goodsInfo", {id:item.id}, res => {
-					console.log(res.data,"商品详情")
 					let itemDetail = res.data;
 					this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
-					itemDetail.num = 0;
+					
 					itemDetail.sel = 1;
+					let isBuy = _.filter(this.shopCar,itemQ=>{
+						return itemQ.id == itemDetail.id
+					})
+					if(isBuy.length > 0){
+						itemDetail.num = isBuy[0].num;
+					}else{
+						itemDetail.num = 0;
+					}
 					this.itemDetail  = itemDetail
 				})
 			},
@@ -344,6 +375,23 @@
 				}
 				&.active{
 					color: $uni-or;
+				}
+			}
+			.car{
+				position:relative;
+				.sm_text{
+					background-color: #f00;
+					color: #fff;
+					position:absolute;
+					width: 50upx;
+					height: 50upx;
+					top: -14upx;
+					right: 0;
+					line-height: 50upx;
+					text-align: center;
+					border-radius: 50%;
+					font-size: 32upx;
+					transform: scale(.7);
 				}
 			}
 		}

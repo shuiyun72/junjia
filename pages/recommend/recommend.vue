@@ -26,7 +26,7 @@
 						</view>
 					</view>
 					<view class="rec_body_sy">
-						<sy-foot2 v-for="item in parent.list" :item="item" @click.stop="foot2Click">
+						<sy-foot2 v-for="item in parent.list" :item="item" @click="foot2Click(item)">
 							<view class="num_add_sy">
 								<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item,pIndex)"></view>
 								<view class="n" v-if="item.num > 0">{{ item.num }}</view>
@@ -81,10 +81,28 @@
 				uni.setNavigationBarTitle({
 					title: ph.title
 				})
+				this.$getApi('/App/Goods/getActCate', {type:3}, resLei => {
+					console.log(resLei,"买一送一")
+					let allClassList = [];
+					_.map(resLei.data,itemClass=>{
+						 this.getOrderLits(itemClass)
+					})
+					
+					console.log(this.allClassList)
+				})
 			}
 			if (ph.title == '团购产品') {
 				uni.setNavigationBarTitle({
 					title: ph.title
+				})
+				this.$getApi('/App/Goods/getActCate', {type:4}, resLei => {
+					console.log(resLei,"买一送一")
+					let allClassList = [];
+					_.map(resLei.data,itemClass=>{
+						 this.getOrderLits(itemClass)
+					})
+					
+					console.log(this.allClassList)
 				})
 			}
 		},
@@ -386,7 +404,7 @@
 
 			.classify_nav {
 				display: flex;
-				justify-content: space-between;
+				// justify-content: space-between;
 				background-color: rgba(255, 255, 255, .9);
 				padding: 26upx 10upx 26upx;
 				border-radius: 30upx 30upx 0 0;
@@ -400,6 +418,7 @@
 					border-radius: 20upx;
 					white-space: pre-wrap;
 					flex-shrink: 0;
+					margin-right: 16upx;
 					&.active {
 						background-color: $uni-bl;
 						color: #fff;
