@@ -11,7 +11,7 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 	token = token == "false" ? false : true;
 	data = data ? data : {};
 	// console.log("token", token);
-	let userInfo = uni.getStorageSync('userInfo');
+	let userInfo = this.$store.state.userInfo; 
 	if (token && userInfo) {
 		data.uid = userInfo.id;
 	}

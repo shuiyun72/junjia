@@ -118,6 +118,14 @@
 			
 			this.getOrederList(this.tabSel)
 		},
+		onPullDownRefresh() {
+			let this_ = this;
+			this.getOrederList(this.tabSel)
+			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
+			setTimeout(function() {
+				uni.stopPullDownRefresh(); //停止下拉刷新动画
+			}, 1000);
+		},
 		methods: {
 			back(){
 				uni.switchTab({
@@ -184,6 +192,7 @@
 					this.$getApi("/App/Goods/confirmOrder", {id:parentOrder.id}, res => {
 						console.log(res.data,"ccccc3161")
 						this.tabSel = 3;
+						this.getOrederList(3)
 					})
 				}
 			

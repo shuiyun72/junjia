@@ -4,20 +4,20 @@ import _ from "../until/lodash"
 Vue.use(Vuex)
 console.log(uni.getStorageSync("userInfo"))
 let hasLogin = (uni.getStorageSync("userInfo") && uni.getStorageSync("userInfo").id) ? true : false;
-uni.setStorage({ //缓存用户登陆状态
-	key: 'userInfo',
-	data: {
-	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJLJSviajaYwLrWzrh8J9ZrYSHXWo3Pdb7otFsaeGXQVrgvf2Vib40iaTyVsTlqrcdcgMa4S32lZqB6A/132",
-	id: "1",
-	nickname: "洪涛",
-	status: "1"
-	}
-})
+// uni.setStorage({ //缓存用户登陆状态
+// 	key: 'userInfo',
+// 	data: {
+// 	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJLJSviajaYwLrWzrh8J9ZrYSHXWo3Pdb7otFsaeGXQVrgvf2Vib40iaTyVsTlqrcdcgMa4S32lZqB6A/132",
+// 	id: "5",
+// 	nickname: "阿木木",
+// 	status: "1"
+// 	}
+// })
 console.log("111", hasLogin)
 const store = new Vuex.Store({
 	state: {
 		hasLogin: hasLogin,
-		userInfo: uni.getStorageSync("userInfo") || undefined,
+		userInfo: uni.getStorageSync("userInfo") || {},
 		httpp: "https://www.henankedou.com/uploads/",
 		selCity: "郑州",
 		location:{

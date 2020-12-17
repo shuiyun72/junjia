@@ -171,13 +171,13 @@
 					</view>
 				</view>
 			</view>
-			<sy-scroll-x class="p26">
-				<view class="item_nav1" v-for="(item,index) in 10" :class="{'active':index == nav2dex}" @click="itemNav2(item,index)">
+			<sy-scroll-x class="p26">  
+				<view class="item_nav1" v-for="(item,index) in firstNavList1" :class="{'active':index == nav2dex}" @click="toClassify(item)">
 					<view class="title1">
 						限量抢购
 					</view>
 					<view class="money">
-						好货专区
+						{{item.name}}
 					</view>
 				</view>
 			</sy-scroll-x>
@@ -195,7 +195,7 @@
 						</view>
 					</sy-foot2>
 				</view>
-				<view class="more">
+				<view class="more"  @click="toNavAll('水果')">
 					查看全部<text class="iconfont iconjiantou"></text>
 				</view>
 			</view>
@@ -212,8 +212,8 @@
 						</view>
 					</sy-foot2>
 				</view>
-				<view class="more">
-					查看全部<text class="iconfont iconjiantou"></text>
+				<view class="more" @click="toNavAll('蔬菜')">
+					查看全部<text class="iconfont iconjiantou" ></text>
 				</view>
 			</view>
 			<!-- 底部商品 -->
@@ -508,6 +508,25 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify","setReCar"]),
+			toNavAll(el){
+				console.log(el)
+				let this_ = this;
+				let shuiguoId = {};
+				if(el == "水果"){
+					shuiguoId = _.filter(this_.classifyList, item => {
+						return item.name.includes('水果')
+					})[0];
+				}
+				if(el == "蔬菜"){
+					shuiguoId = _.filter(this_.classifyList, item => {
+						return item.name.includes('蔬菜')
+					})[0];
+				}
+				console.log(shuiguoId)
+				uni.navigateTo({
+					url:"../home/searchResult?searchId="+shuiguoId.id+"&searchName="+shuiguoId.name
+				})
+			},
 			init() {
 				let this_ = this;
 				// 轮播图

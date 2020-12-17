@@ -139,7 +139,7 @@
 							console.log(JSON.stringify(orderMsgL))
 							uni.requestPayment({
 								provider: 'wxpay',
-								orderInfo: orderMsgL, //微信、支付宝订单数据
+								orderInfo: resbuy.data, //微信、支付宝订单数据
 								success: function(res) {
 									this_.$msg(JSON.stringify(res))
 									uni.navigateTo({

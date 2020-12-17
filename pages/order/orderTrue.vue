@@ -374,15 +374,15 @@
 							}
 							
 							let orderMsgL = {
-								appId: resbuy.data.appid,
-								nonceStr: resbuy.data.noncestr,
+								appid: resbuy.data.appId,
+								partnerid: resbuy.data.partnerId,
+								prepayid: resbuy.data.prepayId,
+								timestamp: resbuy.data.timeStamp,
+								noncestr: resbuy.data.nonceStr,
 								package: resbuy.data.package,
-								// partnerId: resbuy.data.partnerid,
-								prepayId: resbuy.data.prepayid,
-								paySign: resbuy.data.sign,
-								signType: "MD5",
-								timeStamp: resbuy.data.timestamp.toString()
+								sign: resbuy.data.paySign
 							}
+							
 							// let orderMsgL = {
 							// 	appId: resbuy.data.appId,
 							// 	nonceStr: resbuy.data.nonceStr,
@@ -404,7 +404,7 @@
 								console.log(JSON.stringify(orderMsgL))
 								uni.requestPayment({
 								    provider: 'wxpay',
-								    orderInfo: resbuy.data, //微信、支付宝订单数据
+								    orderInfo: orderMsgL, //微信、支付宝订单数据
 								    success: function (res) {
 										this_.$msg(JSON.stringify(res))
 										uni.navigateTo({

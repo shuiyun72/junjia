@@ -156,6 +156,15 @@
 				this.classTop = 157 - res.scrollTop;
 				this.isTop = false;
 			} else {
+				this.classTop = 0;
+				this.isTop = true;
+			}
+			// #endif
+			// #ifdef H5
+			if (res.scrollTop <= 112) {
+				this.classTop = 157 - res.scrollTop;
+				this.isTop = false;
+			} else {
 				this.classTop = 45;
 				this.isTop = true;
 			}
@@ -217,7 +226,9 @@
 				let this_ = this;
 				this.classifyIndex = index;
 
-				// #ifdef MP
+				// #ifndef H5
+				
+				
 				let query = wx.createSelectorQuery();
 				let parentTop = 0;
 				query.select(".recommend").boundingClientRect((res1) => {
@@ -231,7 +242,7 @@
 					})
 				}).exec();
 				// #endif
-				// #ifndef MP
+				// #ifdef H5
 				let titleNames = this.$refs.titleName;
 				_.map(titleNames, itemL => {
 					if (item.name == itemL.$el.innerText) {
@@ -243,6 +254,7 @@
 					}
 				})
 				// #endif
+			
 
 			},
 			toShopCar() {

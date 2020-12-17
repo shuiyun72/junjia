@@ -10,11 +10,11 @@
 					<view class="iconfont iconshangxia"></view>
 				</view>
 			</view>
-			<view class="part2" v-if="isClassifySearch">
+			<!-- <view class="part2" v-if="isClassifySearch">
 				<view class="fenlei_item" :class="{'active':index==search2Sel}" v-for="(item,index) in search2" @click="search2Show(item,index)">
 					{{item}}
 				</view>
-			</view>
+			</view> -->
 			
 		</view>
 		<view class="foot_list_show">
@@ -125,6 +125,18 @@
 					title: ph.searchName
 				})
 				this.searchResult(ph.keyword)
+			}
+			if(ph.searchId){
+				uni.setNavigationBarTitle({
+					title: ph.searchName
+				})
+				this.$getApi("/App/Goods/getGoodsList", {
+					category_id: ph.searchId
+				}, res => {
+					console.log(res.data, "获取商品")
+					this.clacCar(res.data)
+				})
+				
 			}
 		},
 		data() {

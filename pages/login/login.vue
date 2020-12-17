@@ -65,23 +65,27 @@
 											open_id:info.userInfo.openId,
 											nickname:info.userInfo.nickName,		
 											avatar:info.userInfo.avatarUrl,
-											type:4,
-											UnionID:info.userInfo.unionId
+											type:4
+											// ,
+											// UnionID:info.userInfo.unionId
 										}
 										console.log(dataLogin)
 										this_.$getApi("/App/Public/thirdLogin",dataLogin, res => {
 											console.log(res,"登录")
-											this_.$store.commit("login",res.data)
+											// 判断 this_.openP()
+											this_.$store.commit("login", res.data)
 											this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
 												console.log(resCarC.data, "获取购物车")
 												// this_.lunboList = res.data
 												let carInfo = resCarC.data == "" ? [] : resCarC.data;
 												this_.$store.commit("setReCar",carInfo)
 											})
+											console.log(res.data)
 											uni.switchTab({
 												url:"../home/home"
 											})
 											uni.hideLoading();
+											
 										},"false")
 									},
 									fail: () => {

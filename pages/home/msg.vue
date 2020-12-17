@@ -101,8 +101,11 @@
 
 			toNav(el) {
 				if (el == "daifukuan"){
-					uni.navigateTo({
-						url: '../order/order?ins=2'
+					// uni.navigateTo({
+					// 	url: '../order/order?ins=2'
+					// })
+					uni.navigateBack({
+						delta:2
 					})
 				}
 				if(el == "shezhi"){
