@@ -85,7 +85,7 @@
 		data() {
 			return {
 				allFoot:{
-					name:"全部水果",
+					name:"全部",
 					id:""
 				},
 				secondList:{},
@@ -96,8 +96,10 @@
 			};
 		},
 		methods: {
+			...mapMutations(["setClassify"]),
 			getSecondList(id){
 				console.log(id)
+				this.setClassify(id)
 				this.footListId = id;
 				this.$getApi("/App/Public/getNextCategory", {id:id}, res => {
 					console.log(res.data,"获取二级菜单")
@@ -133,10 +135,16 @@
 				this.getSecondList(item.id)
 			},
 			toClassify(item){
-				console.log(item)
-				uni.navigateTo({
-					url:"../home/searchResult?searchName="+item.name+'&fromType=classify'+"&footId="+item.id
-				})
+				if(item.name == "全部"){
+					uni.navigateTo({
+						url:"../home/searchResult?searchName="+this.classifyList[this.classifySel].name+'&fromType=classify'+"&footId="+item.id
+					})
+				}else{
+					uni.navigateTo({
+						url:"../home/searchResult?searchName="+item.name+'&fromType=classify'+"&footId="+item.id
+					})
+				}
+				
 			},
 			
 			toSearchR(){

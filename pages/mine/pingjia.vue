@@ -1,32 +1,32 @@
 <template>
 	<view class="appraise">
 		<view class="appraise_body">
-			<view class="item" v-for="item in myA">
+			<view class="item" v-for="item in pingjiaList">
 				<view class="a_title">
 					<text class="ping">评</text>
 					<text class="ps">订单编号: </text>
-					<text class="ps"> {{item.code}}</text>
+					<text class="ps"> {{item.order_num}}</text>
 				</view>
 				<view class="pj_time">
 					<view class="star_box">
-						<uni-rate :value="item.star" :margin="5" :size="18" :disabled="true"/>
+						<uni-rate :value="Number(item.star)" :margin="5" :size="18" :disabled="true"/>
 						<text class="star_n">{{starC(item.star)}}</text>
 					</view>
 					<view class="time">
-						2020-08-18 18:00
+						{{item.time}}
 					</view>
 				</view>
 				<view class="a_raise">
 					{{item.content}}
 				</view>
 				<view class="img_box">
-					<view class="item_img" :style="'background-image: url(../../static/img/'+imgL+');'" v-for="imgL in item.imgs">
+					<view class="item_img" :style="'background-image: url('+imgL+');'" v-for="imgL in item.pic">
 					</view>
 				</view>
 				<view class="foot_l">
-					<image src="../../static/img/img-sp17.png" class="foot_img" mode=""></image>
+					<image :src="item.goods_thumb" class="foot_img" mode=""></image>
 					<view class="text_cc">
-						{{item.cc}}
+						{{item.name}}
 					</view>
 				</view>
 			</view>
@@ -39,42 +39,14 @@
 	export default {
 		data() {
 			return {
-				myA:[{
-					code:"121212121212",
-					operator:{
-						
-					},
-					star:4,
-					tags:[1,2],
-					content:"特别好吃特别好吃特别好吃特别好吃特别好吃",
-					imgs:["img-pingj1.png","img-pingj2.png","img-pingj3.png"],
-					img:"img-pingj1.png",
-					cc:"南非进口南非进口南非进口"
-				},{
-					code:"121212121212",
-					operator:{
-						
-					},
-					star:4,
-					tags:[1,2],
-					content:"特别好吃特别好吃特别好吃特别好吃特别好吃",
-					imgs:["img-pingj1.png","img-pingj2.png","img-pingj3.png","img-pingj3.png","img-pingj1.png"],
-					img:"img-pingj1.png",
-					cc:"南非进口南非进口南非进口"
-				}],
-				orderReject:[
-					{cause:"服务态度好",text:"两个订单距离太远,无法及时赶到",id:1003},
-					{cause:"不错",text:"订单时间不够,无法及时赶到",id:1004},
-					{cause:"汽车清洗的很干净",text:"订单订单过多,无法及时赶到",id:1005}
-				],
-				rejectIndex:0,
+				pingjiaList:[]
 			};
 		},
 		onShow() {
-			// this.$getApi('/api/user/my/comment',{},res=>{
-			// 	console.log(res.data.data)
-			// 	this.myA = res.data.data;
-			// })
+			this.$getApi('/App/Goods/myCommentList',{},res=>{
+				console.log(res.data,"我的评价")
+				this.pingjiaList = res.data;
+			})
 		},
 		computed:{
 			httpp(){
@@ -86,6 +58,7 @@
 				
 			},
 			starC(n){
+				n = Number(n);
 				switch(n){
 				    case 1 : return "差评"; 
 				       break; //可选

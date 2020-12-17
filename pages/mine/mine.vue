@@ -1,6 +1,6 @@
 <template>
 	<view class="mine">
-		<view class="">
+		<view class="" v-if="hasLogin">
 			<!-- #ifdef MP -->
 			<view class="user_info" :style="{ 'padding-top': (SystemInfoL.menu.top) + 'px' }">
 				<!-- #endif -->
@@ -98,7 +98,7 @@
 						ins: 2,
 						img: "daifk.png",
 						text: "待收货",
-						num: 1
+						num: 0
 					},
 					{
 						ins: 3,
@@ -154,7 +154,7 @@
 			};
 		},
 		computed: {
-			...mapState(["httpp", "SystemInfo", "userInfo"]),
+			...mapState(["httpp", "SystemInfo", "userInfo","hasLogin"]),
 			SystemInfoL() {
 				// #ifdef MP
 				return JSON.parse(this.SystemInfo)
@@ -173,14 +173,33 @@
 					'statusBarHeight': 20
 				}
 				// #endif
-
 			}
 		},
+		onShow() {
+			if(this.hasLogin == false){
+				this.$msg('您还没有登录,请登录')
+				setTimeout(()=>{
+					uni.navigateTo({
+						url:"../login/login"
+					})
+				},1000)
+				
+			}else{
+				this.$getApi('/App/Index/getSysConfig',{},res=>{
+					console.log(res.data,"获取系统配置信息")
+					this.xitongMsg = res.data
+				})
+				this.$getApi('/App/Index/getTipsNum',{type:3},res=>{
+					console.log(res.data,"订单数量")
+					this.orderList[0].num = res.data.order_num1;
+					this.orderList[1].num = res.data.order_num2;
+					this.orderList[2].num = res.data.order_num3;
+					// this.xitongMsg = res.data
+				})
+			}
+			
+		},
 		mounted() {
-			// this.$getApi('/api/user/info',"",res=>{
-			// 	console.log(res)
-			// 	this.mineInfo = res.data
-			// })
 			console.log(this.SystemInfoL)
 			this.$getApi('/App/Index/getSysConfig',{},res=>{
 				console.log(res.data,"获取系统配置信息")

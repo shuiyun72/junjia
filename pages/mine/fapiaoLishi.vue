@@ -6,7 +6,7 @@
 					发票抬头 :
 				</view>
 				<view class="text">
-					{{item.title}}
+					{{item.invoice_name}}
 				</view>
 			</view>
 			<view class="hang">
@@ -14,7 +14,7 @@
 					公司税号 :
 				</view>
 				<view class="text">
-					{{item.shuihao}}
+					{{item.invoice_num}}
 				</view>
 			</view>
 			<view class="hang">
@@ -22,7 +22,7 @@
 					发票金额 :
 				</view>
 				<view class="text">
-					{{item.money}}
+					{{item.credit}}
 				</view>
 			</view>
 			<view class="hang">
@@ -38,7 +38,7 @@
 					申请时间 :
 				</view>
 				<view class="text">
-					{{item.time}}
+					{{getTime(item.create_time)}}
 				</view>
 			</view>
 		</view>
@@ -63,6 +63,19 @@
 					time:"2020-11-16"
 				}]
 			};
+		},
+		onShow() {
+			this.$getApi("/App/Goods/invoiceList", {}, res => {
+				console.log(res.data)
+				this.lishiList = res.data
+				
+			});
+		},
+		methods:{
+			getTime(time){
+				console.log(new Date(time))
+				return new Date(parseInt(time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ')
+			}
 		}
 	}
 </script>

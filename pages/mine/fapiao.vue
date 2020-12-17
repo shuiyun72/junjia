@@ -49,32 +49,21 @@
 	export default {
 		data() {
 			return {
-				fapiaoList:[{
-        "id": "1",
-        "order_num": "SN_202011252311",
-        "credit": "9.80",
-        "num": "2",
-		sel:1
-    },{
-        "id": "2",
-        "order_num": "SN_202011252311",
-        "credit": "9.80",
-        "num": "2",
-		sel:1
-    }]
+				fapiaoList:[]
 			};
 		},
 		onShow() {
-			_.map(this.fapiaoList,item=>{
-				item.sel = 1
-			})
 			this.$getApi("/App/Goods/invoiceOrders", {}, res => {
-				if(res.data.length > 0){
-					this.fapiaoList = res.data;
+				console.log(res.data)
+				let fapiaoList = [];
+				if(res.data.length == 0){
+					this.fapiaoList = [];
 				}else{
-					_.map(this.fapiaoList,item=>{
+					_.map(res.data,item=>{
 						item.sel = 1
+						fapiaoList.push(item)
 					})
+					this.fapiaoList = fapiaoList
 				}
 			});
 		},

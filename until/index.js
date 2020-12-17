@@ -30,28 +30,31 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 				callsuc instanceof Function && callsuc(res.data)
 			} else
 			if (res.data.status == 0) {
-				this.$msg(res.data.msg)
+				if(res.data.msg.indexOf("已领取过该优惠券") != -1){
+					uni.setStorageSync('lingquQ',1)
+				}
+				if(res.data.msg.indexOf("未登录") !=  -1 ){
+					uni.navigateTo({
+						url:"../../pages/login/login"
+					})
+				}else{
+					this.$msg(res.data.msg)
+				}
 				return false
 			} else
 			if (res.data.status == 401) {
 				this.$msg("请重新登录")
 				// #ifndef MP
 					this.$store.commit("logout");
-					uni.reLaunch({
-						url: '../login/login',
-						success(){
-							// location.reload()
-						} 
+					uni.navigateTo({
+						url:"../../pages/login/login"
 					})
 				// #endif
 				// #ifdef MP
 					this.$store.commit("logout");
 					setTimeout(()=>{
-						uni.reLaunch({
-							url: '../home/home',
-							success(){
-								// location.reload() 
-							}
+						uni.switchTab({
+							url: '../../pages/home/home'
 						})
 					},1000)
 				// #endif

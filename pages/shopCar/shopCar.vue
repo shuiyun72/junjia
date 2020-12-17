@@ -476,9 +476,12 @@
 			align-items: center;
 			color: #999;
 			padding-left: 26upx;
-
+			.sel_s{
+				position:relative;
+				top:-4upx;
+			}
 			.text {
-				margin-left: 10upx;
+				margin-left: 20upx;
 			}
 		}
 

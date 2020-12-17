@@ -27,7 +27,7 @@
 				<!-- <view class="btn del round" v-if="orderState == 0 || orderState == 1" @click="quxiaoOrder">
 					取消订单
 				</view> -->
-				<view class="btn blue round" v-if="orderItem.status == -1">
+				<view class="btn blue round" v-if="orderItem.status == -1" @click="quzhifu">
 					去支付
 				</view>
 				<view class="btn blue round" v-if="orderItem.status == 1" @click="zailaiOrder">
@@ -161,7 +161,7 @@
 					支付方式 :
 				</view>
 				<view class="value">
-					微信支付
+					{{orderItem.pay_type == 1?"微信":"支付宝"}}
 				</view>
 			</view>
 			<view class="row_c">
@@ -177,7 +177,7 @@
 					下单时间 :
 				</view>
 				<view class="value">
-					2020-10-21 17:08
+					{{orderItem.add_time}}
 				</view>
 			</view>
 			<view class="row_c" v-if="orderState==1 || orderState==2">
@@ -185,17 +185,17 @@
 					支付时间:
 				</view>
 				<view class="value">
-					2020-10-21 17:08
+					{{orderItem.pay_time}}
 				</view>
 			</view>
-			<view class="row_c" v-if="orderState==2">
+			<!-- <view class="row_c" v-if="orderState==2">
 				<view class="attr">
 					取消时间:
 				</view>
 				<view class="value">
 					2020-10-21 17:08
 				</view>
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>
@@ -228,6 +228,11 @@
 			})
 		},
 		methods:{
+			quzhifu(){
+				uni.navigateTo({
+					url:'./orderPay?orderId='+this.orderId
+				})
+			},
 			quxiaoOrder(){
 				uni.showModal({
 				    title: '取消订单',

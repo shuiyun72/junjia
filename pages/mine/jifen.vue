@@ -6,24 +6,24 @@
 				俏皮女王
 			</view>
 			<view class="jif">
-				<text>520</text>积分
+				<text>{{allJifen}}</text>积分
 			</view>
 		</view>
 		<view class="jf_body">
 			<view class="t_name">
 				积分明细
 			</view>
-			<view class="j_item" v-for="item in itemList">
+			<view class="j_item" v-for="item in jifenList">
 				<view class="left">
 					<view class="title_m">
-						{{item.title}}
+						邀请好友
 					</view>
 					<view class="time">
-						{{item.time}}
+						{{item.create_time}}
 					</view>
 				</view>
 				<view class="right">
-					{{item.num}}
+					{{item.money}}
 				</view>
 			</view>
 		</view>
@@ -31,37 +31,27 @@
 </template>
 
 <script>
+	import _ from "../../until/lodash";
 	export default {
 		data() {
 			return {
-				itemList:[
-					{
-						title:"邀请好友",
-						num:"+10",
-						time:"2020-10-21 08:08"
-					},
-					{
-						title:"邀请好友",
-						num:"+10",
-						time:"2020-10-21 08:08"
-					},
-					{
-						title:"邀请好友",
-						num:"+10",
-						time:"2020-10-21 08:08"
-					},
-					{
-						title:"邀请好友",
-						num:"+10",
-						time:"2020-10-21 08:08"
-					},
-					{
-						title:"邀请好友",
-						num:"+10",
-						time:"2020-10-21 08:08"
-					}
-				]
+				jifenList:[]
 			};
+		},
+		onShow() {
+			this.$getApi('/App/User/getUserBalance',{},res=>{
+				console.log(res.data,"我的积分")
+				this.jifenList = res.data;
+			})
+		},
+		computed:{
+			allJifen(){
+				let allN = 0
+				_.map(this.jifenList,item=>{
+					allN+= Number(item.money)
+				})
+				return allN
+			}
 		}
 	}
 </script>

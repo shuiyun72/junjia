@@ -1,33 +1,35 @@
 <template>
 	<view>
-		<view class="pingjia_box_sy2" v-for="ic in 6">
+		<view class="pingjia_box_sy2" v-for="item in pingjiaList">
 			<view class="pingjia_user">
 				<view class="left">
-					<image src="../../static/img/toux.png" class="img" mode=""></image>
+					<image :src="item.avatar" class="img" mode=""></image>
 					<view class="left2">
 						<view class="name shengluehao">
-							dsadsadd
+							{{item.nickname}}
 						</view>
 						<view class="time">
-							2020-08-01
+							{{item.time}}
 						</view>
 					</view>
 				</view>
 				<view class="right">
-					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" v-model="value" class="rate_pj"></uni-rate>
+					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" :value="item.star" class="rate_pj"></uni-rate>
 				</view>
 			</view>
 			
 			<view class="wa_text">
-				橘子很甜,很好吃
+				{{item.content}}
 			</view>
 			<swiper :interval="3000" :duration="1000" class="pingjia_img_box" display-multiple-items=3>
-				<swiper-item v-for="item in pingjiaImg" >
-					<view class="img_item" :style="'backgroundImage: url(../../static/img/liucheng/'+item.img+')'"></view>
+				<swiper-item v-for="itemImg in item.pic" >
+					<view class="img_item" :style="'backgroundImage: url('+itemImg+')'"></view>
 				</swiper-item>
 			</swiper>
 		</view>
-		
+		<view v-show="isLoadMore"> 
+			<uni-load-more :status="loadStatus" ></uni-load-more>
+		</view>
 	</view>
 </template>
 
@@ -42,9 +44,35 @@
 					img: "img-pingj2.png"
 				}, {
 					img: "img-pingj3.png"
-				}]
+				}],
+				page:1,
+				pingjiaList:[],
+				thisId:0,
+				loadStatus:'loading',  //加载样式：more-加载前样式，loading-加载中样式，nomore-没有数据样式
+				isLoadMore:false,  //是否加载中
 			};
+		},
+		onLoad(ph) {
+			this.thisId = ph.id;
+			this.getData()
+		},
+		methods:{
+			getData(){
+				this.$getApi("/App/Goods/pingjiaList", {p:this.page,id:this.thisId}, res => {
+					console.log(res.data,"商品评价")
+					this.isLoadMore = false;
+					this.pingjiaList = this.pingjiaList.concat(res.data);
+				})
+			}
+		},
+		onReachBottom(){  //上拉触底函数
+			  if(!this.isLoadMore){  //此处判断，上锁，防止重复请求
+					this.isLoadMore=true
+					this.page++;
+					this.getData()
+			  }
 		}
+		
 	}
 </script>
 

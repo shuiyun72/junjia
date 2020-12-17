@@ -376,10 +376,11 @@
 				maiyisongyiList: [],
 				tuangouList: [],
 				qiangouList: [],
-				jiuleiList:[]
+				jiuleiList:[],
+				isCeshi:false,
+				lingQ:true
 			};
 		},
-
 		onReachBottom() { //上拉触底函数
 			console.log("more")
 			this.jingxuanFoot()
@@ -432,15 +433,10 @@
 			this.closePopup();
 			clearInterval(this.timer)
 		},
-		mounted() {
-			// 获取购物车
-			this.$getApi("/App/Goods/shop_car", {}, res => {
-				console.log(res.data, "获取购物车")
-				// this_.lunboList = res.data
-				this.$store.commit("setReCar",res.data)
-			})
-		},
 		onShow() {
+			if(uni.getStorageSync('lingquQ') == 1){
+				this.lingQ = false;
+			}
 			let this_ = this;
 			if(!this.hasLogin){
 				// #ifdef MP
@@ -450,7 +446,15 @@
 				this_.openP()
 				// #endif
 			}else{
-				if(this.userInfo.panduan){
+				// 获取购物车
+				this.$getApi("/App/Goods/shop_car", {}, res => {
+					console.log(res.data, "获取购物车")
+					// this_.lunboList = res.data
+					let carInfo = res.data == "" ? [] : res.data;
+					this.setReCar(carInfo)
+				})
+				
+				if(this.userInfo.status == 1 && this.lingQ){
 					this.openP()
 				}else{
 					this.closePopup();
@@ -503,7 +507,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify"]),
+			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify","setReCar"]),
 			init() {
 				let this_ = this;
 				// 轮播图
@@ -698,16 +702,23 @@
 												let dataLogin = {
 													open_id: resOpen.data.openid,
 													nickname: info.userInfo.nickName,
-													avatar: info.userInfo.avatarUrl
+													avatar: info.userInfo.avatarUrl,
+													type:3,
+													UnionID:""
 												}
 												console.log(dataLogin)
 												this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
 													console.log(res, "登录")
 													uni.hideLoading();
-													// 判断 this_.openP()
 													this_.$store.commit("login", res.data)
+													// 获取购物车
+													this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
+														console.log(resCarC.data, "获取购物车")
+														let carInfo = resCarC.data == "" ? [] : resCarC.data;
+														this_.setReCar(carInfo)
+													})
 													console.log(res.data)
-													if(res.data.panduan){
+													if(res.data.status == 1 &&  this_.lingQ){
 														this_.openP()
 													}else{
 														this_.closePopup();
@@ -732,9 +743,10 @@
 			},
 			getPopup() {
 				let this_ = this;
+				this.closePopup();
 				// #ifndef MP
 				if(!this.hasLogin){
-					this.closePopup();
+					
 					uni.navigateTo({
 						url:"../login/login"
 					})
@@ -801,6 +813,13 @@
 				})
 			},
 			toSearch() {
+				console.log("ccc1")
+				if(!this.isCeshi){
+					console.log("ccc2")
+					this.isNoLogin()
+					console.log("ccc3")
+				}
+				console.log("ccc4")
 				uni.navigateTo({
 					url: "./search"
 				})

@@ -4,7 +4,15 @@ import _ from "../until/lodash"
 Vue.use(Vuex)
 console.log(uni.getStorageSync("userInfo"))
 let hasLogin = (uni.getStorageSync("userInfo") && uni.getStorageSync("userInfo").id) ? true : false;
-let shopCar = uni.getStorageSync("shopCar") ? uni.getStorageSync("shopCar") : [];
+uni.setStorage({ //缓存用户登陆状态
+	key: 'userInfo',
+	data: {
+	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJLJSviajaYwLrWzrh8J9ZrYSHXWo3Pdb7otFsaeGXQVrgvf2Vib40iaTyVsTlqrcdcgMa4S32lZqB6A/132",
+	id: "1",
+	nickname: "洪涛",
+	status: "1"
+	}
+})
 console.log("111", hasLogin)
 const store = new Vuex.Store({
 	state: {
@@ -18,7 +26,7 @@ const store = new Vuex.Store({
 		},
 		back: 1,
 		SystemInfo: "",
-		shopCar: shopCar,
+		shopCar: [],
 		itemHg:"",
 		classify:"",
 		orderTrueFoot:[],

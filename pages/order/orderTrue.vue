@@ -177,13 +177,11 @@
 				_.map(this.orderTrueFoot,item=>{
 					numL = numL + Number(item.num)*(Number(item.price)*100)
 				})
-				console.log(this.peisong) 
-				console.log()
 				return numL/100
 			},
 			allMoneyFootsCalcPS(){
 				console.log(this.allMoneyFootsCalc,this.peisong)
-				if(this.allMoneyFootsCalc <= this.mianPeisong){
+				if(this.allMoneyFootsCalc < this.mianPeisong){
 					this.peisong = this.peisong
 				}else{
 					this.peisong = 0
@@ -206,26 +204,61 @@
 			}
 			if(ph.orderId){
 				this.order_id = ph.orderId;
-				this.$getApi("/App/Goods/orderDetail", {id:ph.orderId}, res => {
-					console.log(res.data[0],"1212")
-					let rItem = res.data[0];
-					let addressItem = {
-						address: rItem.user_address.split(" ")[1],
-						name:rItem.user_name,
-						phone: rItem.user_phone,
-						receive_address: rItem.user_address.split(" ")[0]
-					}
-					this.$store.commit("setAddress",addressItem)
-					this.timeText = rItem.receive_time;
-					let goodsList = [];
-					_.map(rItem.goods_list,item=>{
-						item.thumb = item.goods_thumb;
-						item.id = item.goods_id;
-						item.name = item.goods_name;
-						goodsList.push(item)
+				this.$getApi("/App/Goods/anotherOrder", {id:this.order_id}, resCC => {
+					this.$getApi("/App/Goods/orderDetail", {id:ph.orderId}, res => {
+					
+						console.log(resCC,"再来一单")
+						console.log(res.data[0],"1212")
+						let rItem = res.data[0];
+						let addressItem = {
+							address: rItem.user_address.split(" ")[1],
+							name:rItem.user_name,
+							phone: rItem.user_phone,
+							receive_address: rItem.user_address.split(" ")[0]
+						}
+						this.$store.commit("setAddress",addressItem)
+						this.timeText = rItem.receive_time;
+						let goodsList = [];
+						_.map(rItem.goods_list,item=>{
+							item.thumb = item.goods_thumb;
+							item.id = item.goods_id;
+							item.name = item.goods_name;
+							goodsList.push(item)
+						})
+						this.$store.commit("setOrderTrueFoot",goodsList)
+						this.beizhuC = rItem.remark;
+						
+						let order_car = [];
+						this.$getApi("/App/Goods/shop_car", {}, resCar => {
+							console.log(resCar)
+							_.map(resCar.data,itemCar=>{
+								_.map(goodsList,item=>{
+									console.log(item.id,itemCar.id)
+									if(item.id == itemCar.id){
+										order_car.push(itemCar.cart_id+"_"+item.num);
+									}
+								})
+							})
+							console.log(order_car.toString())
+							
+							let huanhouId = 0;
+							if(this.itemHg && this.itemHg.id){
+								huanhouId = this.itemHg.id
+							}else{
+								huanhouId = ""
+							}
+							this.$getApi("/App/Goods/shopping_cart", {shop_ids_num:order_car.toString(),change_goods_id:huanhouId}, resCode => {
+								console.log(resCode,"1212resCode")
+								this.$getApi("/App/Goods/create_order", {str:resCode.data}, res => {
+									console.log(res,"1212")
+									this.$store.commit('clearCar')
+									this.order_id = res.data.order_id;
+									this.total_credit = res.data.total_credit;
+								})
+							})
+						})
+						
 					})
-					this.$store.commit("setOrderTrueFoot",goodsList)
-					this.beizhuC = rItem.remark;
 				})
 			}
 		},
@@ -243,7 +276,10 @@
 				this_.peisong  =  _.filter(res.data,item=>{
 					return item.remark.includes('配送费')
 				})[0].value;
-				console.log(this_.peisong,'配送费')
+				// this_.mianPeisong = _.filter(res.data,item=>{
+				// 	return item.remark.includes('免配送费门槛')
+				// })[0].value;
+				this_.mianPeisong = 0;
 			})
 		},
 		methods:{
@@ -275,7 +311,7 @@
 				}
 				if(el == 'youhuiquan'){
 					uni.navigateTo({
-						url:"../mine/youhuiquan?fromOrder=1"
+						url:"../mine/youhuiquan?fromOrder=1&money="+this.allMoneyFootsCalc
 					})
 				}
 			},
@@ -313,7 +349,7 @@
 						// #endif
 						let dataPay = {
 							type:payType,
-							total_credit:this.total_credit,
+							total_credit:this.allMoneyFootsCalcPS,
 							id:this.order_id
 						}
 						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
@@ -341,7 +377,7 @@
 								appId: resbuy.data.appid,
 								nonceStr: resbuy.data.noncestr,
 								package: resbuy.data.package,
-								partnerId: resbuy.data.partnerid,
+								// partnerId: resbuy.data.partnerid,
 								prepayId: resbuy.data.prepayid,
 								paySign: resbuy.data.sign,
 								signType: "MD5",
@@ -351,8 +387,8 @@
 							// 	appId: resbuy.data.appId,
 							// 	nonceStr: resbuy.data.nonceStr,
 							// 	package: resbuy.data.package,
-							// 	partnerId: resbuy.data.partnerId,
-							// 	prepayId: resbuy.data.prepayId,
+							// 	// partnerId: resbuy.data.partnerId,
+							// 	// prepayId: resbuy.data.prepayId,
 							// 	paySign: resbuy.data.paySign,
 							// 	signType: "MD5",
 							// 	timeStamp: resbuy.data.timeStamp.toString()
@@ -368,10 +404,12 @@
 								console.log(JSON.stringify(orderMsgL))
 								uni.requestPayment({
 								    provider: 'wxpay',
-								    orderInfo: orderMsgL, //微信、支付宝订单数据
+								    orderInfo: resbuy.data, //微信、支付宝订单数据
 								    success: function (res) {
 										this_.$msg(JSON.stringify(res))
-				
+										uni.navigateTo({
+											url:"../home/msg?title=付款成功"
+										})
 								    },
 								    fail: function (err) {
 										console.log('fail:' + JSON.stringify(err));
@@ -385,7 +423,9 @@
 								    provider: 'alipay',
 								    orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
 								    success: function (res) {
-										
+										uni.navigateTo({
+											url:"../home/msg?title=付款成功"
+										})
 								        console.log('success:' + JSON.stringify(res));
 								    },
 								    fail: function (err) {
@@ -408,12 +448,12 @@
 										})
 										if(this_.$store.state.userInfo.groupid != 0){
 											uni.navigateTo({
-												url:"./orderPay?title=购买成功"
+												url:"../home/msg?title=付款成功"
 											})
 										}else{
 											setTimeout(()=>{
 												uni.navigateTo({
-													url:"./orderPay?title=购买成功"
+													url:"../home/msg?title=付款成功"
 												})
 											},600)
 										}

@@ -45,19 +45,25 @@
 					</view>
 				</view>
 				<!-- 备货中 -->
-				<!-- <view class="btn_box" v-if="parent.status == 1">
-					<view class="btn blue sm round">
+				<view class="btn_box" v-if="parent.status == 2">
+					<view class="btn blue sm round"  @click.stop="toNav('zailaiyidan',parent)">
 						再来一单
 					</view>
-				</view> -->
+				</view>
 				<!-- 配送中 -->
-				<view class="btn_box" v-if="parent.status == 1" >
+				<view class="btn_box" v-if="parent.status == 3 || parent.status == 4" >
 					<view class="btn blue sm round" @click.stop="toNav('zailaiyidan',parent)">
 						再来一单
 					</view>
 				</view>
+				
+				<view class="btn_box" v-if="parent.status == 5" >
+					<view class="btn blue sm round" @click.stop="toNav('shouhuo',parent)">
+						确认收货
+					</view>
+				</view>
 				<!-- 待评价 -->
-				<view class="btn_box" v-if="parent.status == 2"  >
+				<view class="btn_box" v-if="parent.status == 6"  >
 					<view class="btn blue_n sm round" @click.stop="toNav('zailaiyidan',parent)">
 						再来一单
 					</view>
@@ -65,7 +71,12 @@
 						去评价
 					</view>
 				</view>
-				<view class="btn_box" v-if="parent.text == '订单已取消'">
+				<view class="btn_box" v-if="parent.status == 7"  >
+					<view class="btn blue sm round" @click.stop="toNav('zailaiyidan',parent)">
+						再来一单
+					</view>
+				</view>
+				<view class="btn_box" v-if="parent.status == 8">
 					<view class="btn blue sm round">
 						再来一单
 					</view>
@@ -117,13 +128,19 @@
 				if(num == -1){
 					return "等待支付"
 				}
-				if(num == 1){
-					return "配送中"
+				if(num == 1 || num == 2){
+					return "备货中"
 				}
-				if(num == 2){
+				if(num == 3 || num == 4){
+					return "运送中"
+				}
+				if(num == 5){
+					return "已送达"
+				}
+				if(num == 6){
 					return "待评价"
 				}
-				if(num == 3){
+				if(num == 7 || num == 8){
 					return "已完成"
 				}
 			},
@@ -136,10 +153,10 @@
 					getState = -1
 				}
 				if(fromNum == 2){
-					getState = 1
+					getState = 9
 				}
 				if(fromNum == 3){
-					getState = 2
+					getState = 6
 				}
 				this.$getApi("/App/User/userOrder", {status:getState}, res => {
 					console.log(res.data,"ccccc3161")
@@ -150,7 +167,7 @@
 				console.log(parentOrder)
 				if(el == 'quzhifu'){
 					uni.navigateTo({
-						url:'./orderPay'
+						url:'./orderPay?orderId='+parentOrder.id
 					})
 				}
 				if(el == 'pingjia'){
@@ -163,6 +180,13 @@
 						url:'./orderTrue?orderId='+parentOrder.id
 					})
 				}
+				if(el == 'shouhuo'){
+					this.$getApi("/App/Goods/confirmOrder", {id:parentOrder.id}, res => {
+						console.log(res.data,"ccccc3161")
+						this.tabSel = 3;
+					})
+				}
+			
 				
 			},
 			toDetail(items){

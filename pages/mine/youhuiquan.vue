@@ -61,11 +61,21 @@
 					}
 				],
 				tabSel:0,
-				juan1ListType :[]
+				juan1ListType :[],
+				fromOrder:"",
+				fromMoney:0
 			};
 		},
 		computed:{
 
+		},
+		onLoad(ph) {
+			if(ph.fromOrder){
+				this.fromOrder = ph.fromOrder
+				this.fromMoney = ph.money
+			}else{
+				this.fromOrder = ""
+			}
 		},
 		onShow() {
 			this.getInit(1);
@@ -83,10 +93,24 @@
 			},
 			selYHQ(item){
 				console.log(item)
-				this.$store.commit("setYouhuiquan",item)
-				uni.navigateBack({
-					delta:1
-				})
+				if(this.fromOrder != ""){
+					if(Number(item.ksy_money) <=  Number(this.fromMoney)){
+						console.log("12112")
+						this.$store.commit("setYouhuiquan",item)
+						uni.navigateBack({
+							delta:1
+						})
+					}else{
+						this.$msg("您的订单金额"+this.fromMoney+"元,不能使用此优惠券")
+					}
+					
+				}else{
+					uni.navigateBack({
+						delta:1
+					})
+				}
+				
+				
 			}
 		}
 	}

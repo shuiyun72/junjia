@@ -238,6 +238,10 @@
 				let itemDetail = res.data;
 				this.tuijianList  = itemDetail
 			})
+			this.$getApi("/App/Goods/pingjiaList", {p:1,id:ph.id}, res => {
+				console.log(res.data,"商品评价")
+				
+			})
 		},
 		computed:{
 			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar","classifyId"]),
@@ -274,7 +278,7 @@
 			showAllRate(){
 				console.log("dsd")
 				uni.navigateTo({
-					url:"./allRate"
+					url:"./allRate?id="+this.itemId
 				})
 			},
 			handleC(el){

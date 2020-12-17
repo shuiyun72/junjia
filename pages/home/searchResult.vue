@@ -3,7 +3,7 @@
 		
 		<view class="" v-if="isClassify" class="search_box_sy">
 			<view class="part1">
-				<view class="show_item" v-for="item in search1" @click="phandlePaixu(item)">
+				<view class="show_item" :class="{'active':(index==search1Sel && item.sel)}" v-for="(item,index) in search1" @click="phandlePaixu(item,index)">
 					<view class="text">
 						{{item.name}}
 					</view>
@@ -63,14 +63,15 @@
 				uni.setNavigationBarTitle({
 					title: ph.searchName
 				})
+				this.phSearchName = ph.searchName
 				this.isClassify = true;
 				this.footId = ph.footId;
-				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:ph.searchName}, res => {
+				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:this.phSearchName}, res => {
 					console.log(res.data,"ccccc3")
 					this.clacCar(res.data)
 				})
-				console.log(ph.searchName.split("/"))
-				let nameFenlei = ph.searchName.split("/");
+				console.log(this.phSearchName.split("/"))
+				let nameFenlei = this.phSearchName.split("/");
 				if( nameFenlei.length > 1){
 					this.isClassifySearch = true;
 					let search2 = ["全部"]
@@ -86,7 +87,11 @@
 					title: '本周水果前十'
 				})
 				this.isPaihang = true
-				
+				console.log(this.classify)
+				this.$getApi("/App/Goods/getTopTenGoods", {category_id:this.classify}, res => {
+					console.log(res.data,"本周水果前十")
+					this.clacCar(res.data)
+				})
 			}
 			if(ph.fromType == 'home'){
 				if(ph.searchName == '新鲜水果'){
@@ -124,16 +129,19 @@
 		},
 		data() {
 			return {
+				phSearchName:"",
 				page:1,
 				search1:[
-					{name:"有货",ins:false},
-					{name:"新品",ins:false},
-					{name:"折扣",ins:false}
+					{name:"有货",ins:"has_stock",sel:false},
+					{name:"新品",ins:"is_new",sel:false},
+					{name:"折扣",ins:"is_discount",sel:false}
 					// ,
 					// {name:"筛选",ins:false}
 				],
+				search1Sel:0,
 				search2:[],
 				search2Sel:0,
+				
 				classifyNav: [{
 						name: "水果"
 					},
@@ -186,7 +194,7 @@
 			}
 		},
 		computed: {
-			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar","classifyId"]),
+			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar","classifyId","classify"]),
 			carShowNum() {
 				let carShowNum = 0;
 				_.map(this.shopCar, itemC => {
@@ -198,8 +206,59 @@
 		
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
-			phandlePaixu(item){
-				
+			phandlePaixu(item,index){
+				this.search1Sel = index;
+				console.log(item.ins)
+				// {name:"有货",ins:"has_stock",sel:false},
+				// {name:"新品",ins:"is_new",sel:false},
+				// {name:"折扣",ins:"is_discount",sel:false},
+				_.map(this.search1,(itemList,index)=>{
+					if(itemList.ins == item.ins){
+						if(this.search1[index].sel == true){
+							this.search1[index].sel = false
+						}else{
+							this.search1[index].sel = true
+						}
+					}
+				})
+				let dataL = {};
+				if(item.ins == "has_stock"){
+					dataL = {
+						keyword:this.phSearchName,
+						has_stock:this.search1[0].sel ? 1 : 2
+					}
+				}
+				if(item.ins == "is_new"){
+					dataL = {
+						keyword:this.phSearchName,
+						is_new:this.search1[1].sel ? 1 : 2
+					}
+				}
+				if(item.ins == "is_discount"){
+					dataL = {
+						keyword:this.phSearchName,
+						is_discount:this.search1[2].sel ? 1 : 2
+					}
+				}
+				// dataL = {
+				// 	keyword:this.phSearchName,
+				// 	has_stock:this.search1[0].sel ? 1 : 2,
+				// 	is_new:this.search1[1].sel ? 1 : 2,
+				// 	is_discount:this.search1[2].sel ? 1 : 2
+				// }
+				this.$getApi("/App/Goods/getGoodsListByCate", dataL, res => {
+					console.log(res.data,"ccccc3")
+					this.clacCar(res.data)
+				})
+				console.log(this.phSearchName.split("/"))
+				let nameFenlei = this.phSearchName.split("/");
+				if( nameFenlei.length > 1){
+					this.isClassifySearch = true;
+					let search2 = ["全部"]
+					this.search2 = search2.concat(nameFenlei)
+				}else{
+					this.isClassifySearch = false
+				}
 			},
 			clacCar(data){
 				let newList = [];
@@ -257,6 +316,11 @@
 				})
 			},
 			search2Show(name,index2){
+				this.search1 = [
+					{name:"有货",ins:"has_stock",sel:false},
+					{name:"新品",ins:"is_new",sel:false},
+					{name:"折扣",ins:"is_discount",sel:false}
+				];
 				let this_ = this;
 				console.log("121212--",this.qiehuan)
 				if(this.qiehuan == true){
@@ -271,14 +335,11 @@
 				}
 			},
 			searchList(name){
-				
-					
-					name = name == '全部' ? "" :name;
-					this.$getApi("/App/Goods/getGoodsList", {category_id:this.footId,keyword:name}, res => {
-						console.log(res.data,"ccccc3")
-						this.clacCar(res.data)
-					})
-				
+				name = name == '全部' ? "" :name;
+				this.$getApi("/App/Goods/getGoodsListByCate", {category_id:this.footId,keyword:name}, res => {
+					console.log(res.data,"ccccc3")
+					this.clacCar(res.data)
+				})
 			},
 			toShopCar() {
 				uni.switchTab({
@@ -383,10 +444,16 @@
 				.text{
 					font-size: 30upx;
 				}
+				
 				.iconshangxia{
 					font-size: 26upx;
 					color: #999;
 					transform: scale(.8);
+				}
+				&.active{
+					.iconshangxia{
+						color: $uni-bl;
+					}
 				}
 			}
 		}
