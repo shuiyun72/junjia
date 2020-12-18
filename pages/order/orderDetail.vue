@@ -156,12 +156,30 @@
 					{{orderItem.order_num}}
 				</view>
 			</view>
-			<view class="row_c">
-				<view class="attr">
-					支付方式 :
+			<view v-if="orderItem.status > 0">
+				<view class="row_c">
+					<view class="attr">
+						支付方式 :
+					</view>
+					<view class="value">
+						{{orderItem.pay_type == 1?"微信":"支付宝"}}
+					</view>
 				</view>
-				<view class="value">
-					{{orderItem.pay_type == 1?"微信":"支付宝"}}
+				<view class="row_c">
+					<view class="attr">
+						下单时间 :
+					</view>
+					<view class="value">
+						{{getDateL(orderItem.add_time)}}
+					</view>
+				</view>
+				<view class="row_c">
+					<view class="attr">
+						支付时间:
+					</view>
+					<view class="value">
+						{{getDateL(orderItem.pay_time)}}
+					</view>
 				</view>
 			</view>
 			<view class="row_c">
@@ -172,22 +190,7 @@
 					{{orderItem.remark}}
 				</view>
 			</view>
-			<view class="row_c">
-				<view class="attr">
-					下单时间 :
-				</view>
-				<view class="value">
-					{{orderItem.add_time}}
-				</view>
-			</view>
-			<view class="row_c" v-if="orderState==1 || orderState==2">
-				<view class="attr">
-					支付时间:
-				</view>
-				<view class="value">
-					{{orderItem.pay_time}}
-				</view>
-			</view>
+			
 			<!-- <view class="row_c" v-if="orderState==2">
 				<view class="attr">
 					取消时间:
@@ -259,6 +262,9 @@
 				uni.navigateTo({
 					url:"./orderTrue?orderId="+this.orderId
 				})
+			},
+			getDateL(date){
+				return this.$getDate(date,'s-s-s s:s:s',"c")
 			}
 		}
 	}

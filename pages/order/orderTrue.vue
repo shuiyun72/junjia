@@ -217,7 +217,7 @@
 							receive_address: rItem.user_address.split(" ")[0]
 						}
 						this.$store.commit("setAddress",addressItem)
-						this.timeText = rItem.receive_time;
+						// this.timeText = rItem.receive_time;
 						let goodsList = [];
 						_.map(rItem.goods_list,item=>{
 							item.thumb = item.goods_thumb;
@@ -267,7 +267,7 @@
 			let toData =  newD.setTime(newD.getTime()+24*60*60*1000);
 			let newTime ="今天-"+this.$getDate("","月-号");
 			let tomorrowTime ="明天-"+ this.$getDate(toData,"月-号")
-			this.multiArray = [[newTime,tomorrowTime],["尽快送达","13:30-14:00","14:00-14:30"]]
+			this.multiArray = [[newTime,tomorrowTime],["尽快送达","12:00-12:30","12:30-13:00","13:00-13:30","17:30-18:00","18:00-18:30","18:30-19:00","19:00-19:30","19:30-20:00","20:00-20:30","20:30-21:00","21:00-21:30"]]
 			this.timeTextM();
 			let this_ = this;
 			// 获取系统配置信息
@@ -283,10 +283,16 @@
 			})
 		},
 		methods:{
+		
 			timeTextM(){
 				console.log(this.multiIndex,"ccc")
 				if(this.multiArray[1][this.multiIndex[1]] == '尽快送达'){
-					this.timeText =  "尽快送达 预计14:58送达"
+					let shijianC = new Date().getTime() + 1800000;
+					let lasteTimeC  = this.$getDate(new Date(shijianC),"s:s:s")
+					console.log(lasteTimeC)
+					let lasteTimeC2  = lasteTimeC.split(":")[0]+":"+lasteTimeC.split(":")[1]
+					console.log(lasteTimeC2)
+					this.timeText =  "尽快送达 预计"+lasteTimeC2+"送达"
 				}else{
 					this.timeText = this.multiArray[0][this.multiIndex[0]]+" "+this.multiArray[1][this.multiIndex[1]]
 				}
@@ -326,13 +332,34 @@
 						this.$msg('请选择地址')
 						return false;
 					};
+					
+					console.log(this.timeText)
+					let timeText = ""
+					if(this.timeText.indexOf('尽快送达') != -1){
+						let thisTT = this.timeText.split("预计")[1].split("送达")[0];
+						let thisTimeC = this.$getDate("","s:s:s").split(":")[0]+":"+this.$getDate("","s:s:s").split(":")[1]
+						timeText = this.$getDate("","s-s-s")+" "+thisTimeC +"-"+thisTT
+					}else
+					if(this.timeText.indexOf('今天') != -1){
+						timeText = this.$getDate("","s-s-s")+" "+this.timeText.split("号 ")[1]
+						let selTime = new Date(this.$getDate("","s-s-s")+" "+this.timeText.split("号 ")[1].split("-")[1]+":00").getTime();
+						if(selTime <= new Date().getTime()){
+							this.$msg("您选择的今天送达时间 "+this.timeText.split("号 ")[1].split("-")[1]+" 不合理,请重新选择")
+							return false;
+						}
+					}else
+					if(this.timeText.indexOf('明天') != -1){
+						let day3 = new Date();
+						let tomorrow = day3.setTime(day3.getTime()+24*60*60*1000);
+						timeText = this.$getDate(tomorrow,"s-s-s")+" "+this.timeText.split("号 ")[1]
+					}
 					let dataL = {
 						id:this.order_id,
 						remark:this.beizhuC,
 						user_name:this.address.name,
 						user_phone:this.address.phone,
 						user_address:this.address.receive_address+this.address.address,
-						receive_time:this.timeText,
+						receive_time:timeText,
 						coupon_id:"",
 						credit:this.total_credit,
 						lat:this.address.lat,
@@ -479,11 +506,12 @@
 				if(el.detail.column == 0 ){
 					this.multiIndex[0] = el.detail.value
 					if(el.detail.value == 0){
-						this.multiArray = [[newTime,tomorrowTime],["尽快送达","13:30-14:00","14:00-14:30"]]
+						this.multiArray = [[newTime,tomorrowTime],["尽快送达","12:00-12:30","12:30-13:00","13:00-13:30","17:30-18:00","18:00-18:30","18:30-19:00","19:00-19:30","19:30-20:00","20:00-20:30","20:30-21:00","21:00-21:30"]]
 					}else
 					if(el.detail.value == 1){
-						this.multiArray = [[newTime,tomorrowTime],["13:30-14:00","14:00-14:30"]]
+						this.multiArray = [[newTime,tomorrowTime],["12:00-12:30","12:30-13:00","13:00-13:30","17:30-18:00","18:00-18:30","18:30-19:00","19:00-19:30","19:30-20:00","20:00-20:30","20:30-21:00","21:00-21:30"]]
 					}
+					this.timeTextM()
 				}else
 				if(el.detail.column == 1 ){
 					console.log("cccccccccccccc")

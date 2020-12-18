@@ -84,7 +84,7 @@
 			//sgTop10 来自水果排行
 			if (ph.fromType == 'sgTop10') {
 				uni.setNavigationBarTitle({
-					title: '本周水果前十'
+					title: '本周前十'
 				})
 				this.isPaihang = true
 				console.log(this.classify)

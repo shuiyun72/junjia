@@ -8,7 +8,7 @@ let hasLogin = (uni.getStorageSync("userInfo") && uni.getStorageSync("userInfo")
 // 	key: 'userInfo',
 // 	data: {
 // 	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJLJSviajaYwLrWzrh8J9ZrYSHXWo3Pdb7otFsaeGXQVrgvf2Vib40iaTyVsTlqrcdcgMa4S32lZqB6A/132",
-// 	id: "5",
+// 	id: "1",
 // 	nickname: "阿木木",
 // 	status: "1"
 // 	}

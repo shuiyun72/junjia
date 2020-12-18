@@ -68,7 +68,7 @@
 		display: inline-flex;
 		background-color: #fff;
 		color: $uni-bl;
-		padding: 4upx 10upx 4upx 20upx;
+		padding: 6upx 10upx 2upx 20upx;
 		border-radius: 50upx;
 		transform: scale(.9);
 	}

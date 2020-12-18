@@ -178,11 +178,15 @@ const msg = (title, duration = 1500, mask = false, icon = 'none') => {
 }
 Vue.prototype.$msg = msg;
 
-const getDate = (myDate,type) => {
+const getDate = (myDate,type,timec) => {
 	if(!myDate){
 		myDate = new Date()
 	}else{
-		myDate = new Date(myDate)
+		if(timec == "c"){
+			myDate = new Date(parseInt(myDate) * 1000)
+		}else{
+			myDate = new Date(myDate)
+		}
 	}
 	let year = myDate.getFullYear();   //获取系统的年；
 	let month = myDate.getMonth()+1;   //获取系统月份，由于月份是从0开始计算，所以要加1

@@ -109,14 +109,18 @@
 						type: 3
 					}
 				],
+				page:1
 			};
 		},
 		onLoad(ph) {
 			this.tabSel = ph.ins;
 			console.log(ph.ins)
-			
-			
 			this.getOrederList(this.tabSel)
+		},
+		async onReachBottom() {
+			console.log("onReachBottom");
+			this.page++;
+			this.getOrederList(this.tabSel,"more")
 		},
 		onPullDownRefresh() {
 			let this_ = this;
@@ -125,6 +129,9 @@
 			setTimeout(function() {
 				uni.stopPullDownRefresh(); //停止下拉刷新动画
 			}, 1000);
+		},
+		onShow() {
+			this.getOrederList(this.tabSel)
 		},
 		methods: {
 			back(){
@@ -152,7 +159,7 @@
 					return "已完成"
 				}
 			},
-			getOrederList(fromNum){
+			getOrederList(fromNum,more){
 				let getState  = ""
 				if(fromNum == 0){
 					getState = ""
@@ -166,9 +173,15 @@
 				if(fromNum == 3){
 					getState = 6
 				}
-				this.$getApi("/App/User/userOrder", {status:getState}, res => {
+				this.$getApi("/App/User/userOrder", {status:getState,page:this.page}, res => {
 					console.log(res.data,"ccccc3161")
-					this.orderList  = res.data
+					if(more == "more"){
+						this.orderList  = this.orderList.concat(res.data) 
+					}else{
+						this.orderList  = res.data;
+						this.page = 1
+					}
+					
 				})
 			},
 			toNav(el,parentOrder){

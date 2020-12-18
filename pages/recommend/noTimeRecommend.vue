@@ -145,9 +145,9 @@
 			this.$getApi("/App/Goods/getShoppingTypes", {}, res => {
 				let qiaogouTimeList = res.data;
 				// let qiaogouTimeList = [
-				// {start_time:"02:42:00",end_time:"02:43:00"}
+				// {start_time:"01:00:00",end_time:"02:00:00"}
 				// ,{start_time:"02:43:20",end_time:"02:44:00"}
-				// ,{start_time:"02:44:30",end_time:"02:45:00"}
+				// ,{start_time:"15:44:30",end_time:"15:45:00"}
 				// ]
 				_.map(qiaogouTimeList,item=>{
 					item.sel = 0

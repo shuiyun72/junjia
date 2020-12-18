@@ -116,8 +116,7 @@
 												open_id: resOpen.data.openid,
 												nickname: info.userInfo.nickName,
 												avatar: info.userInfo.avatarUrl,
-												type:3,
-												UnionID:""
+												type:3
 											}
 											console.log(dataLogin)
 											this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {

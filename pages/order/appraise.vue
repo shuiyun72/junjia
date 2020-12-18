@@ -72,11 +72,12 @@ export default {
 			this.star = star+1
 		},
 		nativeTo(){
+			let imgList = this.imgList.length > 0 ?this.imgList.join(";"):""
 			let data = {
 				order_id:this.orderItem.id,
 				goods_id:this.orderItem.goods_list[0].goods_id,
 				content:this.textT,
-				pic:this.imgList.toString(),
+				pic:imgList,
 				star:this.star
 			}
 			this.$getApi("/App/Goods/addComment", data, res => {

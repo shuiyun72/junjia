@@ -2,7 +2,7 @@
 	<view class="home">
 
 		<view class="guodu_header" :style="{'padding-top':SystemInfoL.menu.top+75+'px',
-					'background-image':'linear-gradient(to bottom, '+lunboList[lunboIndex].color+' 0%, '+lunboList[lunboIndex].color+' 30%, #fff 100%)'}">
+					'background-image':'linear-gradient(to bottom, '+lunboList[lunboIndex].color+' 0%, '+lunboList[lunboIndex].color+' 30%, #fff 100%)'}" v-if="lunboList.length>0">
 			<view class="h_fixed" :class="{'fixed':isFixed}" :style="{'padding-top':SystemInfoL.menu.top+'px'}">
 				<view class="msg_info m26 zindex10" :style="{ 'line-height': (SystemInfoL.menu.bottom - SystemInfoL.menu.top) + 'px'}">
 					<view class="address">
@@ -107,7 +107,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="time_limit_box">
+			<view class="time_limit_box">  
 				<view class="item" v-for="item in qiangouList" @click="itemClick(item)">
 					<view class="img_box">
 						<image :src="item.thumb" class="img" mode=""></image>
@@ -277,8 +277,6 @@
 				<view class="iconfont iconyduicuowushixin" @click="closePopup"></view>
 			</view>
 		</uni-popup>
-		<uni-load-more :status="loadStatus"></uni-load-more>
-
 	</view>
 </template>
 
@@ -297,38 +295,11 @@
 				classifyList: [],
 				shuiguoList: [],
 				shucaiList: [],
-				shopList2: [{
-						id: 101,
-						price: 7.9,
-						num: 0,
-						sel: 1
-					},
-					{
-						id: 102,
-						price: 7.9,
-						num: 0,
-						sel: 1
-					},
-					{
-						id: 103,
-						price: 7.9,
-						num: 0,
-						sel: 1
-					}
-				],
+				shopList2: [],
 				nav2dex: 0,
-				lunboList: [{
-					color: "#80ff80",
-					pic: "http://39.100.227.2/Uploads/admin/Guang/banner/2020-11-18/1605683223_13322805375fb4c817a4027.png",
-					url: "www.baidu.com"
-				}],
+				lunboList: [],
 				lunboIndex: 0,
-				erjiNav: [{
-					img: "dj.png",
-					bg: "#FDF5D2",
-					text: "当季水果",
-					id: ""
-				}],
+				erjiNav: [],
 				loadStatus: 'loading',
 				footPb: [],
 				homeNav1: [{
@@ -378,13 +349,45 @@
 				qiangouList: [],
 				jiuleiList:[],
 				isCeshi:false,
-				lingQ:true
+				lingQ:true,
+				page:1
 			};
+		},
+		//发送给朋友
+		onShareAppMessage(res) {
+			let userInfoId = this.userInfo.id;
+			// 此处的distSource为分享者的部分信息，需要传递给其他人
+			uni.share({
+			    provider: "weixin",
+			    scene: "WXSceneSession",
+			    type: 1,
+			    summary: "欢迎使用君佳优选商城！",
+			    success: function (res) {
+			        console.log("success:" + JSON.stringify(res));
+			    },
+			    fail: function (err) {
+			        console.log("fail:" + JSON.stringify(err));
+			    }
+			});
+		},
+		//分享到朋友圈
+		onShareTimeline(res) {
+			uni.share({
+			    provider: "weixin",
+			    scene: "WXSenceTimeline",
+			    type: 1,
+			    summary: "欢迎使用君佳优选商城！",
+			    success: function (res) {
+			        console.log("success:" + JSON.stringify(res));
+			    },
+			    fail: function (err) {
+			        console.log("fail:" + JSON.stringify(err));
+			    }
+			});
 		},
 		onReachBottom() { //上拉触底函数
 			console.log("more")
-			this.jingxuanFoot()
-			this.loadStatus = "false"
+			this.jingxuanFoot("more")
 		},
 		watch: {
 			shopCar: {
@@ -428,10 +431,18 @@
 
 			}
 		},
+		onReachBottom(){  //上拉触底函数
+			this.footPbNum++;
+			this.jingxuanFoot("more")	  
+		},
 		onHide() {
 			console.log("cccc")
 			this.closePopup();
 			clearInterval(this.timer)
+			uni.pageScrollTo({
+				scrollTop: 0,
+				duration: 100,
+			});
 		},
 		onShow() {
 			if(uni.getStorageSync('lingquQ') == 1){
@@ -462,6 +473,7 @@
 			}
 			this.init();
 			this.initShopCar();
+			clearInterval(this.timer)
 			this.startTime();
 			this.footPbL();
 			console.log(this.shopCar)
@@ -601,26 +613,35 @@
 				})
 				// 获取抢购时间
 				this_.$getApi("/App/Goods/getShoppingTypes", {}, res => {
+					console.log(res.data,"获取抢购时间")
+					// this.qiaogouTimeList = [
+					// {start_time:"14:00",end_time:"15:00"}
+					// ,{start_time:"15:43",end_time:"16:44"}
+					// ,{start_time:"16:44",end_time:"17:45"}
+					// ]
 					this.qiaogouTimeList = res.data;
-					// this.qiaogouTimeList = [{start_time:"00:30",end_time:"00:40"}]
 				})
 				
 				// 酒类专区
 				this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"酒"}, res => {
 					console.log(res.data, "酒类专区")
 					this.jiuleiList = res.data;
-					// this.qiaogouTimeList = [{start_time:"00:30",end_time:"00:40"}]
 				},"false")
 				this.jingxuanFoot()
 			},
-			jingxuanFoot() {
+			jingxuanFoot(more) {
 				this.$getApi("/App/Goods/getGoodsList", {
 					p: this.footPbNum,
 					recommend: 1
 				}, res => {
 					console.log(res.data, "精选好物")
 					let resData = res.data ? res.data : [];
-					this.footPb = this.footPb.concat(resData)
+					if(more == "more"){
+						this.footPb = this.footPb.concat(resData)
+					}else{
+						this.footPb = resData
+					}
+					
 					if(this.footPb.length > 0 && this.shopCar.length>0){
 						_.map(this.footPb, (itemL,indexL) => {
 							_.map(this.shopCar, (itemC, index) => {
@@ -631,7 +652,6 @@
 						})
 					}
 					this.footPbL(this.footPb);
-					this.footPbNum++
 				})
 			},
 			nShareAppMessage: function(e) {
@@ -894,7 +914,7 @@
 			startTime() {
 				let this_ = this;
 				this_.toLastTime()
-				clearInterval(this_.timer)
+				
 				this_.timer = setInterval(() => {
 					if (this.toTime != '00:00:00') {
 						this_.toLastTime()
@@ -902,15 +922,17 @@
 				}, 1000)
 			},
 			toLastTime() {
+				// console.log("888----------------",this.qiaogouTimeList)
 				let this_ = this;
 				if (this.qiaogouTimeList.length > 0) {
 					let timeDate = this.$getDate("", "s-s-s")
 					let thisDateTime = new Date().getTime();
 					for (let itTime = 0; itTime < this.qiaogouTimeList.length; itTime++) {
-						let startTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
+						// console.log(itTime,"894")
+						let startTimeLL = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
 						let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
-						if (thisDateTime < startTime && thisDateTime < endTime) {
-
+						if (thisDateTime < startTimeLL && thisDateTime < endTime) {
+							console.log(itTime)
 							let stTime = this.qiaogouTimeList[itTime].start_time;
 							console.log(stTime, "121212")
 							// 抢购商品
@@ -1217,16 +1239,16 @@
 		.time_limit_box {
 			display: flex;
 			flex-wrap: wrap;
-			padding: 0 12upx 20upx 12upx;
-			justify-content: space-around;
+			padding: 0 0upx 20upx 12upx;
+			// justify-content: space-around;
 
 			.item {
-				width: 23%;
+				width: 22%;
 				background-color: #fff;
 				text-align: center;
 				border-radius: 16upx;
 				margin-bottom: 16upx;
-
+				margin-left: 2%;
 				.img_box {
 
 					.img {
@@ -1345,7 +1367,7 @@
 	}
 
 	.home {
-
+		padding-bottom: 50upx;
 		// background-color: #f0f0f0;
 		.mine_title {
 			display: flex;

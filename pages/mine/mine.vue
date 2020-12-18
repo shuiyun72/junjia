@@ -324,6 +324,12 @@
 			font-size: 32upx;
 			color: #666;
 			padding: 0;
+			background-color: #fff;
+			outline: none;
+			border: none;
+			&:after{
+				border: none;
+			}
 		}
 		.mine_body {
 			// background-color: #fff;

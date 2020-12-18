@@ -81,11 +81,8 @@
 				uni.share({
 				    provider: "weixin",
 				    scene: "WXSceneSession",
-				    type: 0,
-				    href: "http://uniapp.dcloud.io/",
-				    title: "君佳优选",
-				    summary: "我君佳优选购物，赶紧跟我一起来体验！",
-				    imageUrl: "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png",
+				    type: 1,
+				    summary: "我在君佳优选购物，赶紧跟我一起来体验！",
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));
 				    },

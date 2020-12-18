@@ -6,6 +6,7 @@
 			"navigationStyle": "custom",
 			"navigationBarTitleText": "君佳优选",
 			"enablePullDownRefresh": true,
+			"onReachBottonDistance":150,
 			"app-plus": {
 				"titleNView": false
 			}
@@ -75,6 +76,7 @@
 		"style": {	
 			"navigationBarTitleText": "订单",
 			"enablePullDownRefresh": true,
+			"onReachBottonDistance":50,
 			"navigationStyle": "custom",
 			"app-plus": {
 				"titleNView": false

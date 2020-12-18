@@ -20,7 +20,7 @@
 									<!-- {{item.goods_info}} -->
 									商品已到货
 								</view>
-								<view class="content_flex">
+								<view class="content_flex" v-if="item.goods_info">
 									<image :src="item.goods_info.thumb" class="c_img" mode=""></image>
 									<view class="content">
 										{{item.goods_info.name}}
@@ -56,22 +56,6 @@
 		data() {
 			return {
 				xiaoxiListCC:[],  //展示消息
-				
-				xiaoxiListDD: [{  //订单消息
-					time: "2020-05-17",
-					title: "订单退款已受理 : 99854456564658474",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}],
-				xiaoxiListDH: [{  //到货消息
-					time: "2020-05-17",
-					title: "商品已到货",
-					content: "南非进口橙子17:50到货南非进口橙子17:50到货南非进口橙子17:50到货"
-				}],
-				xiaoxiListXT: [{  //系统消息
-					time: "2020-05-17",
-					title: "系统消息",
-					content: "消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容消息内容"
-				}],
 				firstTitle: "系统消息",
 				xiaoxiList: [{
 					time: ""
@@ -133,17 +117,14 @@
 				console.log(el)
 				if(el[0] == 0){
 					this.titleName = "订单消息"
-					// this.xiaoxiListCC = this.xiaoxiListDD
 					this.getMsg(2)
 				}else
 				if(el[0] == 1){
 					this.titleName = "到货提醒"
-					// this.xiaoxiListCC = this.xiaoxiListDH
 					this.getMsg(3)
 				}else
 				if(el[0] == 2){
 					this.titleName = "系统消息"
-					// this.xiaoxiListCC = this.xiaoxiListXT
 					this.getMsg(1)
 				}
 				
@@ -165,7 +146,7 @@
 				})
 			},
 			getDateL(date){
-				return this.$getDate(date,'年-月-日')
+				return this.$getDate(date,'年-月-日',"c")
 			}
 		}
 	}

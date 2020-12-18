@@ -28,7 +28,7 @@
 						剩余{{itemDetail.stock}}件
 					</view>
 				</view>
-				<view class="right">
+				<view class="right" @click="fenxiangF">
 					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image><text>推荐给好友</text>
 				</view>
 			</view>
@@ -42,29 +42,27 @@
 		</uni-list>
 		<view class="" v-if="itemDetail.comment_list.length > 0">
 		<view class="pingjia_box_sy">
-			<view class="pingjia_user">
+			<view class="pingjia_user" >
 				<view class="left">
-					<image :src="itemPj.avatar" class="img" mode=""></image>
+					<image :src="itemDetail.comment_list[0].avatar" class="img" mode=""></image>
 					<view class="name shengluehao">
-						{{itemPj.nickname}}
+						{{itemDetail.comment_list[0].nickname}}
 					</view>
 				</view>
 				<view class="time">
-					{{itemPj.time}}
+					{{itemDetail.comment_list[0].time}}
 				</view>
 			</view>
 			<view class="rate_pj">
-				<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" v-model="itemPj.star" ></uni-rate>
+				<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" v-model="itemDetail.comment_list[0].star" ></uni-rate>
 			</view>
 			
 			<view class="wa_text">
-				{{itemPj.content}}
+				{{itemDetail.comment_list[0].content}}
 			</view>
-			<swiper :interval="3000" :duration="1000" class="pingjia_img_box" display-multiple-items=3>
-				<swiper-item v-for="itemImg in itemPj.pic" >
-					<view class="img_item" :style="'background-image: url(../../static/img/liucheng/'+itemImg+')'"></view>
-				</swiper-item>
-			</swiper>
+			<view class="pingjia_img_box">
+				<view class="img_item" :style="'background-image: url('+http+itemImg+')'" v-for="itemImg in itemDetail.comment_list[0].pic"></view>
+			</view>
 		</view>
 		</view>
 		<view class="bgf20"></view>
@@ -212,8 +210,12 @@
 				imgsIndex: 0,
 				itemDetail:{},
 				isShoucang:false,
-				tuijianList:[]
+				tuijianList:[],
+				http:""
 			};
+		},
+		mounted() {
+			this.http = this.$apiUrl;
 		},
 		onLoad(ph) {
 			this.itemId = ph.id;
@@ -255,7 +257,13 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
+			fenxiangF(){
+				uni.navigateTo({
+					url:"../mine/fenxiang?fId="+this.itemId
+				})
+			},
 			itemClick(item){
+				this.itemId = item.id;
 				this.$getApi("/App/Goods/goodsInfo", {id:item.id}, res => {
 					let itemDetail = res.data;
 					this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
@@ -462,11 +470,13 @@
 			// padding: 0 26upx;
 			height: 230upx;
 			padding-bottom: 30upx;
+			display: flex;
 			.img_item{
 				width: 226upx;
 				height: 226upx;
 				background: no-repeat center center;
-				background-size: 262upx auto;
+				background-size: 226upx auto;
+				margin-right: 20upx;
 			}
 		}
 	}

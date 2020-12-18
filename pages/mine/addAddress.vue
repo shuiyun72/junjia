@@ -73,7 +73,8 @@
 				type: 'wgs84',
 				altitude: true,
 				success: function(res) {
-					this_.address1 = res.address
+					console.log(res,JSON.stringify(res),"76hang")
+					// this_.address1 = res.address
 					console.log('当前位置的经度：' + res);
 					console.log('当前位置的纬度：' + res.latitude);
 				}
@@ -91,7 +92,7 @@
 				let this_ = this;
 				uni.chooseLocation({
 					success: (res) => {
-						console.log(res)
+						console.log(res,JSON.stringify(res),"94hang")
 						this_.address1 = res.address;
 						this_.lat = res.latitude;
 						this_.lng = res.longitude;

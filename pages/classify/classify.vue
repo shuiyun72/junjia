@@ -92,7 +92,6 @@
 				classifyList: [],
 				classifySel: 0,
 				footListId:""
-				
 			};
 		},
 		methods: {
@@ -130,6 +129,7 @@
 				})
 			},
 			selClass(item, index) {
+				this.footListId = item.id;
 				this.classifySel = index;
 				console.log(item)
 				this.getSecondList(item.id)
@@ -149,7 +149,7 @@
 			
 			toSearchR(){
 				uni.navigateTo({
-					url:"../home/searchResult?fromType=sgTop10"
+					url:"../home/searchResult?fromType=sgTop10&classId="+this.footListId
 				})
 			}
 		}
