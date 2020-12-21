@@ -66,7 +66,10 @@
 				this.phSearchName = ph.searchName
 				this.isClassify = true;
 				this.footId = ph.footId;
-				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:this.phSearchName}, res => {
+				this.phFromType = ph.fromType;
+				this.page = 1;
+				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:this.phSearchName,
+					p:this.page}, res => {
 					console.log(res.data,"ccccc3")
 					this.clacCar(res.data)
 				})
@@ -86,17 +89,21 @@
 				uni.setNavigationBarTitle({
 					title: '本周前十'
 				})
-				this.isPaihang = true
+				this.isPaihang = true;
+				this.page = 1;
+				this.phFromType = ph.fromType;
 				console.log(this.classify)
-				this.$getApi("/App/Goods/getTopTenGoods", {category_id:this.classify}, res => {
+				this.$getApi("/App/Goods/getTopTenGoods", {category_id:this.classify,
+					p:this.page}, res => {
 					console.log(res.data,"本周水果前十")
 					this.clacCar(res.data)
 				})
 			}
 			if(ph.fromType == 'home'){
 				if(ph.searchName == '新鲜水果'){
-					
-					this.$getApi("/App/Goods/getGoodsListByCate", {keyword:ph.searchName}, res => {
+					this.page = 1;
+					this.$getApi("/App/Goods/getGoodsListByCate", {keyword:ph.searchName,
+					p:this.page}, res => {
 						console.log(res.data,"新鲜水果新列表")
 						this.clacCar(res.data)
 						// this.shopList  = res.data;
@@ -106,11 +113,16 @@
 				uni.setNavigationBarTitle({
 					title: ph.searchName
 				})
+				this.phSearchName = ph.searchName;
+				this.phFromType = ph.fromType;
 			}
 			if(ph.fromType == 'shoucang'){
 				uni.setNavigationBarTitle({
 					title: ph.searchName
 				})
+				this.phSearchName = ph.searchName;
+				this.phFromType = ph.fromType;
+				this.page = 1;
 				this.$getApi("/App/User/myCollect", {page:this.page}, res => {
 					console.log(res.data,"收藏列表")
 					this.clacCar(res.data)
@@ -124,20 +136,33 @@
 				uni.setNavigationBarTitle({
 					title: ph.searchName
 				})
+				this.phSearchName = ph.searchName;
+				this.phFromType = ph.fromType;
+				this.page = 1;
+				this.phKeyword = ph.keyword;
 				this.searchResult(ph.keyword)
 			}
 			if(ph.searchId){
 				uni.setNavigationBarTitle({
 					title: ph.searchName
 				})
+				this.phSearchName = ph.searchName;
+				this.phSearchId = ph.searchId;
+				
+				this.page = 1;
 				this.$getApi("/App/Goods/getGoodsList", {
-					category_id: ph.searchId
+					category_id: ph.searchId,
+					p:this.page
 				}, res => {
 					console.log(res.data, "获取商品")
 					this.clacCar(res.data)
 				})
 				
 			}
+		},
+		onReachBottom() { //上拉触底函数
+			console.log("more")
+			this.jingxuanFoot("more")
 		},
 		data() {
 			return {
@@ -176,7 +201,11 @@
 				isClassifySearch:false,
 				isPaihang:false,
 				footId:"",
-				qiehuan:true
+				qiehuan:true,
+				page:1,
+				phFromType:"",
+				phSearchId:"",
+				phKeyword:""
 			};
 		},
 		onPageScroll() {
@@ -218,12 +247,70 @@
 		
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
-			phandlePaixu(item,index){
-				this.search1Sel = index;
-				console.log(item.ins)
-				// {name:"有货",ins:"has_stock",sel:false},
-				// {name:"新品",ins:"is_new",sel:false},
-				// {name:"折扣",ins:"is_discount",sel:false},
+			jingxuanFoot(more){
+				if(more == "more"){
+					this.page++;
+					if (this.phFromType == 'classify') {
+						this.phandlePaixu("","","more")
+					}else
+					if(this.phFromType == 'home'){
+						if(this.phSearchName == '新鲜水果'){
+							this.$getApi("/App/Goods/getGoodsListByCate", {keyword:this.phSearchName,
+							p:this.page}, res => {
+								console.log(res.data,"新鲜水果新列表")
+								let shopList = this.shopList.concat(res.data)
+								this.clacCar(shopList)
+							})
+						}
+					}
+					if(this.phFromType == 'shoucang'){
+						this.$getApi("/App/User/myCollect", {page:this.page}, res => {
+							console.log(res.data,"收藏列表")
+							let shopList = this.shopList.concat(res.data)
+							this.$forceUpdate()
+							this.clacCar(shopList)
+							// this.shopList  = res.data;
+							// this.calcList();
+						})
+					}
+					//search 来自搜索
+					
+					if(this.phFromType == 'search'){
+						this.$forceUpdate()
+						this.searchResult(this.phKeyword,"more")
+					}
+					if(this.phSearchId){
+						this.$getApi("/App/Goods/getGoodsList", {
+							category_id: this.phSearchId,
+							p:this.page
+						}, res => {
+							console.log(res.data, "获取商品")
+							let shopList = this.shopList.concat(res.data)
+							this.$forceUpdate()
+							this.clacCar(shopList)
+						})
+						
+					}
+				}else{
+					this.page = 1;
+				}
+			},
+			phandlePaixu(item,index,more){
+				if(index != "" || index === 0){
+					console.log("cc1")
+					this.search1Sel = index;
+				}else{
+					console.log("cc2")
+					index = this.search1Sel;
+				}
+				if(!item){
+					item = this.search1[this.search1Sel]
+					console.log(item,this.search1,this.search1Sel)
+				}
+				if(more != "more"){
+					this.shopList = [];
+					this.page = 1;
+				}
 				_.map(this.search1,(itemList,index)=>{
 					if(itemList.ins == item.ins){
 						if(this.search1[index].sel == true){
@@ -233,6 +320,9 @@
 						}
 					}
 				})
+				console.log(item)
+				
+				
 				let dataL = {};
 				if(item.ins == "has_stock"){
 					dataL = {
@@ -252,25 +342,25 @@
 						is_discount:this.search1[2].sel ? 1 : 2
 					}
 				}
-				// dataL = {
-				// 	keyword:this.phSearchName,
-				// 	has_stock:this.search1[0].sel ? 1 : 2,
-				// 	is_new:this.search1[1].sel ? 1 : 2,
-				// 	is_discount:this.search1[2].sel ? 1 : 2
-				// }
+				dataL.p = this.page
 				this.$getApi("/App/Goods/getGoodsListByCate", dataL, res => {
 					console.log(res.data,"ccccc3")
-					this.clacCar(res.data)
+					if(more == "more"){
+						let shopList = this.shopList.concat(res.data)
+						this.clacCar(shopList)
+					}else{
+						this.clacCar(res.data)
+					}
 				})
-				console.log(this.phSearchName.split("/"))
-				let nameFenlei = this.phSearchName.split("/");
-				if( nameFenlei.length > 1){
-					this.isClassifySearch = true;
-					let search2 = ["全部"]
-					this.search2 = search2.concat(nameFenlei)
-				}else{
-					this.isClassifySearch = false
-				}
+				// console.log(this.phSearchName.split("/"))
+				// let nameFenlei = this.phSearchName.split("/");
+				// if( nameFenlei.length > 1){
+				// 	this.isClassifySearch = true;
+				// 	let search2 = ["全部"]
+				// 	this.search2 = search2.concat(nameFenlei)
+				// }else{
+				// 	this.isClassifySearch = false
+				// }
 			},
 			clacCar(data){
 				let newList = [];
@@ -303,20 +393,23 @@
 				})
 				this.shopList  = newList;
 				console.log("ccc1",newList)
+				this.$forceUpdate()
 				this.calcList();
 			},
-			searchResult(el){
+			searchResult(el,more){
 				el = el || "";
-				this.$getApi("/App/Goods/getGoodsList", {keyword:el}, res => {
+				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:el,p:this.page}, res => {
 					console.log(res.data,"ccccc3")
-					this.shopList  = res.data;
-					this.calcList();
+					if(more == "more"){
+						let shopList = this.shopList.concat(res.data)
+						this.$forceUpdate()
+						this.clacCar(shopList)
+					}else{
+						this.$forceUpdate()
+						this.clacCar(res.data)
+					}
+					
 				})
-				// this.$getApi("/App/Goods/searchKey", {keyword:el}, res => {
-				// 	console.log(res.data,"ccccc3")
-				// 	this.shopList  = res.data;
-				// 	this.calcList();
-				// })
 			},
 			calcList(){
 				_.map(this.shopList, itemL => {
@@ -326,6 +419,7 @@
 						}
 					})
 				})
+				this.$forceUpdate()
 			},
 			search2Show(name,index2){
 				this.search1 = [
@@ -348,7 +442,7 @@
 			},
 			searchList(name){
 				name = name == '全部' ? "" :name;
-				this.$getApi("/App/Goods/getGoodsListByCate", {category_id:this.footId,keyword:name}, res => {
+				this.$getApi("/App/Goods/getGoodsListByCate", {category_id:this.footId,keyword:name,p:this.page}, res => {
 					console.log(res.data,"ccccc3")
 					this.clacCar(res.data)
 				})

@@ -112,7 +112,8 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "搜索结果",
-                "enablePullDownRefresh": false
+                "enablePullDownRefresh": false,
+				"onReachBottonDistance":150
             }
             
         }

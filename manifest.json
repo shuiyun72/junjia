@@ -11,7 +11,8 @@
         "modules" : {
             "Maps" : {},
             "Payment" : {},
-            "OAuth" : {}
+            "OAuth" : {},
+            "Share" : {}
         },
         "distribute" : {
             "android" : {
@@ -67,6 +68,12 @@
                     "weixin" : {
                         "appid" : "wxef2dd947dd8bbf4b",
                         "appsecret" : "cfd7049fcff17070e6bd9ba527fcd56b",
+                        "UniversalLinks" : ""
+                    }
+                },
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wxef2dd947dd8bbf4b",
                         "UniversalLinks" : ""
                     }
                 }

@@ -16,7 +16,6 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 		data.uid = userInfo.id;
 	}
 	uni.request({
-		// url: apiUrl +'/api/'+ url +'?'+Qs.stringify(data), //仅为示例，并非真实接口地址。
 		url: apiUrl + url,
 		method: 'post',
 		data: data,
@@ -30,6 +29,11 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 				callsuc instanceof Function && callsuc(res.data)
 			} else
 			if (res.data.status == 0) {
+				try{
+					uni.hideLoading();
+				}catch(e){
+					//TODO handle the exception
+				}
 				if(res.data.msg.indexOf("已领取过该优惠券") != -1){
 					uni.setStorageSync('lingquQ',1)
 				}

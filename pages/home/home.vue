@@ -341,7 +341,7 @@
 				benzhouList: [],
 				shuiguoId: "",
 				shucaiId: "",
-				footPbNum: 1,
+				page: 1,
 				qiaogouTimeList: [],
 				qiaogouTime: "",
 				maiyisongyiList: [],
@@ -349,8 +349,7 @@
 				qiangouList: [],
 				jiuleiList:[],
 				isCeshi:false,
-				lingQ:true,
-				page:1
+				lingQ:true
 			};
 		},
 		//发送给朋友
@@ -432,7 +431,7 @@
 			}
 		},
 		onReachBottom(){  //上拉触底函数
-			this.footPbNum++;
+			this.page++;
 			this.jingxuanFoot("more")	  
 		},
 		onHide() {
@@ -443,8 +442,11 @@
 				scrollTop: 0,
 				duration: 100,
 			});
+			this.page = 1;
 		},
 		onShow() {
+			this.page = 1;
+			console.log(this.page,"this.page")
 			if(uni.getStorageSync('lingquQ') == 1){
 				this.lingQ = false;
 			}
@@ -631,7 +633,7 @@
 			},
 			jingxuanFoot(more) {
 				this.$getApi("/App/Goods/getGoodsList", {
-					p: this.footPbNum,
+					p: this.page,
 					recommend: 1
 				}, res => {
 					console.log(res.data, "精选好物")
@@ -719,21 +721,22 @@
 						} else {
 							//用户已经授权过了
 							console.log("当前已授权");
-							// 弹出正在登录的弹框
-							uni.showLoading({
-								mask: true,
-								title: '正在登录···',
-								complete: () => {}
-							});
+							
 							uni.login({
 								provider: 'weixin',
 								success: function(loginRes) {
+									// 弹出正在登录的弹框
+									
 									console.log(loginRes, "微信权限信息");
 									this_.$getApi("/App/Public/getOpenid", {
 										code: loginRes.code
 									}, resOpen => {
 										console.log(resOpen, "ccccc")
-			
+										uni.showLoading({
+											mask: true,
+											title: '正在登录···',
+											complete: () => {}
+										});
 										uni.getUserInfo({
 											provider: 'weixin',
 											success: (info) => { //这里请求接口
@@ -746,30 +749,46 @@
 													UnionID:""
 												}
 												console.log(dataLogin)
-												this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
-													console.log(res, "登录")
-													uni.hideLoading();
-													this_.$store.commit("login", res.data)
-													// 获取购物车
-													this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
-														console.log(resCarC.data, "获取购物车")
-														let carInfo = resCarC.data == "" ? [] : resCarC.data;
-														this_.setReCar(carInfo)
-													})
-													console.log(res.data)
-													if(res.data.status == 1 &&  this_.lingQ){
-														this_.openP()
-													}else{
-														this_.closePopup();
-													}
-													
-												})
+												
+												uni.showModal({
+												    title: '提示',
+												    content: '为了更好的购物体验,购买商品及加入购物车,收藏商品等需要登录,是否确认登录',
+												    success: function (res) {
+												        if (res.confirm) {
+												            console.log('用户点击确定');
+															this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
+																console.log(res, "登录")
+																uni.hideLoading();
+																this_.$store.commit("login", res.data)
+																// 获取购物车
+																this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
+																	console.log(resCarC.data, "获取购物车")
+																	let carInfo = resCarC.data == "" ? [] : resCarC.data;
+																	this_.setReCar(carInfo)
+																})
+																console.log(res.data)
+																if(res.data.status == 1 &&  this_.lingQ){
+																	this_.openP()
+																}else{
+																	this_.closePopup();
+																}
+																
+															})
+												        } else if (res.cancel) {
+												            console.log('用户点击取消');
+															this_.$msg("取消登录")
+															uni.hideLoading();
+												        }
+												    }
+												});
+												
 											},
 											fail: () => {
 												uni.showToast({
 													title: "微信登录授权失败",
 													icon: "none"
 												});
+												uni.hideLoading();
 											}
 										})
 									})

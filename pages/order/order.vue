@@ -132,6 +132,7 @@
 		},
 		onShow() {
 			this.getOrederList(this.tabSel)
+			this.page = 1;
 		},
 		methods: {
 			back(){
@@ -300,9 +301,7 @@
 					width: 160upx;
 					text-align: center;
 					margin-left: 20upx;
-					&+.btn{
-						
-					}
+					
 				}
 			}
 		}

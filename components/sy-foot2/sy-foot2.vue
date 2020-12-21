@@ -74,6 +74,9 @@
 			};
 		},
 		props: ["item","isPaihang","itemIndex"],
+		updated() {
+			this.itemL = this.item;
+		},
 		computed:{
 			itemLC(){
 				if(this.itemL.old_price == this.itemL.price){
