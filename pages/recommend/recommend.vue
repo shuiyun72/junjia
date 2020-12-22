@@ -85,7 +85,7 @@
 					console.log(resLei,"买一送一")
 					let allClassList = [];
 					_.map(resLei.data,itemClass=>{
-						 this.getOrderLits(itemClass)
+						 this.getOrderLits(itemClass,"on_sale")
 					})
 					
 					console.log(this.allClassList)
@@ -96,10 +96,10 @@
 					title: ph.title
 				})
 				this.$getApi('/App/Goods/getActCate', {type:4}, resLei => {
-					console.log(resLei,"买一送一")
+					console.log(resLei,"团购产品")
 					let allClassList = [];
 					_.map(resLei.data,itemClass=>{
-						 this.getOrderLits(itemClass)
+						 this.getOrderLits(itemClass,"group_buy")
 					})
 					
 					console.log(this.allClassList)
@@ -203,8 +203,26 @@
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
 			stopStop() {},
-			async getOrderLits(itemClass){
-				this.$getApi('/App/Goods/getGoodsList', {category_id:itemClass.id}, res => {
+			async getOrderLits(itemClass,leiType){
+				let dataL = {}
+				
+				if(leiType == "group_buy"){  //团购产品
+					dataL = {
+						category_id:itemClass.id,
+						group_buy:1
+					}
+				}else
+				if(leiType == "on_sale"){  //买一送一
+					dataL = {
+						category_id:itemClass.id,
+						on_sale:1
+					}
+				}else{
+					dataL = {
+						category_id:itemClass.id
+					}
+				}
+				this.$getApi('/App/Goods/getGoodsList', dataL, res => {
 					console.log(res)
 					let bingbingList = res.data
 					_.map(bingbingList, itemL => {
@@ -328,7 +346,11 @@
 		}
 	}
 </script>
-
+<style>
+	page{
+		background-color: #f0f0f0;
+	}
+</style>
 <style lang="scss" scoped>
 	.num_add_sy {
 		display: inline-flex;

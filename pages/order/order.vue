@@ -12,7 +12,7 @@
 						{{orderText(parent.status)}}
 					</view>
 					<view class="right">
-						2020-10-21 14:31
+						{{orderItem.receive_time}}
 					</view>
 				</view>
 				<view class="o_item" v-for="item in parent.goods_list">
@@ -28,7 +28,7 @@
 				</view>
 				<view class="last_money">
 					<view class="left">
-						...
+						
 					</view>
 					<view class="right">
 						<view class="sm">

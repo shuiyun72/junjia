@@ -103,14 +103,17 @@
 										
 									},
 									fail: () => {
-										uni.showToast({title:"微信登录授权失败",icon:"none"});
+										// uni.showToast({title:"微信登录授权失败",icon:"none"});
 										uni.hideLoading();
 									},
 								})
 								
 							},
 							fail: () => {
-								uni.showToast({title:"微信登录授权失败",icon:"none"});
+								setTimeout(()=>{
+									uni.hideLoading();
+									uni.showToast({title:"微信登录授权失败",icon:"none"});
+								},1000)
 							}
 						})
 						// #endif

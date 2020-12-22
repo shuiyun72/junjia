@@ -445,6 +445,7 @@
 			this.page = 1;
 		},
 		onShow() {
+			
 			this.page = 1;
 			console.log(this.page,"this.page")
 			if(uni.getStorageSync('lingquQ') == 1){
@@ -501,7 +502,11 @@
 					}
 				})
 			})
-
+			try{
+				uni.hideLoading();
+			}catch(e){
+				//TODO handle the exception
+			}
 
 		},
 		onPullDownRefresh() {
@@ -784,10 +789,10 @@
 												
 											},
 											fail: () => {
-												uni.showToast({
-													title: "微信登录授权失败",
-													icon: "none"
-												});
+												// uni.showToast({
+												// 	title: "微信登录授权失败",
+												// 	icon: "none"
+												// });
 												uni.hideLoading();
 											}
 										})
@@ -857,7 +862,8 @@
 			},
 			closePopup() {
 				try{
-					this.$refs.showimage.close()
+					this.$refs.showimage.close();
+					this.lingQ = false;
 				}catch(e){
 					//TODO handle the exception
 				}

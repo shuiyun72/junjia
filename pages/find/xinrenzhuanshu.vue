@@ -141,47 +141,54 @@
 				_.map(this.footList, fil => {
 					if (fil.id == item.id) {
 						item.num++;
-						this.jiaCar(item)
+						if(item.num == 1){
+							// App/Goods/add_car
+							this.$getApi("/App/Goods/add_car", {goods_id:item.id,num:item.num}, resCar => {
+								this.jiaCar(item)
+							})
+						}else{
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								console.log(resCar.data,item.id,"item.id")
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+									this.jiaCar(item)
+								})
+							})
+						}
 					}
 				})
-				let numb = 0;
-				_.map(this.shopCar, item => {
-					numb += item.num
-				})
-				if (numb > 0) {
-					let numbStr = numb.toString();
-					uni.setTabBarBadge({
-						index: 3,
-						text: numbStr
-					})
-				} else {
-					uni.removeTabBarBadge({
-						index: 3
-					})
-				}
 			},
 			foot2JianItem(item) {
 				_.map(this.footList, fil => {
 					if (fil.id == item.id) {
 						item.num--;
-						this.jianCar(item)
+						if(item.num == 0){
+							// App/Goods/add_car
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								console.log(resCar,item,"1212")
+						
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								
+								this.$getApi("/App/Goods/del_car", {ids:carId}, resCar => {
+									this.jianCar(item)
+								})
+							})
+						}else{
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								let carId = _.filter(resCar.data,itemC=>{
+									return itemC.id == item.id
+								})[0].cart_id;
+								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+									this.jianCar(item)
+								})
+							})
+						}
 					}
 				})
-				let numb = 0;
-				_.map(this.shopCar, item => {
-					numb += item.num
-				})
-				if (numb > 0) {
-					let numbStr = numb.toString();
-					uni.setTabBarBadge({
-						index: 3,
-						text: numbStr
-					})
-				} else {
-					uni.removeTabBarBadge({
-						index: 3
-					})
-				}
 			},
 			toShopCar() {
 				uni.switchTab({
