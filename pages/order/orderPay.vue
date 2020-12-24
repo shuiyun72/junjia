@@ -6,7 +6,7 @@
 					应付 :
 				</view>
 				<view class="money">
-					￥<text class="num">{{orderItem.credit}}</text>
+					￥<text class="num">{{allMoney}}</text>
 				</view>
 			</view>
 		</view>
@@ -36,7 +36,7 @@
 			<view class="btn1">
 				<view>合计 :</view>
 				<view class="red">
-					￥<text class="big">23.88</text>
+					￥<text class="big">{{allMoney}}</text>
 				</view>
 			</view>
 			<view class="btn_b bl" @click="toNav('pay')">
@@ -64,8 +64,14 @@
 				this.orderItem = res.data[0];
 			})
 		},
+		computed:{
+			allMoney(){
+				return Number(this.orderItem.credit) + Number(this.orderItem.fee)
+			}
+		},
 		methods: {
 			toNav(el) {
+				let this_ = this;
 				if (el == 'pay') {
 					let payType = 0;
 					// #ifndef MP

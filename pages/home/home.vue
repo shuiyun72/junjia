@@ -65,7 +65,7 @@
 			<uni-notice-bar :scrollable="true" :single="true" :text="bobaoText" class="bobao_text" background-color="#fff" color="#333" />
 		</view>
 		<!-- 酒水区 -->
-		<view class="jiushui_qu_sy">
+		<!-- <view class="jiushui_qu_sy">
 			<view class="ab_img">
 				<image src="../../static/img/home/img-bt.png" class="img" mode=""></image>
 			</view>
@@ -84,7 +84,7 @@
 					</view>
 				</swiper-item>
 			</swiper>
-		</view>
+		</view> -->
 		<!-- 限时抢购 -->
 		<view class="time_limit_sy m26" v-if="qiaogouTime">
 			<view class="" @click="turnTo({name:'限时抢购'})">

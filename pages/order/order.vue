@@ -12,7 +12,7 @@
 						{{orderText(parent.status)}}
 					</view>
 					<view class="right">
-						{{orderItem.receive_time}}
+						{{parent.receive_time}}
 					</view>
 				</view>
 				<view class="o_item" v-for="item in parent.goods_list">

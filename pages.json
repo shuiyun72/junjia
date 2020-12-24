@@ -35,11 +35,11 @@
 		"style": {
 			"navigationBarTitleText": "全部分类"
 		}
-	}, {
-		"path": "pages/find/find",
-		"style": {
-			"navigationBarTitleText": "发现"
-		}
+	// }, {
+	// 	"path": "pages/find/find",
+	// 	"style": {
+	// 		"navigationBarTitleText": "发现"
+	// 	}
 	}, {
 		"path": "pages/shopCar/shopCar",
 		"style": {
@@ -370,11 +370,11 @@
 			"iconPath": "static/img/bar/fenlh.png",
 			"selectedIconPath": "static/img/bar/fenll.png",
 			"text": "分类"
-		}, {
-			"pagePath": "pages/find/find",
-			"iconPath": "static/img/bar/faxh.png",
-			"selectedIconPath": "static/img/bar/faxl.png",
-			"text": "发现"
+		// }, {
+		// 	"pagePath": "pages/find/find",
+		// 	"iconPath": "static/img/bar/faxh.png",
+		// 	"selectedIconPath": "static/img/bar/faxl.png",
+		// 	"text": "发现"
 		}, {
 			"pagePath": "pages/shopCar/shopCar",
 			"iconPath": "static/img/bar/gouwch.png",
