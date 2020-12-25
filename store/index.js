@@ -13,15 +13,15 @@ let hasLogin = (uni.getStorageSync("userInfo") && uni.getStorageSync("userInfo")
 // 	status: "1"
 // 	}
 // })
-// uni.setStorage({ //缓存用户登陆状态
-// 	key: 'userInfo',
-// 	data: {
-// 	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/yZqkeEoAQPtODibCibdYWpcrXxZ4kCCRRUdffOmdjDkK39m9986eibEdVvEVBKYG7QcYw0MJRiaDQgEaWG4rAbmGgw/132",
-// 	id: "6",
-// 	nickname: "林海",
-// 	status: "1"
-// 	}
-// })
+uni.setStorage({ //缓存用户登陆状态
+	key: 'userInfo',
+	data: {
+	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/yZqkeEoAQPtODibCibdYWpcrXxZ4kCCRRUdffOmdjDkK39m9986eibEdVvEVBKYG7QcYw0MJRiaDQgEaWG4rAbmGgw/132",
+	id: "1",
+	nickname: "林海",
+	status: "1"
+	}
+})
 
 console.log("111", hasLogin)
 const store = new Vuex.Store({

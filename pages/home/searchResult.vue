@@ -98,7 +98,7 @@
 					console.log(res.data,"本周水果前十")
 					this.clacCar(res.data)
 				})
-			}
+			}			
 			if(ph.fromType == 'home'){
 				if(ph.searchName == '新鲜水果'){
 					this.page = 1;
@@ -141,6 +141,20 @@
 				this.page = 1;
 				this.phKeyword = ph.keyword;
 				this.searchResult(ph.keyword)
+			}
+			// 更多水果/蔬菜
+			if(ph.fromType == 'more'){
+				uni.setNavigationBarTitle({
+					title: ph.searchName
+				})
+				this.page = 1;
+				this.phSearchName = ph.searchName;
+				this.phFromType = ph.fromType;
+				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:this.phSearchName ,
+				p:this.page}, res => {
+					this.clacCar(res.data)
+				})
+				
 			}
 			if(ph.searchId){
 				uni.setNavigationBarTitle({
@@ -221,12 +235,12 @@
 					if (numb > 0) {
 						let numbStr = numb.toString();
 						uni.setTabBarBadge({
-							index: 3,
+							index: 2,
 							text: numbStr
 						})
 					} else {
 						uni.removeTabBarBadge({
-							index: 3
+							index: 2
 						})
 					}
 				},
@@ -279,11 +293,12 @@
 						this.$forceUpdate()
 						this.searchResult(this.phKeyword,"more")
 					}
-					if(this.phSearchId){
-						this.$getApi("/App/Goods/getGoodsList", {
-							category_id: this.phSearchId,
-							p:this.page
-						}, res => {
+					if(this.phFromType == 'more'){
+						
+						this.$getApi("/App/Goods/getGoodsListByCate", {
+						keyword:this.phSearchName ,
+						p:this.page}, res => {
+						
 							console.log(res.data, "获取商品")
 							let shopList = this.shopList.concat(res.data)
 							this.$forceUpdate()

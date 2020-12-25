@@ -543,7 +543,7 @@
 				}
 				console.log(shuiguoId)
 				uni.navigateTo({
-					url:"../home/searchResult?searchId="+shuiguoId.id+"&searchName="+shuiguoId.name
+					url:"../home/searchResult?fromType=more&searchName="+shuiguoId.name
 				})
 			},
 			init() {
@@ -560,21 +560,30 @@
 					this_.shuiguoId = _.filter(this_.classifyList, item => {
 						return item.name.includes('水果')
 					})[0].id;
+					
 					// 获取水果
-					this_.$getApi("/App/Goods/getGoodsList", {
-						category_id: this_.shuiguoId
-					}, res => {
-						console.log(res.data, "获取水果")
+					// this_.$getApi("/App/Goods/getGoodsList", {
+					// 	category_id: this_.shuiguoId
+					// }, res => {
+					// 	console.log(res.data, "获取水果")
+					// 	this_.shuiguoList = res.data.slice(0, 3)
+					// })
+					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"水果",
+					p:1}, res => {
 						this_.shuiguoList = res.data.slice(0, 3)
 					})
 					this_.shucaiId = _.filter(this_.classifyList, item => {
 						return item.name.includes('蔬菜')
 					})[0].id;
 					// 获取蔬菜
-					this_.$getApi("/App/Goods/getGoodsList", {
-						category_id: this_.shucaiId
-					}, res => {
-						console.log(res.data, "获取蔬菜")
+					// this_.$getApi("/App/Goods/getGoodsList", {
+					// 	category_id: this_.shucaiId
+					// }, res => {
+					// 	console.log(res.data, "获取蔬菜")
+					// 	this_.shucaiList = res.data.slice(0, 3)
+					// })
+					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"蔬菜",
+					p:1}, res => {
 						this_.shucaiList = res.data.slice(0, 3)
 					})
 
@@ -683,12 +692,12 @@
 				if (numb > 0) {
 					let numbStr = numb.toString();
 					uni.setTabBarBadge({
-						index: 3,
+						index: 2,
 						text: numbStr
 					})
 				} else {
 					uni.removeTabBarBadge({
-						index: 3
+						index: 2
 					})
 				}
 			},
@@ -737,11 +746,12 @@
 										code: loginRes.code
 									}, resOpen => {
 										console.log(resOpen, "ccccc")
-										uni.showLoading({
-											mask: true,
-											title: '正在登录···',
-											complete: () => {}
-										});
+										// uni.showLoading({
+										// 	mask: true,
+										// 	title: '正在登录···',
+										// 	complete: () => {}
+										// });
+										
 										uni.getUserInfo({
 											provider: 'weixin',
 											success: (info) => { //这里请求接口
@@ -750,20 +760,18 @@
 													open_id: resOpen.data.openid,
 													nickname: info.userInfo.nickName,
 													avatar: info.userInfo.avatarUrl,
-													type:3,
-													UnionID:""
+													type:"3"
 												}
 												console.log(dataLogin)
-												
-												uni.showModal({
-												    title: '提示',
-												    content: '为了更好的购物体验,购买商品及加入购物车,收藏商品等需要登录,是否确认登录',
-												    success: function (res) {
-												        if (res.confirm) {
-												            console.log('用户点击确定');
+												// uni.showModal({
+												//     title: '提示',
+												//     content: '为了更好的购物体验,购买商品及加入购物车,收藏商品等需要登录,是否确认登录',
+												//     success: function (res) {
+												//         if (res.confirm) {
+												//             console.log('用户点击确定');
 															this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
 																console.log(res, "登录")
-																uni.hideLoading();
+																// uni.hideLoading();
 																this_.$store.commit("login", res.data)
 																// 获取购物车
 																this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
@@ -779,13 +787,13 @@
 																}
 																
 															})
-												        } else if (res.cancel) {
-												            console.log('用户点击取消');
-															this_.$msg("取消登录")
-															uni.hideLoading();
-												        }
-												    }
-												});
+												//         } else if (res.cancel) {
+												//             console.log('用户点击取消');
+												// 			this_.$msg("取消登录")
+												// 			uni.hideLoading();
+												//         }
+												//     }
+												// });
 												
 											},
 											fail: () => {
@@ -1392,7 +1400,7 @@
 	}
 
 	.home {
-		padding-bottom: 50upx;
+		// padding-bottom: 50upx;
 		// background-color: #f0f0f0;
 		.mine_title {
 			display: flex;

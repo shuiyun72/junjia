@@ -63,28 +63,30 @@
 								provider: 'weixin',
 								success: (info) => { //这里请求接口
 									console.log(info, "527");
-									let dataLogin = {
-										open_id: resOpen.data.openid,
-										nickname: info.userInfo.nickName,
-										avatar: info.userInfo.avatarUrl,
-										type:3
-									}
-									console.log(dataLogin)
-									this_.$msg(resOpen.data.openid,info.userInfo.nickName,info.userInfo.avatarUrl)
+									
 									uni.showModal({
-									    title: '提示',
-									    content: '购买商品及加入购物车,收藏商品等需要登录,是否确认登录'+resOpen.data.openid+" "+info.userInfo.nickName+" "+info.userInfo.avatarUrl,
-									    success: function (res) {
-									        if (res.confirm) {
+									    title: '确认登录',
+									    content: '购买商品及加入购物车,收藏商品等需要登录,是否确认登录',
+									    success: function (resLL) {
+									        if (resLL.confirm) {
 									            console.log('用户点击确定');
 												uni.showLoading({
 													mask:true,
 													title: '正在登录···',
 													complete:()=>{}
 												});
+												let dataLogin = {
+													open_id: resOpen.data.openid,
+													nickname: info.userInfo.nickName,
+													avatar: info.userInfo.avatarUrl,
+													type:"3"
+												}
+												console.log(dataLogin)
+												
 												this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
 													console.log(res, "登录")
 													uni.hideLoading();
+													this_.$msg("登录成功")
 													// 判断 this_.openP()
 													this_.$store.commit("login", res.data)
 													this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
@@ -96,8 +98,8 @@
 															url:"../home/home"
 														})
 													})
-												})
-									        } else if (res.cancel) {
+												},"false")
+									        } else if (resLL.cancel) {
 									            console.log('用户点击取消');
 												this_.$msg("取消登录")
 												uni.hideLoading();
@@ -131,34 +133,32 @@
 							provider: 'weixin',
 							success: (loginRes) => {
 								// 弹出正在登录的弹框
-								uni.showLoading({
-									mask:true,
-									title: '正在登录···',
-									complete:()=>{}
-								});
+								
 								uni.getUserInfo({
 									provider: 'weixin',
-									success: (info) => {//这里请求接口
-
-										console.log(loginRes);
-										console.log(info);
-										let dataLogin = {
-											open_id:info.userInfo.openId,
-											nickname:info.userInfo.nickName,		
-											avatar:info.userInfo.avatarUrl,
-											type:4
-											// ,
-											// UnionID:info.userInfo.unionId
-										}
-										console.log(dataLogin)
+									success: (info) => {//这里请求接口							
 										uni.showModal({
-										    title: '提示',
-										    content: '购买商品及加入购物车,收藏商品等需要登录,是否确认登录'+info.userInfo.openId+" "+info.userInfo.nickName+" "+info.userInfo.avatarUrl,
-										    success: function (res) {
-										        if (res.confirm) {
+										    title: '确认登录',
+										    content: '购买商品及加入购物车,收藏商品等需要登录,是否确认登录',
+										    success: function (resLL) {
+										        if (resLL.confirm) {
 										            console.log('用户点击确定');
+													let dataLogin = {
+														open_id:info.userInfo.openId,
+														nickname:info.userInfo.nickName,		
+														avatar:info.userInfo.avatarUrl,
+														type:"4"
+														// ,
+														// UnionID:info.userInfo.unionId
+													}
+													uni.showLoading({
+														mask:true,
+														title: '正在登录···',
+														complete:()=>{}
+													});
 													this_.$getApi("/App/Public/thirdLogin",dataLogin, res => {
 														console.log(res,"登录")
+														uni.hideLoading();
 														// 判断 this_.openP()
 														this_.$store.commit("login", res.data)
 														this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
@@ -166,7 +166,7 @@
 															// this_.lunboList = res.data
 															let carInfo = resCarC.data == "" ? [] : resCarC.data;
 															this_.$store.commit("setReCar",carInfo)
-															uni.hideLoading();
+															
 															uni.switchTab({
 																url:"../home/home"
 															})
@@ -174,7 +174,7 @@
 														console.log(res.data)
 													},"false")
 													
-										        } else if (res.cancel) {
+										        } else if (resLL.cancel) {
 										            console.log('用户点击取消');
 													this_.$msg("取消登录")
 													uni.hideLoading();

@@ -64,147 +64,139 @@
 				this.orderItem = res.data[0];
 			})
 		},
-		computed:{
-			allMoney(){
-				return Number(this.orderItem.credit) + Number(this.orderItem.fee)
+		computed: {
+			allMoney() {
+				return Number(this.orderItem.credit) 
+				// + Number(this.orderItem.fee)
 			}
 		},
 		methods: {
 			toNav(el) {
 				let this_ = this;
 				if (el == 'pay') {
-					let payType = 0;
-					// #ifndef MP
-					payType = this.radio == "A" ? 1 : 2;
-					// #endif
-					// #ifdef MP
-					payType = 3;
-					// #endif
-					let dataPay = {
-						type: payType,
-						total_credit: this.orderItem.credit,
-						id: this.orderId
-					}
-					this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
-						console.log(resbuy, "payOrder1111")
+					// let dataL = {
+					// 	id: this.orderId,
+					// 	remark: this.orderItem.remark,
+					// 	user_name: this.orderItem.address.user_name,
+					// 	user_phone: this.orderItem.address.user_phone,
+					// 	user_address: this.orderItem.user_address,
+					// 	receive_time: this.orderItem.receive_time,
+					// 	coupon_id: this.orderItem.youhuiquan.coupon_id != 0 ? this.orderItem.youhuiquan.coupon_id : "",
+					// 	credit: this.orderItem.allMoney,
+					// 	lat: this.orderItem.lat,
+					// 	lng: this.orderItem.lng
+					// }
+					// this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
+						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
+							let payType = 0;
+							// #ifndef MP
+							payType = this.radio == "A" ? 1 : 2;
+							// #endif
+							// #ifdef MP
+							payType = 3;
+							// #endif
+							let dataPay = {
+								type: payType,
+								total_credit: this.orderItem.credit,
+								id: this.orderId
+							}
+							console.log(resbuy, "payOrder1111")
 
-						console.log(this.radio)
-						let thisPayType = ""
+							console.log(this.radio)
+							let thisPayType = ""
 
-						// #ifndef MP
-						if (this.radio == "A") {
-							thisPayType = "wepay"
-						} else
-						if (this.radio == "B") {
-							thisPayType = "alipay"
-						} else
-						if (this.radio == "C") {
-							thisPayType = "xxwepay"
-						}
+							// #ifndef MP
+							if (this.radio == "A") {
+								thisPayType = "wepay"
+							} else
+							if (this.radio == "B") {
+								thisPayType = "alipay"
+							} else
+							if (this.radio == "C") {
+								thisPayType = "xxwepay"
+							}
 
-						// let orderMsgL = {
-						// 	appId: resbuy.data.appid,
-						// 	nonceStr: resbuy.data.noncestr,
-						// 	package: resbuy.data.package,
-						// 	partnerId: resbuy.data.partnerid,
-						// 	prepayId: resbuy.data.prepayid,
-						// 	paySign: resbuy.data.sign,
-						// 	signType: "MD5",
-						// 	timeStamp: resbuy.data.timestamp.toString()
-						// }
-						
-						// {"appId":"wxecd3f91ea27efd64",
-						// "partnerId":"1600270993",
-						// "prepayId":"wx170137550934325fbf203fddf0ed420000",
-						// "timeStamp":"1608140275",
-						// "nonceStr":"V7XEHGo8jAWRVwFI",
-						// "package":"Sign=WXPay",
-						// "paySign":"8C66F91B205C87D66C8F48C49349846E"}
-						
-						// // 上面是其他项目正常微信app支付,下面是咱的接口返回值 看起来少个 partnerId ,不知道排序有没有影响
-						
-						// {"appId":"wxb93dc4f298fe3f11","nonceStr":"wk9XIz4mwCB8k28kMbB2NsAfPIy3HDKD","package":"Sign=WXPay","prepayId":"wx170142288145814f3727eb82dec5350000","paySign":"DA078D038DCC6CEA05C9DAD6D615F7B7","signType":"MD5","timeStamp":"1608140548"} 
-						
-						let orderMsgL = {
-							appid: resbuy.data.appId,
-							partnerid: resbuy.data.partnerId,
-							prepayid: resbuy.data.prepayId,
-							timestamp: resbuy.data.timeStamp,
-							noncestr: resbuy.data.nonceStr,
-							package: resbuy.data.package,
-							sign: resbuy.data.paySign
-						}
-						console.log(JSON.stringify(orderMsgL))
-						// #endif
-						// #ifdef MP
-						thisPayType = "xxwepay"
-						// #endif	
-
-						if (thisPayType == "wepay") {
-							console.log("wepay")
-							console.log(JSON.stringify(orderMsgL))
-							uni.requestPayment({
-								provider: 'wxpay',
-								orderInfo: resbuy.data, //微信、支付宝订单数据
-								success: function(res) {
-									this_.$msg(JSON.stringify(res))
-									uni.navigateTo({
-										url:"../home/msg?title=付款成功"
-									})
-								},
-								fail: function(err) {
-									console.log('fail:' + JSON.stringify(err));
-									this_.$msg(JSON.stringify(err))
-								}
-							});
-						} else
-						if (thisPayType == "alipay") {
-							console.log(orderMsgL, "cccc")
-							uni.requestPayment({
-								provider: 'alipay',
-								orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
-								success: function(res) {
-									uni.navigateTo({
-										url:"../home/msg?title=付款成功"
-									})
-									console.log('success:' + JSON.stringify(res));
-								},
-								fail: function(err) {
-									console.log('fail:' + JSON.stringify(err));
-								}
-							});
-						} else
-						if (thisPayType == "xxwepay") {
-							let timeStamp = resbuy.data.timeStamp.toString()
-							uni.requestPayment({
-								provider: 'wxpay',
-								timeStamp: timeStamp,
-								nonceStr: resbuy.data.nonceStr,
+							let orderMsgL = {
+								appid: resbuy.data.appId,
+								partnerid: resbuy.data.partnerId,
+								prepayid: resbuy.data.prepayId,
+								timestamp: resbuy.data.timeStamp,
+								noncestr: resbuy.data.nonceStr,
 								package: resbuy.data.package,
-								signType: resbuy.data.signType,
-								paySign: resbuy.data.paySign,
-								success: function(res) {
-									this_.$getApi("/api/user/userinfo", {}, resss => {
-										this_.$store.commit('login', resss.data);
-									})
-									if (this_.$store.state.userInfo.groupid != 0) {
+								sign: resbuy.data.paySign
+							}
+							console.log(JSON.stringify(orderMsgL))
+							// #endif
+							// #ifdef MP
+							thisPayType = "xxwepay"
+							// #endif	
+
+							if (thisPayType == "wepay") {
+								console.log("wepay")
+								console.log(JSON.stringify(orderMsgL))
+								uni.requestPayment({
+									provider: 'wxpay',
+									orderInfo: resbuy.data, //微信、支付宝订单数据
+									success: function(res) {
+										this_.$msg(JSON.stringify(res))
 										uni.navigateTo({
-											url:"../home/msg?title=付款成功"
+											url: "../home/msg?title=付款成功"
 										})
-									} else {
-										setTimeout(() => {
-											uni.navigateTo({
-												url:"../home/msg?title=付款成功"
-											})
-										}, 600)
+									},
+									fail: function(err) {
+										console.log('fail:' + JSON.stringify(err));
+										this_.$msg(JSON.stringify(err))
 									}
-								},
-								fail: function(err) {
-									console.log('fail:' + JSON.stringify(err));
-								}
-							});
-						}
-					});
+								});
+							} else
+							if (thisPayType == "alipay") {
+								console.log(orderMsgL, "cccc")
+								uni.requestPayment({
+									provider: 'alipay',
+									orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
+									success: function(res) {
+										uni.navigateTo({
+											url: "../home/msg?title=付款成功"
+										})
+										console.log('success:' + JSON.stringify(res));
+									},
+									fail: function(err) {
+										console.log('fail:' + JSON.stringify(err));
+									}
+								});
+							} else
+							if (thisPayType == "xxwepay") {
+								let timeStamp = resbuy.data.timeStamp.toString()
+								uni.requestPayment({
+									provider: 'wxpay',
+									timeStamp: timeStamp,
+									nonceStr: resbuy.data.nonceStr,
+									package: resbuy.data.package,
+									signType: resbuy.data.signType,
+									paySign: resbuy.data.paySign,
+									success: function(res) {
+										this_.$getApi("/api/user/userinfo", {}, resss => {
+											this_.$store.commit('login', resss.data);
+										})
+										if (this_.$store.state.userInfo.groupid != 0) {
+											uni.navigateTo({
+												url: "../home/msg?title=付款成功"
+											})
+										} else {
+											setTimeout(() => {
+												uni.navigateTo({
+													url: "../home/msg?title=付款成功"
+												})
+											}, 600)
+										}
+									},
+									fail: function(err) {
+										console.log('fail:' + JSON.stringify(err));
+									}
+								});
+							}
+						});
+					// })
 				}
 			},
 			RadioChange(el) {

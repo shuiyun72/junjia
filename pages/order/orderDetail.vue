@@ -3,8 +3,9 @@
 		<view class="order_header">
 			<view class="deng1" v-if="orderItem.status == -1">
 				<view class="part1">
-					<text class="d_t1">等待支付 剩余</text>
-					<text class="d_t2">03:20</text>
+					<!-- <text class="d_t1">等待支付 剩余</text>
+					<text class="d_t2">03:20</text> -->
+					<text class="d_t1">等待支付</text>
 				</view>
 				<view class="part2">
 					逾期未支付订单将自动取消
@@ -30,10 +31,10 @@
 				<view class="btn blue round" v-if="orderItem.status == -1" @click="quzhifu">
 					去支付
 				</view>
-				<view class="btn blue round" v-if="orderItem.status == 1" @click="zailaiOrder">
+				<view class="btn blue round" v-if="orderItem.status == 1 || orderItem.status == 6" @click="zailaiOrder">
 					再来一单
 				</view>
-				<view class="btn del round" v-if="orderItem.status == 2 || orderItem.status == 3"  @click="zailaiOrder">
+				<view class="btn del round" v-if="orderItem.status == 2 || orderItem.status == 3 "  @click="zailaiOrder">
 					再来一单
 				</view>
 				<view  @click="lianxiKF" class="btn del round">
@@ -70,8 +71,8 @@
 				<view class="attr">
 					收货地址 :
 				</view>
-				<view class="value">
-					{{orderItem.user_address}}
+				<view class="value" v-if="orderItem.user_address">
+					{{orderItem.user_address.split("undefined")[0]}}
 				</view>
 			</view>
 		</view>

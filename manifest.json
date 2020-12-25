@@ -57,7 +57,7 @@
                 "payment" : {
                     "weixin" : {
                         "__platform__" : [ "ios", "android" ],
-                        "appid" : "wxef2dd947dd8bbf4b",
+                        "appid" : "wxb93dc4f298fe3f11",
                         "UniversalLinks" : ""
                     },
                     "alipay" : {
@@ -66,14 +66,14 @@
                 },
                 "oauth" : {
                     "weixin" : {
-                        "appid" : "wxef2dd947dd8bbf4b",
-                        "appsecret" : "cfd7049fcff17070e6bd9ba527fcd56b",
+                        "appid" : "wxb93dc4f298fe3f11",
+                        "appsecret" : "34c2b335a52316bb506ec1957551a09a",
                         "UniversalLinks" : ""
                     }
                 },
                 "share" : {
                     "weixin" : {
-                        "appid" : "wxef2dd947dd8bbf4b",
+                        "appid" : "wxb93dc4f298fe3f11",
                         "UniversalLinks" : ""
                     }
                 }

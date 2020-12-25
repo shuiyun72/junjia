@@ -113,12 +113,12 @@
 				if (numb > 0) {
 					let numbStr = numb.toString();
 					uni.setTabBarBadge({
-						index: 3,
+						index: 2,
 						text: numbStr
 					})
 				} else {
 					uni.removeTabBarBadge({
-						index: 3
+						index: 2
 					})
 				}
 			},
