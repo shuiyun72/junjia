@@ -3,9 +3,9 @@
 		<view class="order_header">
 			<view class="deng1" v-if="orderItem.status == -1">
 				<view class="part1">
-					<!-- <text class="d_t1">等待支付 剩余</text>
-					<text class="d_t2">03:20</text> -->
-					<text class="d_t1">等待支付</text>
+					<text class="d_t1">等待支付 剩余</text>
+					<text class="d_t2">{{orderItemTime}}</text>
+					<!-- <text class="d_t1">等待支付</text> -->
 				</view>
 				<view class="part2">
 					逾期未支付订单将自动取消
@@ -25,16 +25,16 @@
 				</view>
 			</view>
 			<view class="part3">
-				<!-- <view class="btn del round" v-if="orderState == 0 || orderState == 1" @click="quxiaoOrder">
+				<view class="btn del round" v-if="orderItem.status == -1" @click="quxiaoOrder">
 					取消订单
-				</view> -->
+				</view>
 				<view class="btn blue round" v-if="orderItem.status == -1" @click="quzhifu">
 					去支付
 				</view>
-				<view class="btn blue round" v-if="orderItem.status == 1 || orderItem.status == 6" @click="zailaiOrder">
+				<view class="btn blue round" v-if="orderItem.status == 1 || orderItem.status == 6 || orderItem.status == 8" @click="zailaiOrder">
 					再来一单
 				</view>
-				<view class="btn del round" v-if="orderItem.status == 2 || orderItem.status == 3 "  @click="zailaiOrder">
+				<view class="btn del round" v-if="orderItem.status == 2 || orderItem.status == 3  "  @click="zailaiOrder">
 					再来一单
 				</view>
 				<view  @click="lianxiKF" class="btn del round">
@@ -117,7 +117,7 @@
 					{{Number(orderItem.credit)+ Number(orderItem.coupon_money)}}
 				</view>
 			</view>
-			<view class="row_c">
+			<view class="row_c" v-if="orderItem.coupon_money">
 				<view class="attr">
 					优惠 :
 				</view>
@@ -125,7 +125,7 @@
 					{{orderItem.coupon_money}}
 				</view>
 			</view>
-			<view class="row_c">
+			<view class="row_c" >
 				<view class="attr">
 					配送费 :
 				</view>
@@ -133,7 +133,7 @@
 					{{orderItem.credit >= peisongfei ?'0': peisongfei}}
 				</view>
 			</view>
-			<view class="row_c">
+			<view class="row_c" v-if="orderItem.coupon_money">
 				<view class="attr">
 					实付 :
 				</view>
@@ -214,15 +214,13 @@
 				orderItem:{},
 				peisongfei:0,
 				xitongMsg:[],
-				orderId:0
+				orderId:0,
+				timerL:""
 			};
 		},
 		onLoad(ph) {
 			this.orderId = ph.orderId;
-			this.$getApi("/App/Goods/orderDetail",{id:ph.orderId}, res => {
-				console.log(res.data,"订单详情")
-				this.orderItem = res.data[0];
-			})
+			
 			this.$getApi('/App/Index/getSysConfig',{},res=>{
 				console.log(res.data,"配送费")
 				this.xitongMsg = res.data;
@@ -230,20 +228,66 @@
 					return item.remark.indexOf("配送费") != -1
 				})[0].value;
 			})
+			this.getDetail();
+			let this_ = this;
+			this.timerL =  setInterval(()=>{
+				this_.getDetail();
+			},1000)
+		},
+		beforeDestroy() {
+			clearInterval(this.timerL)
+		},
+		computed:{
+			orderItemTime(){
+				if(this.orderItem.add_time){
+					let timeCCL = this.$getDate(Number(this.orderItem.add_time) + 299,"s-s-s s:s:s","c")
+					return this.$lastDate(timeCCL,'d-s:s:s')
+				}else{
+					return "00:00"
+				}
+			}
+		},
+		watch:{
+			orderItemTime(){
+				// console.log(this.orderItemTime)
+				if(this.orderItemTime == "00:05"){
+					this.$msg('5秒钟后将自动取消订单,返回订单列表')
+				}
+				if(this.orderItemTime == "00:00"){
+					uni.navigateBack({
+						delta:1
+					})
+				}
+			}
 		},
 		methods:{
+			getDetail(){
+				this.$getApi("/App/Goods/orderDetail",{id:this.orderId}, res => {
+					// console.log(res.data,"订单详情")
+					this.orderItem = res.data[0];
+				})
+			},
 			quzhifu(){
 				uni.navigateTo({
 					url:'./orderPay?orderId='+this.orderId
 				})
 			},
 			quxiaoOrder(){
+				let this_ = this;
 				uni.showModal({
 				    title: '取消订单',
 				    content: '是否确认取消订单',
 				    success: function (res) {
 				        if (res.confirm) {
-				            console.log('用户点击确定');
+				            this_.$getApi("/App/Goods/cancelOrder",{id:this_.orderId}, res => {
+				            	console.log(res.data,"订单取消")
+								this_.$msg("订单已取消")
+								setTimeout(()=>{
+									uni.navigateBack({
+										delta:1
+									})
+								},500)
+				            })
 				        } else if (res.cancel) {
 				            console.log('用户点击取消');
 				        }

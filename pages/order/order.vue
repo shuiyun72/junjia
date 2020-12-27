@@ -156,8 +156,11 @@
 				if(num == 6){
 					return "待评价"
 				}
-				if(num == 7 || num == 8){
+				if(num == 7){
 					return "已完成"
+				}
+				if(num == 8){
+					return "已取消"
 				}
 			},
 			getOrederList(fromNum,more){

@@ -16,7 +16,7 @@
 			}, -->
 			<view class="">
 				<view class="red">
-					￥<text>{{item.price}}</text>
+					￥<text>{{isTuangou?item.group_buy_price:item.price}}</text>
 				</view>
 				<view class="red sc9" v-if="isTuan">
 					团购价
@@ -40,7 +40,7 @@
 		beforeMount() {
 			this.httpp = this.$apiUrl
 		},
-		props:["item","isTuan"],
+		props:["item","isTuan","isTuangou"],
 		methods:{
 			handleClick(item){
 				this.$emit('click',item)

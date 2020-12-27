@@ -36,7 +36,7 @@
 					商品
 				</view>
 				<view class="num">
-					{{orderTrueFoot.length}}件
+					{{itemHg != '' ? orderTrueFoot.length+1 : orderTrueFoot.length }}件
 				</view>
 			</view>
 			<view class="i_item" v-for="item in orderTrueFoot">
@@ -47,7 +47,7 @@
 							{{item.name}}
 						</view>
 						<view class="in2">
-							x <text>{{item.price}}</text>
+							￥ <text>{{item.price}}</text>
 						</view>
 					</view>
 				</view>
@@ -55,6 +55,23 @@
 					x{{item.num}}
 				</view>
 			</view>
+			<view class="i_item" v-if="itemHg != ''">
+				<view class="left">
+					<image :src="itemHg.thumb" class="img_m" mode=""></image>
+					<view class="info_cc">
+						<view class="in1 shengluehao">
+							{{itemHg.name}}
+						</view>
+						<view class="in2">
+							￥ <text>{{itemHg.change_price}}</text>
+						</view>
+					</view>
+				</view>
+				<view class="right">
+					x1
+				</view>
+			</view>
+			
 			<view class="last_calc">
 				共{{allFootsCalc}}件商品 小计￥:<text class="num">{{allMoneyFootsCalc}}元</text>
 			</view>
@@ -160,17 +177,19 @@
 				order_id: "",
 				total_credit: "",
 				peisong: 0,
-				mianPeisong: 28
+				mianPeisong: 28,
+				phStrCode:""
 
 			};
 		},
 		computed: {
-			...mapState(["address", "orderTrueFoot", "youhuiquan"]),
+			...mapState(["address", "orderTrueFoot", "youhuiquan","itemHg"]),
 			allFootsCalc() {
 				let numL = 0;
 				_.map(this.orderTrueFoot, item => {
 					numL = numL + Number(item.num)
 				})
+				numL = this.itemHg != '' ? numL + 1 : numL
 				return numL
 			},
 			youhui(){
@@ -185,7 +204,8 @@
 				_.map(this.orderTrueFoot, item => {
 					numL = numL + Number(item.num) * (Number(item.price) * 100)
 				})
-				return numL / 100
+				let numLC = this.itemHg != '' ?  1 : 0
+				return ( numL / 100 ) + numLC
 			},
 			allMoneyFootsCalcPS() {
 				console.log(this.allMoneyFootsCalc, this.peisong)
@@ -195,23 +215,19 @@
 					this.peisong = 0
 				}
 				let youhuiquanM = this.youhuiquan.money ? Number(this.youhuiquan.money) : 0;
+				let numLC = this.itemHg != '' ?  1 : 0;
 				return Number(this.allMoneyFootsCalc) + Number(this.peisong) - youhuiquanM;
 			}
 		},
 		onShow() {
 			console.log("orderTrueFoot", this.orderTrueFoot)
-			console.log(this.address)
+			console.log(this.itemHg)
+			this.$store.commit("setYouhuiquan",{})
 		},
 		onLoad(ph) {
+			
 			if (ph.strCode) {
-				this.$getApi("/App/Goods/create_order", {
-					str: ph.strCode
-				}, res => {
-					console.log(res, "1212")
-					this.$store.commit('clearCar')
-					this.order_id = res.data.order_id;
-					this.total_credit = res.data.total_credit;
-				})
+				this.phStrCode = ph.strCode;
 			}
 			if (ph.orderId) {
 				this.order_id = ph.orderId;
@@ -229,7 +245,9 @@
 							address: rItem.user_address.split(" ")[1],
 							name: rItem.user_name,
 							phone: rItem.user_phone,
-							receive_address: rItem.user_address.split(" ")[0]
+							receive_address: rItem.user_address.split(" ")[0],
+							lat:rItem.lat,
+							lng:rItem.lng
 						}
 						this.$store.commit("setAddress", addressItem)
 						// this.timeText = rItem.receive_time;
@@ -267,14 +285,16 @@
 								change_goods_id: huanhouId
 							}, resCode => {
 								console.log(resCode, "1212resCode")
-								this.$getApi("/App/Goods/create_order", {
-									str: resCode.data
-								}, res => {
-									console.log(res, "1212")
-									this.$store.commit('clearCar')
-									this.order_id = res.data.order_id;
-									this.total_credit = res.data.total_credit;
-								})
+								this.phStrCode = resCode.data;
+								console.log(this.address)
+								// this.$getApi("/App/Goods/create_order", {
+								// 	str: resCode.data
+								// }, res => {
+								// 	console.log(res, "1212")
+								// 	this.$store.commit('clearCar')
+								// 	this.order_id = res.data.order_id;
+								// 	this.total_credit = res.data.total_credit;
+								// })
 							})
 						})
 
@@ -301,14 +321,15 @@
 				this_.peisong = _.filter(res.data, item => {
 					return item.remark.includes('配送费')
 				})[0].value;
-				// this_.mianPeisong = _.filter(res.data,item=>{
-				// 	return item.remark.includes('免配送费门槛')
-				// })[0].value;
-				this_.mianPeisong = 0;
+				this_.mianPeisong = _.filter(res.data,item=>{
+					return item.remark.includes('免配送费门槛')
+				})[0].value;
+				// this_.mianPeisong = 0;
 			})
+			
 		},
 		methods: {
-
+			
 			timeTextM() {
 				console.log(this.multiIndex, "ccc")
 				if (this.multiArray[1][this.multiIndex[1]] == '尽快送达') {
@@ -350,6 +371,154 @@
 				console.log(el)
 				this.radio = el.detail.value
 			},
+			createOrder(){
+				console.log("12121221----------")
+				this.$getApi("/App/Goods/create_order", {
+					str: this.phStrCode
+				}, res => {
+					console.log(res, "1212")
+					this.$store.commit('clearCar')
+					this.order_id = res.data.order_id;
+					this.total_credit = res.data.total_credit;
+					this.phStrCode = "";
+					this.jiesuanOrder();
+				})
+			},
+			jiesuanOrder(){
+				console.log(this.timeText)
+				let timeText = ""
+				if (this.timeText.indexOf('尽快送达') != -1) {
+					let thisTT = this.timeText.split("预计")[1].split("送达")[0];
+					let thisTimeC = this.$getDate("", "s:s:s").split(":")[0] + ":" + this.$getDate("", "s:s:s").split(":")[1]
+					timeText = this.$getDate("", "s-s-s") + " " + thisTimeC + "-" + thisTT
+				} else
+				if (this.timeText.indexOf('今天') != -1) {
+					timeText = this.$getDate("", "s-s-s") + " " + this.timeText.split("号 ")[1]
+					let selTime = new Date(this.$getDate("", "s-s-s") + " " + this.timeText.split("号 ")[1].split("-")[1] + ":00").getTime();
+					if (selTime <= new Date().getTime()) {
+						this.$msg("您选择的今天送达时间 " + this.timeText.split("号 ")[1].split("-")[1] + " 不合理,请重新选择")
+						return false;
+					}
+				} else
+				if (this.timeText.indexOf('明天') != -1) {
+					let day3 = new Date();
+					let tomorrow = day3.setTime(day3.getTime() + 24 * 60 * 60 * 1000);
+					timeText = this.$getDate(tomorrow, "s-s-s") + " " + this.timeText.split("号 ")[1]
+				}
+				let user_address = this.address.address ? this.address.address : "";
+				console.log("cc2",this.order_id)
+				let dataL = {
+					id: this.order_id,
+					remark: this.beizhuC,
+					user_name: this.address.name,
+					user_phone: this.address.phone,
+					user_address: this.address.receive_address + user_address,
+					receive_time: timeText,
+					coupon_id: this.youhuiquan.coupon_id ? this.youhuiquan.coupon_id : "",
+					credit: this.total_credit,
+					lat: this.address.lat,
+					lng: this.address.lng
+				}
+				console.log(dataL)
+				this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
+								
+					let payType = 0;
+					// #ifndef MP
+					payType = this.radio == "A" ? 1 : 2;
+					// #endif
+					// #ifdef MP
+					payType = 3;
+					// #endif
+					let dataPay = {
+						type: payType,
+						total_credit: this.allMoneyFootsCalcPS,
+						id: this.order_id
+					}
+					this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
+						console.log(resbuy, "payOrder1111")
+						let thisPayType = ""
+				
+						// #ifndef MP
+						if (this.radio == "A") {
+							thisPayType = "wepay"
+						} else
+						if (this.radio == "B") {
+							thisPayType = "alipay"
+						} else
+						if (this.radio == "C") {
+							thisPayType = "xxwepay"
+						}
+				
+						let orderMsgL = {
+							appid: resbuy.data.appId,
+							partnerid: resbuy.data.partnerId,
+							prepayid: resbuy.data.prepayId,
+							timestamp: resbuy.data.timeStamp,
+							noncestr: resbuy.data.nonceStr,
+							package: resbuy.data.package,
+							sign: resbuy.data.paySign
+						}
+						console.log(JSON.stringify(orderMsgL))
+						// #endif
+						// #ifdef MP
+						thisPayType = "xxwepay"
+						// #endif	
+				
+						if (thisPayType == "wepay") {
+							console.log("wepay")
+							console.log(JSON.stringify(orderMsgL))
+							uni.requestPayment({
+								provider: 'wxpay',
+								orderInfo: orderMsgL, //微信、支付宝订单数据
+								success: function(res) {
+									uni.navigateTo({
+										url: "../home/msg?title=付款成功"
+									})
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+									this_.$msg(JSON.stringify(err))
+								}
+							});
+						} else
+						if (thisPayType == "alipay") {
+							console.log(orderMsgL, "cccc")
+							uni.requestPayment({
+								provider: 'alipay',
+								orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
+								success: function(res) {
+									uni.navigateTo({
+										url: "../home/msg?title=付款成功"
+									})
+									console.log('success:' + JSON.stringify(res));
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+								}
+							});
+						} else
+						if (thisPayType == "xxwepay") {
+							let timeStamp = resbuy.data.timeStamp.toString()
+							uni.requestPayment({
+								provider: 'wxpay',
+								timeStamp: timeStamp,
+								nonceStr: resbuy.data.nonceStr,
+								package: resbuy.data.package,
+								signType: resbuy.data.signType,
+								paySign: resbuy.data.paySign,
+								success: function(res) {
+									uni.navigateTo({
+										url: "../home/msg?title=付款成功"
+									})
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+								}
+							});
+						}
+					})
+				})
+			},
 			toNav(el) {
 				let this_ = this;
 				if (el == 'pay') {
@@ -357,151 +526,15 @@
 						this.$msg('请选择地址')
 						return false;
 					};
-
-					console.log(this.timeText)
-					let timeText = ""
-					if (this.timeText.indexOf('尽快送达') != -1) {
-						let thisTT = this.timeText.split("预计")[1].split("送达")[0];
-						let thisTimeC = this.$getDate("", "s:s:s").split(":")[0] + ":" + this.$getDate("", "s:s:s").split(":")[1]
-						timeText = this.$getDate("", "s-s-s") + " " + thisTimeC + "-" + thisTT
-					} else
-					if (this.timeText.indexOf('今天') != -1) {
-						timeText = this.$getDate("", "s-s-s") + " " + this.timeText.split("号 ")[1]
-						let selTime = new Date(this.$getDate("", "s-s-s") + " " + this.timeText.split("号 ")[1].split("-")[1] + ":00").getTime();
-						if (selTime <= new Date().getTime()) {
-							this.$msg("您选择的今天送达时间 " + this.timeText.split("号 ")[1].split("-")[1] + " 不合理,请重新选择")
-							return false;
-						}
-					} else
-					if (this.timeText.indexOf('明天') != -1) {
-						let day3 = new Date();
-						let tomorrow = day3.setTime(day3.getTime() + 24 * 60 * 60 * 1000);
-						timeText = this.$getDate(tomorrow, "s-s-s") + " " + this.timeText.split("号 ")[1]
+					if(this.phStrCode != ""){
+						this.createOrder()
+					}else{
+						this.jiesuanOrder()
 					}
-					let user_address = this.address.address ? this.address.address : "";
-					let dataL = {
-						id: this.order_id,
-						remark: this.beizhuC,
-						user_name: this.address.name,
-						user_phone: this.address.phone,
-						user_address: this.address.receive_address + user_address,
-						receive_time: timeText,
-						coupon_id: this.youhuiquan.coupon_id ? this.youhuiquan.coupon_id : "",
-						credit: this.total_credit,
-						lat: this.address.lat,
-						lng: this.address.lng
-					}
-					console.log(dataL)
-					this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
-				
-						let payType = 0;
-						// #ifndef MP
-						payType = this.radio == "A" ? 1 : 2;
-						// #endif
-						// #ifdef MP
-						payType = 3;
-						// #endif
-						let dataPay = {
-							type: payType,
-							total_credit: this.allMoneyFootsCalcPS,
-							id: this.order_id
-						}
-						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
-							console.log(resbuy, "payOrder1111")
-							let thisPayType = ""
-
-							// #ifndef MP
-							if (this.radio == "A") {
-								thisPayType = "wepay"
-							} else
-							if (this.radio == "B") {
-								thisPayType = "alipay"
-							} else
-							if (this.radio == "C") {
-								thisPayType = "xxwepay"
-							}
-
-							let orderMsgL = {
-								appid: resbuy.data.appId,
-								partnerid: resbuy.data.partnerId,
-								prepayid: resbuy.data.prepayId,
-								timestamp: resbuy.data.timeStamp,
-								noncestr: resbuy.data.nonceStr,
-								package: resbuy.data.package,
-								sign: resbuy.data.paySign
-							}
-							console.log(JSON.stringify(orderMsgL))
-							// #endif
-							// #ifdef MP
-							thisPayType = "xxwepay"
-							// #endif	
-
-							if (thisPayType == "wepay") {
-								console.log("wepay")
-								console.log(JSON.stringify(orderMsgL))
-								uni.requestPayment({
-									provider: 'wxpay',
-									orderInfo: orderMsgL, //微信、支付宝订单数据
-									success: function(res) {
-										this_.$msg(JSON.stringify(res))
-										uni.navigateTo({
-											url: "../home/msg?title=付款成功"
-										})
-									},
-									fail: function(err) {
-										console.log('fail:' + JSON.stringify(err));
-										this_.$msg(JSON.stringify(err))
-									}
-								});
-							} else
-							if (thisPayType == "alipay") {
-								console.log(orderMsgL, "cccc")
-								uni.requestPayment({
-									provider: 'alipay',
-									orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
-									success: function(res) {
-										uni.navigateTo({
-											url: "../home/msg?title=付款成功"
-										})
-										console.log('success:' + JSON.stringify(res));
-									},
-									fail: function(err) {
-										console.log('fail:' + JSON.stringify(err));
-									}
-								});
-							} else
-							if (thisPayType == "xxwepay") {
-								let timeStamp = resbuy.data.timeStamp.toString()
-								uni.requestPayment({
-									provider: 'wxpay',
-									timeStamp: timeStamp,
-									nonceStr: resbuy.data.nonceStr,
-									package: resbuy.data.package,
-									signType: resbuy.data.signType,
-									paySign: resbuy.data.paySign,
-									success: function(res) {
-										this_.$getApi("/api/user/userinfo", {}, resss => {
-											this_.$store.commit('login', resss.data);
-										})
-										if (this_.$store.state.userInfo.groupid != 0) {
-											uni.navigateTo({
-												url: "../home/msg?title=付款成功"
-											})
-										} else {
-											setTimeout(() => {
-												uni.navigateTo({
-													url: "../home/msg?title=付款成功"
-												})
-											}, 600)
-										}
-									},
-									fail: function(err) {
-										console.log('fail:' + JSON.stringify(err));
-									}
-								});
-							}
-						})
-					})
+					
+					
+					
+					
 
 
 				}

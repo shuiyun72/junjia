@@ -1,7 +1,7 @@
 <template>
 	<view class="mine_set">
 		<uni-list>
-			<uni-list-item title="账号与安全" @click="setTo('anquan')"></uni-list-item>
+			<!-- <uni-list-item title="账号与安全" @click="setTo('anquan')"></uni-list-item> -->
 			<uni-list-item title="用户协议" @click="setTo('xieyi')"></uni-list-item>
 			<uni-list-item title="清除缓存" @click="setTo('huancun')"></uni-list-item>
 			<uni-list-item title="版本更新" @click="setTo('gengxin')" rightText="V1.0.1" :showArrow="false"></uni-list-item>

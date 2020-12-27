@@ -73,7 +73,7 @@
 							</view>
 							<view class="text">
 								<view class="title">
-									<view class="maiyisong" v-if="item.state == 4">买一送一</view> <view>{{item.name}}</view>
+									<view class="maiyisong" v-if="item.on_sale == 1">买一送一</view> <view>{{item.name}}</view>
 								</view>
 								<view class="money_num">
 									<view class="money">
@@ -88,9 +88,9 @@
 							</view>
 						</view>
 					</view>
-					<view class="maiyisongyi" v-if="item.state == 4">
+					<view class="maiyisongyi" v-if="item.on_sale == 1">
 						<view class="img_l">
-							<image src="../../static/img/home/or.png" class="img" mode=""></image>
+							<image :src="item.thumb" class="img" mode=""></image>
 						</view>
 						<view class="text_r">
 							<view class="r_l shengluehao">

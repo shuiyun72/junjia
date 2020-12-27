@@ -237,13 +237,21 @@ const lastDate = (myDate,type) => {
 	h = Math.floor(leftTime/1000/60/60%24);  
 	m = Math.floor(leftTime/1000/60%60);  
 	s = Math.floor(leftTime/1000%60);
-	if(d<10){ d = "0"+d}
 	if(h<10){ h = "0"+h}
 	if(m<10){ m = "0"+m}
 	if(s<10){ s = "0"+s}
 	if (leftTime>=0) {  
 		if(type == 'd-s:s:s'){
-			return d+"天" +h+":"+m+":"+s
+			if(d == 0){
+				if(h == '00'){
+					return m+":"+s
+				}else{
+					return h+":"+m+":"+s
+				}
+			}else{
+				return d+"天" +h+":"+m+":"+s
+			}
+			
 		}else{
 			return h+":"+m+":"+s
 		}

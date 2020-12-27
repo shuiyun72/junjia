@@ -57,7 +57,7 @@
 				<view class="money">
 					<text class="c1" v-if="itemLC.state == 5">团购价</text>
 					<text class="c1">￥</text>
-					<text class='c2'>{{itemLC.price}}</text>
+					<text class='c2'>{{itemLC.state == 5?itemLC.group_buy_price:itemLC.price}}</text>
 					<text class='c3'>￥{{itemLC.old_price}}</text>
 				</view>
 				<slot></slot>

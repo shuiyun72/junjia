@@ -18,7 +18,7 @@
 		<view class="ctrl">
 			<view class="left">
 				<view class="m1 red">
-					￥<text class="m">{{item.price}}</text>
+					￥<text class="m">{{item.group_buy == 1 ? item.group_buy_price:item.price}}</text>
 				</view>
 				<view class="m2">
 					￥<text>{{item.old_price}}</text>

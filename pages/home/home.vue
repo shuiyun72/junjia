@@ -158,7 +158,7 @@
 				<sy-header1 @click="turnTo({name:'买一送一'})" :item="title1"></sy-header1>
 				<view class="shop_case_box">
 					<view class="shop_auto">
-						<sy-foot1 :isTuan='true' @click="part1Num" :item="item" v-for="item in maiyisongyiList"></sy-foot1>
+						<sy-foot1 @click="part1Num" :item="item" v-for="item in maiyisongyiList"></sy-foot1>
 					</view>
 				</view>
 			</view>
@@ -167,7 +167,7 @@
 				<sy-header1 @click="turnTo({name:'团购产品'})" :item="title2"></sy-header1>
 				<view class="shop_case_box">
 					<view class="shop_auto">
-						<sy-foot1 :isTuan='true' @click="part1Num" :item="item" v-for="item in tuangouList"></sy-foot1>
+						<sy-foot1 :isTuan='true' @click="part1Num" :isTuangou="true" :item="item" v-for="item in tuangouList"></sy-foot1>
 					</view>
 				</view>
 			</view>
