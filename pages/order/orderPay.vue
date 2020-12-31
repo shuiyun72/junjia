@@ -21,15 +21,16 @@
 					</view>
 					<radio :class="radio=='A'?'checked':''" :checked="radio=='A'?true:false" value="A" class="radio" :color="'#18B357'"></radio>
 				</label>
+				<!-- #ifndef MP -->
 				<label class="cu-form-group">
 					<view class="item">
 						<image style="width: 44rpx;height: 44rpx;" src="../../static/img/zhifb.png" mode=""></image><text class="margin-left-xs">支付宝支付</text>
 					</view>
 					<view>
-						<radio :class="radio=='B'?'checked':''" :checked="radio=='C'?true:false" value="B" class="radio" :color="'#18B357'"></radio>
+						<radio :class="radio=='B'?'checked':''" :checked="radio=='B'?true:false" value="B" class="radio" :color="'#18B357'"></radio>
 					</view>
 				</label>
-
+				<!-- #endif -->
 			</radio-group>
 		</view>
 		<view class="bottom_btn_zu_sy">
@@ -87,22 +88,23 @@
 					// 	lng: this.orderItem.lng
 					// }
 					// this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
+						let payType = 0;
+						// #ifndef MP
+						payType = this.radio == "A" ? 1 : 2;
+						// #endif
+						// #ifdef MP
+						payType = 3;
+						// #endif
+						let dataPay = {
+							type: payType,
+							total_credit: this.orderItem.credit,
+							id: this.orderId
+						}
 						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
-							let payType = 0;
-							// #ifndef MP
-							payType = this.radio == "A" ? 1 : 2;
-							// #endif
-							// #ifdef MP
-							payType = 3;
-							// #endif
-							let dataPay = {
-								type: payType,
-								total_credit: this.orderItem.credit,
-								id: this.orderId
-							}
+							
 							console.log(resbuy, "payOrder1111")
 
-							console.log(this.radio)
+							
 							let thisPayType = ""
 
 							// #ifndef MP
@@ -136,7 +138,7 @@
 								console.log(JSON.stringify(orderMsgL))
 								uni.requestPayment({
 									provider: 'wxpay',
-									orderInfo: resbuy.data, //微信、支付宝订单数据
+									orderInfo: orderMsgL, //微信、支付宝订单数据
 									success: function(res) {
 										this_.$msg(JSON.stringify(res))
 										uni.navigateTo({
@@ -153,7 +155,7 @@
 								console.log(orderMsgL, "cccc")
 								uni.requestPayment({
 									provider: 'alipay',
-									orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
+									orderInfo: resbuy.data, //微信、支付宝订单数据
 									success: function(res) {
 										uni.navigateTo({
 											url: "../home/msg?title=付款成功"
@@ -201,6 +203,7 @@
 			},
 			RadioChange(el) {
 				console.log(el.detail.value)
+				this.radio = el.detail.value
 			}
 		}
 	}

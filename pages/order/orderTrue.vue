@@ -482,10 +482,9 @@
 							});
 						} else
 						if (thisPayType == "alipay") {
-							console.log(orderMsgL, "cccc")
 							uni.requestPayment({
 								provider: 'alipay',
-								orderInfo: JSON.stringify(orderMsgL), //微信、支付宝订单数据
+								orderInfo: resbuy.data, //微信、支付宝订单数据
 								success: function(res) {
 									uni.navigateTo({
 										url: "../home/msg?title=付款成功"
