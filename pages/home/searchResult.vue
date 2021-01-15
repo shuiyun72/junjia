@@ -26,7 +26,7 @@
 			<view class="">
 				<view class="rec_body_sy" v-if="shopList.length > 0">
 					<view >
-						<sy-foot2 v-for="(item,index) in shopList" :item="item" @click="foot2Click" :isPaihang="isPaihang" :itemIndex="index">
+						<sy-foot2 v-for="(item,index) in shopList" :item="item" @click="foot2Click(item)" :isPaihang="isPaihang" :itemIndex="index">
 							<view class="num_add_sy" v-if="item.state != 3">
 								<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
 								<view class="n" v-if="item.num > 0">{{ item.num }}</view>
@@ -111,7 +111,13 @@
 					this.$getApi("/App/Goods/getGoodsListByCate", {keyword:ph.searchName,
 					p:this.page}, res => {
 						console.log(res.data,"新鲜水果新列表")
-						this.clacCar(res.data)
+						let list = []
+						_.map(res.data,item=>{
+							item.sel = 1;
+							item.num = 0;
+							list.push(item)
+						})
+						this.clacCar(list)
 						// this.shopList  = res.data;
 						// this.calcList();
 					})
@@ -131,7 +137,13 @@
 				this.page = 1;
 				this.$getApi("/App/User/myCollect", {page:this.page}, res => {
 					console.log(res.data,"收藏列表")
-					this.clacCar(res.data)
+					let list = []
+					_.map(res.data,item=>{
+						item.sel = 1;
+						item.num = 0;
+						list.push(item)
+					})
+					this.clacCar(list)
 					// this.shopList  = res.data;
 					// this.calcList();
 				})
@@ -158,7 +170,13 @@
 				this.phFromType = ph.fromType;
 				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:this.phSearchName ,
 				p:this.page}, res => {
-					this.clacCar(res.data)
+					let list = []
+					_.map(res.data,item=>{
+						item.sel = 1;
+						item.num = 0;
+						list.push(item)
+					})
+					this.clacCar(list)
 				})
 				
 			}
@@ -175,7 +193,13 @@
 					p:this.page
 				}, res => {
 					console.log(res.data, "获取商品")
-					this.clacCar(res.data)
+					let list = []
+					_.map(res.data,item=>{
+						item.sel = 1;
+						item.num = 0;
+						list.push(item)
+					})
+					this.clacCar(list)
 				})
 				
 			}
@@ -475,8 +499,14 @@
 			},
 			foot2Click(item) {
 				console.log(item)
+				let itemId = ""
+				if(this.phSearchName == "我的收藏"){
+					itemId = item.tid
+				}else{
+					itemId = item.id
+				}
 				uni.navigateTo({
-					url:"../detail/detail?id="+item.id
+					url:"../detail/detail?id="+itemId
 				})
 			},
 			foot2Jia(item) {

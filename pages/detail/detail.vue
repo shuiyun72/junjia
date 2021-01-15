@@ -54,7 +54,7 @@
 					</view>
 				</view>
 				<view class="rate_pj">
-					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" v-model="itemDetail.comment_list[0].star"></uni-rate>
+					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :disabled="true" :size="18" v-model="itemDetail.comment_list[0].star"></uni-rate>
 				</view>
 
 				<view class="wa_text">

@@ -75,20 +75,39 @@
 	export default {
 		data() {
 			return {
-				
+				fenxiangImg:"",
+				fenxiangText:""
 			};
+		},
+		onShow() {
+			let this_ =  this;
+			// 获取系统配置信息
+			this_.$getApi("/App/Index/getSysConfig", {}, res => {
+				console.log(res, "获取系统配置信息")
+				this_.fenxiangText = _.filter(res.data, item => {
+					return item.remark.includes('分享文字')
+				})[0].value;
+				this_.fenxiangImg = _.filter(res.data, item => {
+					return item.remark.includes('分享图片')
+				})[0].value;
+				console.log(this_.bobaoText, '热点播报')
+			})
 		},
 		//发送给朋友
 		onShareAppMessage(res) {
 			// let userInfoId = this.userInfo.id;
 			// 此处的distSource为分享者的部分信息，需要传递给其他人
+			let this_ = this;
 			uni.share({
 			    provider: "weixin",
 			    scene: "WXSceneSession",
 			    type: 1,
-			    summary: "欢迎使用君佳优选商城！",
+			    summary: this_.fenxiangText,
 			    success: function (res) {
 			        console.log("success:" + JSON.stringify(res));
+					uni.navigateTo({
+						url:"./jifen"
+					})
 			    },
 			    fail: function (err) {
 			        console.log("fail:" + JSON.stringify(err));
@@ -97,13 +116,17 @@
 		},
 		//分享到朋友圈
 		onShareTimeline(res) {
+			let this_ = this;
 			uni.share({
 			    provider: "weixin",
 			    scene: "WXSenceTimeline",
 			    type: 1,
-			    summary: "欢迎使用君佳优选商城！",
+			    summary: this_.fenxiangText,
 			    success: function (res) {
 			        console.log("success:" + JSON.stringify(res));
+					uni.navigateTo({
+						url:"./jifen"
+					})
 			    },
 			    fail: function (err) {
 			        console.log("fail:" + JSON.stringify(err));
@@ -123,21 +146,20 @@
 				this.$refs.btPop.open()
 			},
 			fenxiang(){
+				let this_ = this;
 			// #ifndef MP
-			
-			
 				uni.share({
 				    provider: "weixin",
 				    scene: "WXSceneSession",
 				    type: 0,
 				    href: "https://www.baidu.com",
 				    title: "君佳优选",
-				    summary: "我在君佳优选购物，赶紧跟我一起来体验！",
-				    imageUrl: "http://www.junjiayouxuan.com/Uploads/admin/Guang/banner/2021-01-15/1610677453_7149006226000fccdd30b2.png",
+				    summary: this_.fenxiangText,
+				    imageUrl: this_.fenxiangImg,
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));
-						uni.navigateBack({
-							delta:1
+						uni.navigateTo({
+							url:"./jifen"
 						})
 				    },
 				    fail: function (err) {
@@ -150,9 +172,12 @@
 				    provider: "weixin",
 				    scene: "WXSceneSession",
 				    type: 1,
-				    summary: "我在君佳优选购物，赶紧跟我一起来体验！",
+				    summary: this_.fenxiangText,
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));
+						uni.navigateTo({
+							url:"./jifen"
+						})
 				    },
 				    fail: function (err) {
 				        console.log("fail:" + JSON.stringify(err));

@@ -369,7 +369,13 @@
 			    type: 'wgs84',
 				geocode:true,
 			    success: function (res) {
-					this_.setLocation(res)
+					
+					let position = {};
+					// "address":{"country":"中国","province":"河南省","city":"郑州市","district":"中原区","street":"药厂街","streetNum":"154号","poiName":"河南省国家大学科技园西区","cityCode":"0371"}
+					position.name = res.address.poiName;
+					position.address = res.address.province+res.address.city+res.address.district+res.address.street;
+					this_.setLocation(position)
+					console.log('当前位置：' + JSON.stringify(res));
 			        console.log('当前位置的经度：' + res.longitude);
 			        console.log('当前位置的纬度：' + res.latitude);
 			    }
