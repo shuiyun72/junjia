@@ -1,83 +1,77 @@
 <template>
 	<view class="mine">
 		<view class="" v-if="hasLogin">
-			<!-- #ifdef MP -->
 			<view class="user_info" :style="{ 'padding-top': (SystemInfoL.menu.top) + 'px' }">
-				<!-- #endif -->
-				<!-- #ifndef MP -->
-				<view class="user_info">
-					<!-- #endif -->
-
-					<view class="left_info" @click="navsTo('mineMsg')">
-						<image :src="userInfo.avatar" class="user_img" mode=""></image>
-						<view class="name_c">
-							<view class="name">{{userInfo.nickname}}</view>
-							<view class="name2">我爱买买买</view>
-						</view>
-					</view>
-					<view class="right_set">
-						<image src="../../static/img/mine/xiaox.png" class="msg1_img" mode=""  @click="navsTo('xiaoxi')"></image>
-						<image src="../../static/img/mine/shez.png" class="msg1_img" mode="" @click="navsTo('set')"></image>
-
-					</view>
-					<view class="mine_order">
-						<view class="title">
-							<view class="">
-								我的订单
-							</view>
-							<!-- <view class="iconfont iconjiantou"></view> -->
-						</view>
-						<view class="o_box">
-							<view class="item" v-for="item in orderList" @click="toOrder(item.ins)">
-								<view class="img_c">
-									<view class="num" v-if="item.num>0">
-										{{item.num}}
-									</view>
-									<image :src="'../../static/img/mine/'+item.img" mode="" class="bg_img_c"></image>
-								</view>
-								<view class="">
-									{{item.text}}
-								</view>
-							</view>
-						</view>
+				<view class="left_info" @click="navsTo('mineMsg')">
+					<image :src="userInfo.avatar" class="user_img" mode=""></image>
+					<view class="name_c">
+						<view class="name">{{userInfo.nickname}}</view>
+						<view class="name2" v-if="userInfo.mobile">{{userInfo.mobile}}</view>
 					</view>
 				</view>
-			</view>
-			<view class="mine_body">
-				<image src="../../static/img/mine/yaoqhy.png" class="mine_img" mode="" @click="navsTo('fenxiang')"></image>
-				<view class="mine_serve">
+				<view class="right_set">
+					<image src="../../static/img/mine/xiaox.png" class="msg1_img" mode="" @click="navsTo('xiaoxi')"></image>
+					<image src="../../static/img/mine/shez.png" class="msg1_img" mode="" @click="navsTo('set')"></image>
+
+				</view>
+				<view class="mine_order">
 					<view class="title">
-						我的服务
+						<view class="">
+							我的订单
+						</view>
+						<!-- <view class="iconfont iconjiantou"></view> -->
 					</view>
 					<view class="o_box">
-						<view class="item" v-for="item in serveList" @click="navTo(item.text)">
+						<view class="item" v-for="item in orderList" @click="toOrder(item.ins)">
 							<view class="img_c">
+								<view class="num" v-if="item.num>0">
+									{{item.num}}
+								</view>
 								<image :src="'../../static/img/mine/'+item.img" mode="" class="bg_img_c"></image>
 							</view>
 							<view class="">
 								{{item.text}}
 							</view>
 						</view>
-						<!-- #ifndef MP -->
-						<view class="item" @click="navTo('联系客服')">
-							<view class="img_c">
-								<image src="../../static/img/mine/fw-lx.png" mode="" class="bg_img_c"></image>
-							</view>
-							<button  open-type="contact" class="kf_btn">联系客服</button>
-						</view>
-						<!-- #endif -->
-						<!-- #ifdef MP -->
-						<view class="item" >
-							<view class="img_c" @click="navTo('联系客服')">
-								<image src="../../static/img/mine/fw-lx.png" mode="" class="bg_img_c"></image>
-							</view>
-							<button  open-type="contact" class="kf_btn">联系客服</button>
-						</view>
-						<!-- #endif -->
 					</view>
 				</view>
 			</view>
 		</view>
+		<view class="mine_body">
+			<image src="../../static/img/mine/yaoqhy.png" class="mine_img" mode="" @click="navsTo('fenxiang')"></image>
+			<view class="mine_serve">
+				<view class="title">
+					我的服务
+				</view>
+				<view class="o_box">
+					<view class="item" v-for="item in serveList" @click="navTo(item.text)">
+						<view class="img_c">
+							<image :src="'../../static/img/mine/'+item.img" mode="" class="bg_img_c"></image>
+						</view>
+						<view class="">
+							{{item.text}}
+						</view>
+					</view>
+					<!-- #ifndef MP -->
+					<view class="item" @click="navTo('联系客服')">
+						<view class="img_c">
+							<image src="../../static/img/mine/fw-lx.png" mode="" class="bg_img_c"></image>
+						</view>
+						<button open-type="contact" class="kf_btn">联系客服</button>
+					</view>
+					<!-- #endif -->
+					<!-- #ifdef MP -->
+					<view class="item">
+						<view class="img_c" @click="navTo('联系客服')">
+							<image src="../../static/img/mine/fw-lx.png" mode="" class="bg_img_c"></image>
+						</view>
+						<button open-type="contact" class="kf_btn">联系客服</button>
+					</view>
+					<!-- #endif -->
+				</view>
+			</view>
+		</view>
+	</view>
 </template>
 
 <script>
@@ -150,11 +144,11 @@
 						text: "意见反馈"
 					}
 				],
-				xitongMsg:[]
+				xitongMsg: []
 			};
 		},
 		computed: {
-			...mapState(["httpp", "SystemInfo", "userInfo","hasLogin"]),
+			...mapState(["httpp", "SystemInfo", "userInfo", "hasLogin"]),
 			SystemInfoL() {
 				// #ifdef MP
 				return JSON.parse(this.SystemInfo)
@@ -176,36 +170,38 @@
 			}
 		},
 		onShow() {
-			if(this.hasLogin == false){
+			if (this.hasLogin == false) {
 				this.$msg('您还没有登录,请登录')
-				setTimeout(()=>{
+				setTimeout(() => {
 					uni.navigateTo({
-						url:"../login/login"
+						url: "../login/login"
 					})
-				},1000)
-				
-			}else{
-				this.$getApi('/App/Index/getSysConfig',{},res=>{
-					console.log(res.data,"获取系统配置信息")
+				}, 1000)
+
+			} else {
+				this.$getApi('/App/Index/getSysConfig', {}, res => {
+					console.log(res.data, "获取系统配置信息")
 					this.xitongMsg = res.data
 				})
-				this.$getApi('/App/Index/getTipsNum',{type:3},res=>{
-					console.log(res.data,"订单数量")
+				this.$getApi('/App/Index/getTipsNum', {
+					type: 3
+				}, res => {
+					console.log(res.data, "订单数量")
 					this.orderList[0].num = res.data.order_num1;
 					this.orderList[1].num = res.data.order_num2;
 					this.orderList[2].num = res.data.order_num3;
 					// this.xitongMsg = res.data
 				})
 			}
-			
+
 		},
 		mounted() {
 			console.log(this.SystemInfoL)
-			this.$getApi('/App/Index/getSysConfig',{},res=>{
-				console.log(res.data,"获取系统配置信息")
+			this.$getApi('/App/Index/getSysConfig', {}, res => {
+				console.log(res.data, "获取系统配置信息")
 				this.xitongMsg = res.data
 			})
-			
+
 		},
 		methods: {
 			toOrder(ins) {
@@ -235,7 +231,7 @@
 						url: './fenxiang'
 					})
 				}
-				
+
 			},
 			navTo(text) {
 				if (text == '优惠券') {
@@ -284,20 +280,20 @@
 					})
 				} else
 				if (text == '联系客服') {
-					let phoneL  = _.filter(this.xitongMsg,item=>{
+					let phoneL = _.filter(this.xitongMsg, item => {
 						return item.remark.indexOf("客服电话") != -1
 					})[0].value;
 					console.log(phoneL)
 					uni.makePhoneCall({
 						phoneNumber: phoneL
-					});	
-				} 
+					});
+				}
 			}
 		}
 	};
 </script>
 <style>
-	page{
+	page {
 		background-color: #f0f0f0;
 	}
 </style>
@@ -318,7 +314,8 @@
 		color: #333;
 		display: flex;
 		flex-direction: column;
-		.kf_btn{
+
+		.kf_btn {
 			font-size: 26upx;
 			line-height: inherit;
 			font-size: 32upx;
@@ -327,10 +324,12 @@
 			background-color: #fff;
 			outline: none;
 			border: none;
-			&:after{
+
+			&:after {
 				border: none;
 			}
 		}
+
 		.mine_body {
 			// background-color: #fff;
 			flex: 1;

@@ -28,7 +28,7 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: hasLogin,
 		userInfo: uni.getStorageSync("userInfo") || {},
-		httpp: "https://www.henankedou.com/uploads/",
+		httpp: "https://www.junjiayouxuan.com",
 		selCity: "郑州",
 		location:{
 			name:"",

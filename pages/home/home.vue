@@ -35,7 +35,7 @@
 			<view class="bt_img zindex10">
 				<swiper :autoplay="true" :circular="true" :interval="4000" :duration="1000" @change="changeLunbo">
 					<swiper-item v-for="item in lunboList">
-						<view class="swiper-item">
+						<view class="swiper-item" @click="tiaozhuan(item)">
 							<image :src="item.pic" class="img1"></image>
 						</view>
 					</swiper-item>
@@ -289,7 +289,6 @@
 	export default {
 		data() {
 			return {
-
 				isFixed: false,
 				bobaoText: "平台上线了,快来下单吧",
 				classifyList: [],
@@ -330,13 +329,6 @@
 					t2: "平台推荐商品",
 					url: "33"
 				},
-				item: {
-					t1: "绿地枸杞9900从萨达",
-					img: "or.png",
-					m1: "12.8",
-					m2: "16.8",
-					id: "2"
-				},
 				youhuiquanList: [],
 				benzhouList: [],
 				shuiguoId: "",
@@ -349,7 +341,9 @@
 				qiangouList: [],
 				jiuleiList:[],
 				isCeshi:false,
-				lingQ:true
+				lingQ:true,
+				yindaoPop:true,
+				yindaoImg:""
 			};
 		},
 		//发送给朋友
@@ -366,6 +360,18 @@
 			    },
 			    fail: function (err) {
 			        console.log("fail:" + JSON.stringify(err));
+			    }
+			});
+		},
+		mounted() {
+			let this_ = this;
+			uni.getLocation({
+			    type: 'wgs84',
+				geocode:true,
+			    success: function (res) {
+					this_.setLocation(res)
+			        console.log('当前位置的经度：' + res.longitude);
+			        console.log('当前位置的纬度：' + res.latitude);
 			    }
 			});
 		},
@@ -388,6 +394,7 @@
 			console.log("more")
 			this.jingxuanFoot("more")
 		},
+		
 		watch: {
 			shopCar: {
 				handler: function(newVal, oldVal) {
@@ -463,7 +470,6 @@
 				// 获取购物车
 				this.$getApi("/App/Goods/shop_car", {}, res => {
 					console.log(res.data, "获取购物车")
-					// this_.lunboList = res.data
 					let carInfo = res.data == "" ? [] : res.data;
 					this.setReCar(carInfo)
 				})
@@ -527,6 +533,13 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify","setReCar"]),
+			tiaozhuan(item){
+				if(item.url){
+					window.location.href = item.url
+				}else{
+					this.$msg("没有跳转链接")
+				}
+			},
 			toNavAll(el){
 				console.log(el)
 				let this_ = this;
@@ -901,7 +914,7 @@
 				uni.chooseLocation({
 					success: (res) => {
 						console.log(res)
-						this.setLocation(res)
+						this_.setLocation(res)
 						// this.location = formatLocation(res.longitude, res.latitude),
 						// this.locationAddress = res.address
 					},

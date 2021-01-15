@@ -5,6 +5,12 @@
 		<view class="tab_list_sy">
 			<view class="item" v-for="(item,index) in tabList" :class="{'active':index == tabSel}" @click="selectTab(item,index)">{{item.text}}</view>
 		</view>
+		<view class="no_foot" v-if="orderList.length == 0">
+			<image src="../../static/img/none.png" class="no_img" mode=""></image>
+			<view class="no_text">
+				暂无订单
+			</view>
+		</view>
 		<view class="order_list">
 			<view class="order_box" v-for="parent in orderList" @click="toDetail(parent)">
 				<view class="title_c">
@@ -232,6 +238,20 @@
 <style lang="scss" scoped>
 	page {
 		background-color: #f0f0f0;
+	}
+	.no_foot{
+		text-align: center;
+		font-size: 40upx;
+		padding-top: 100upx;
+		.no_img{
+			width: 500upx;
+			height: 500upx;
+		}
+		.no_text{
+			font-size: 40upx;
+			color: #999;
+			padding-top: 60upx;
+		}
 	}
 	.order_list{
 		padding: 0upx 26upx 20upx;

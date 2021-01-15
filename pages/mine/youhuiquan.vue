@@ -1,10 +1,17 @@
 <template>
 	<view>
-		<view class="tab_list_sy">
+		<view class="tab_list_sy" v-if="fromNorder">
 			<view class="item" v-for="(item,index) in tabList" :class="{'active':index == tabSel}" @click="selectTab(item,index)">{{item.text}}</view>
 		</view>
 		<view class="bg10_f"></view>
+		
 		<view class="coupon">
+			<view class="no_foot" v-if="juan1ListType.length == 0">
+				<image src="../../static/img/none.png" class="no_img" mode=""></image>
+				<view class="no_text">
+					暂无优惠券
+				</view>
+			</view>
 			<view class="item_card" v-for="item in juan1ListType" @click="selYHQ(item)">
 				<image src="../../static/img/mine/youhj.png" mode="widthFix" class="img" v-show="tabSel == 0"></image>
 				<image src="../../static/img/mine/youhjh.png" mode="widthFix" class="img" v-show="tabSel != 0"></image>
@@ -63,7 +70,8 @@
 				tabSel:0,
 				juan1ListType :[],
 				fromOrder:"",
-				fromMoney:0
+				fromMoney:0,
+				fromNorder:true
 			};
 		},
 		computed:{
@@ -72,9 +80,11 @@
 		onLoad(ph) {
 			if(ph.fromOrder){
 				this.fromOrder = ph.fromOrder
-				this.fromMoney = ph.money
+				this.fromMoney = ph.money;
+				this.fromNorder = false;
 			}else{
 				this.fromOrder = ""
+				this.fromNorder = true;
 			}
 		},
 		onShow() {
@@ -117,6 +127,20 @@
 </script>
 
 <style lang="scss" scoped>
+	.no_foot{
+		text-align: center;
+		font-size: 40upx;
+		padding-top: 100upx;
+		.no_img{
+			width: 500upx;
+			height: 500upx;
+		}
+		.no_text{
+			font-size: 40upx;
+			color: #999;
+			padding-top: 60upx;
+		}
+	}
 	.bg10_f{
 		height: 20upx;
 		background-color: #f0f0f0;

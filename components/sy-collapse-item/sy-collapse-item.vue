@@ -174,7 +174,7 @@
 	}
 
 	.uni-collapse-cell__title:active {
-		background-color: #f1f1f1;
+		background-color: #fff;
 	}
 
 	.uni-collapse-cell__title-img {

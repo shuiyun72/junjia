@@ -96,7 +96,13 @@
 				this.$getApi("/App/Goods/getTopTenGoods", {category_id:this.classify,
 					p:this.page}, res => {
 					console.log(res.data,"本周水果前十")
-					this.clacCar(res.data)
+					let list = []
+					_.map(res.data,item=>{
+						item.sel = 1;
+						item.num = 0;
+						list.push(item)
+					})
+					this.clacCar(list)
 				})
 			}			
 			if(ph.fromType == 'home'){

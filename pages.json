@@ -1,5 +1,18 @@
 {
-	"pages": [{
+	"pages": [
+		{
+		    "path" : "pages/home/yindaoye",
+		    "style" :                                                                                    
+		    {
+		       "navigationStyle": "custom",
+		       "navigationBarTitleText": "引导页",
+		       "enablePullDownRefresh": false,
+		       "app-plus": {
+		       	"titleNView": false
+		       }
+		    }
+		    
+		},{
 		"path": "pages/home/home",
 
 		"style": {
@@ -345,6 +358,16 @@
                 "app-plus": {
                 	"titleNView": false
                 }
+            }
+            
+        }
+        
+        ,{
+            "path" : "pages/login/bangPhone",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "绑定手机",
+                "enablePullDownRefresh": false
             }
             
         }

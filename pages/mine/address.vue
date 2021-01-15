@@ -1,9 +1,9 @@
 <template>
 	<view class="page">
-		<uni-nav-bar color="#333333" background-color="#ffffff" 
-		:status-bar="true" left-icon="arrowleft" :title="pageTitle" @clickLeft="back" />
+		<uni-nav-bar color="#333333" background-color="#ffffff" :status-bar="true" left-icon="arrowleft" :title="pageTitle"
+		 @clickLeft="back" />
 		<view class="h20">
-			
+
 		</view>
 		<view class="add_list_address" :class="{'active':index == dataSel}" v-for="(item,index) in dataList" @click="selAddress(item,index)">
 			<view class="p_list">
@@ -27,23 +27,23 @@
 					</view>
 				</view>
 				<view class="right">
-					<view class="item2" @click.stop="editP(item)">	
-							<text class="iconfont icontianxiegongdan-kuozhan-hebing"></text>
-							<text>编辑</text>
+					<view class="item2" @click.stop="editP(item)">
+						<text class="iconfont icontianxiegongdan-kuozhan-hebing"></text>
+						<text>编辑</text>
 					</view>
 					<view class="item2" @click.stop="deleteP(item)">
 						<text class="iconfont iconqingkongshanchu"></text>
 						<text>删除</text>
 					</view>
 				</view>
-				
+
 			</view>
 		</view>
-
-			<view class="add_car_btn" @click="addAdd">
-				<text class="iconfont icontianjia"></text>
-				<text>新建地址</text>
-			</view>
+		
+		<view class="add_car_btn" @click="addAdd">
+			<text class="iconfont icontianjia"></text>
+			<text>新建地址</text>
+		</view>
 
 	</view>
 </template>
@@ -52,18 +52,18 @@
 	export default {
 		data() {
 			return {
-				dataSel:0,
+				dataSel: 0,
 				dataList: [],
-				item:{},
-				pageTitle:"地址管理",
-				formC:""
+				item: {},
+				pageTitle: "地址管理",
+				formC: ""
 			}
 		},
 		onShow() {
 			this.addressInit();
 		},
 		onLoad(ph) {
-			if(ph.title){
+			if (ph.title) {
 				this.pageTitle = ph.title
 			}
 		},
@@ -74,51 +74,51 @@
 		// 	return true; 
 		// },
 		methods: {
-			addAdd(){
-				if(this.pageTitle == "地址选择"){
+			addAdd() {
+				if (this.pageTitle == "地址选择") {
 					uni.navigateTo({
-						url:"../mine/addAddress?fromTitle=地址选择"
+						url: "../mine/addAddress?fromTitle=地址选择"
 					})
-				}else{
+				} else {
 					uni.navigateTo({
-						url:"../mine/addAddress"
+						url: "../mine/addAddress"
 					})
 				}
-				
+
 			},
-			selAddress(item,index){
+			selAddress(item, index) {
 				this.dataSel = index;
-				if(this.pageTitle == '地址选择'){
+				if (this.pageTitle == '地址选择') {
 					console.log(item)
-					this.$store.commit("setAddress",item)
-					console.log(item,"ad")
+					this.$store.commit("setAddress", item)
+					console.log(item, "ad")
 					uni.navigateBack({
-						delta:1
+						delta: 1
 					})
 				}
 			},
-			back(){
-				if(this.pageTitle == "地址选择"){
+			back() {
+				if (this.pageTitle == "地址选择") {
 					uni.navigateBack({
-						delta:1
+						delta: 1
 					})
-				}else{
+				} else {
 					uni.switchTab({
-						url:"../mine/mine"
-					}) 
+						url: "../mine/mine"
+					})
 				}
 			},
-			closeJuan(){
+			closeJuan() {
 				// this.$refs['juan0'].close();
 			},
-			deleteBtn(){
+			deleteBtn() {
 				// this.$getApi("/api/user/address/del",{id:this.item.id},resl=>{
 				// 	// this.$refs['juan0'].close();
 				// 	this.addressInit()
 				// })
 			},
-			addressInit(){
-				this.$getApi("/App/User/getUserAddress",{},res=>{
+			addressInit() {
+				this.$getApi("/App/User/getUserAddress", {}, res => {
 					console.log(res)
 					this.dataList = res.data;
 					// uni.navigateTo({
@@ -126,18 +126,18 @@
 					// })
 				});
 			},
-			editP(item){
-				if(this.pageTitle == "地址选择"){
+			editP(item) {
+				if (this.pageTitle == "地址选择") {
 					uni.navigateTo({
-						url:"../mine/addAddress?fromTitle=地址选择&edit=1&item="+JSON.stringify(item)
+						url: "../mine/addAddress?fromTitle=地址选择&edit=1&item=" + JSON.stringify(item)
 					})
-				}else{
+				} else {
 					uni.navigateTo({
-						url:"../mine/addAddress?edit=1&item="+JSON.stringify(item)
+						url: "../mine/addAddress?edit=1&item=" + JSON.stringify(item)
 					})
 				}
 			},
-			deleteP(item){
+			deleteP(item) {
 				// this.$refs['juan0'].open();
 				this.item = item;
 				let this_ = this;
@@ -148,11 +148,13 @@
 					cancelText: "取消",
 					success: function(res) {
 						if (res.confirm) {
-						this_.$getApi("/App/User/delUserAddress",{id:this_.item.id},resl=>{
-							// this.$refs['juan0'].close();
-							this_.addressInit()
-							this_.$msg("删除成功")
-						})
+							this_.$getApi("/App/User/delUserAddress", {
+								id: this_.item.id
+							}, resl => {
+								// this.$refs['juan0'].close();
+								this_.addressInit()
+								this_.$msg("删除成功")
+							})
 						}
 					}
 				})
@@ -168,20 +170,20 @@
 		padding: 26upx 36upx;
 		width: 440upx;
 		border-radius: 26upx;
-	
+
 		.iconguanbi {
 			position: absolute;
 			top: 20upx;
 			right: 16upx;
 			font-size: 26upx;
 		}
-	
+
 		.ju_title {
 			text-align: center;
 			font-size: 36upx;
 			margin-bottom: 30upx;
 		}
-	
+
 		.t {
 			text-align: center;
 			font-size: 26upx;
@@ -189,16 +191,17 @@
 			line-height: 46upx;
 			margin-bottom: 20upx;
 		}
-	
+
 		.t_btn {
 			display: flex;
-	
+
 			.btn {
 				width: 40%;
 			}
 		}
 	}
-	.add_car_btn{
+
+	.add_car_btn {
 		position: fixed;
 		left: 0;
 		bottom: 0;
@@ -208,60 +211,73 @@
 		color: #fff;
 		padding: 26upx 0;
 		font-size: 36upx;
-		.icontianjia{
+
+		.icontianjia {
 			margin-right: 20upx;
 		}
 	}
-	.page{
+
+	.page {
 		background-color: #f0f0f0;
 		min-height: 100vh;
 	}
-	.h20{
+
+	.h20 {
 		height: 20upx;
 		background-color: #f0f0f0;
 	}
+
 	.add_list_address {
 		background-color: #fff;
 		margin-bottom: 20upx;
 		padding: 10upx 26upx;
-		&.active{
-			.part2{
-				.iconyduizhengqueshixin{
+
+		&.active {
+			.part2 {
+				.iconyduizhengqueshixin {
 					color: $uni-bl;
 				}
 			}
 		}
-		.part2{
-			display: flex;		
+
+		.part2 {
+			display: flex;
 			color: #999;
 			padding: 14upx 0upx 16upx;
 			margin-top: 10upx;
 			border-top: 1upx solid #eee;
 			display: flex;
 			justify-content: space-between;
-			.iconyduizhengqueshixin{
+
+			.iconyduizhengqueshixin {
 				font-size: 40upx;
 				margin-right: 20upx;
 				color: #999;
 			}
-			.left{
+
+			.left {
 				display: inline-flex;
 			}
-			.right{
+
+			.right {
 				display: inline-flex;
 			}
-			.item2{
+
+			.item2 {
 				margin-left: 40upx;
-				.iconfont{
+
+				.iconfont {
 					margin-right: 20upx;
 				}
 			}
 		}
-		.info{
+
+		.info {
 			font-size: 28upx;
 			color: #666;
 			padding: 0upx 0upx 20upx;
 		}
+
 		.p_list {
 			display: flex;
 			flex-wrap: wrap;
@@ -272,7 +288,8 @@
 				display: flex;
 				font-size: 32upx;
 				color: #666;
-				.phone{
+
+				.phone {
 					margin-left: 30upx;
 				}
 			}

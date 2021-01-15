@@ -64,9 +64,9 @@
 				<view v-if="shopList.length > 0">
 					
 				
-				<view class="for_item_box" v-for="(item,index) in shopList" @click="selItem(item,index)">
+				<view class="for_item_box" v-for="(item,index) in shopList">
 					<view class="item_box" >
-						<view class="iconfont sel_s" :class="item.sel == 1?'iconyduizhengqueshixin':'sel_c'"></view>
+						<view class="iconfont sel_s" :class="item.sel == 1?'iconyduizhengqueshixin':'sel_c'"  @click="selItem(item,index)"></view>
 						<view class="right_info">
 							<view class="">
 								<image :src="item.thumb" class="img" mode=""></image>
@@ -266,29 +266,41 @@
 			},
 			//删除已选商品
 			deleteFoots() {
-				let noSelFoot = _.filter(this.shopList, item => {
-					return item.sel == 0
-				})
-				let delSelFoot = _.filter(this.shopList, item => {
-					return item.sel == 1
-				})
+				let this_ = this;
+				uni.showModal({
+				    title: '删除',
+				    content: '是否确认删除商品',
+				    success: function (res) {
+				        if (res.confirm) {
+				            let noSelFoot = _.filter(this_.shopList, item => {
+				            	return item.sel == 0
+				            })
+				            let delSelFoot = _.filter(this_.shopList, item => {
+				            	return item.sel == 1
+				            })
+				            
+				            this_.$getApi("/App/Goods/shop_car", {}, resCar => {
+				            	console.log(resCar.data,"1212")
+				            	let delCar = []
+				            	_.map(resCar.data,itemRes=>{
+				            		_.map(delSelFoot,itemC=>{
+				            			if(itemRes.id == itemC.id){
+				            				delCar.push(itemRes.cart_id)
+				            			}
+				            		})
+				            	})		
+				            	this_.$getApi("/App/Goods/del_car", {ids:delCar.toString()}, res => {
+				            		console.log(res,"1212")
+				            		this_.shopList = noSelFoot
+				            		this_.delCar(this_.shopList)
+				            	})
+				            })
+				        } else if (res.cancel) {
+				            console.log('用户点击取消');
+				        }
+				    }
+				});
 				
-				this.$getApi("/App/Goods/shop_car", {}, resCar => {
-					console.log(resCar.data,"1212")
-					let delCar = []
-					_.map(resCar.data,itemRes=>{
-						_.map(delSelFoot,itemC=>{
-							if(itemRes.id == itemC.id){
-								delCar.push(itemRes.cart_id)
-							}
-						})
-					})		
-					this.$getApi("/App/Goods/del_car", {ids:delCar.toString()}, res => {
-						console.log(res,"1212")
-						this.shopList = noSelFoot
-						this.delCar(this.shopList)
-					})
-				})
 				
 				
 			},
@@ -509,8 +521,8 @@
 		}
 
 		.sel_s {
-			width: 30upx;
-			height: 30upx;
+			width: 36upx;
+			height: 36upx;
 
 			border-radius: 50%;
 			margin-left: 4upx;
@@ -636,8 +648,8 @@
 					
 
 					.sel_s {
-						width: 30upx;
-						height: 30upx;
+						width: 36upx;
+						height: 36upx;
 
 						border-radius: 50%;
 						margin-left: 4upx;

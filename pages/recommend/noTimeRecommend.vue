@@ -188,7 +188,7 @@
 						let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
 						let lastEndTime = new Date(timeDate + " " + this.qiaogouTimeList[this.qiaogouTimeList.length-1].end_time)
 						if(thisDateTime  > startTime &&  thisDateTime  < endTime) { 
-							this.qiaogouTime = this.qiaogouTimeList[itTime].end_time;
+							this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
 							let toTime = timeDate + " " + this.qiaogouTime;
 							this.toTime = this.$lastDate(toTime, "s:s:s")	
 							if(itTime != this.noTimeSel){

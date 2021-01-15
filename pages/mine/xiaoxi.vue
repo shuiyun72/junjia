@@ -1,46 +1,62 @@
 <template>
 	<view class="xiaoxi">
 		<uni-collapse :accordion="true" @change="changeItem">
-			<sy-collapse-item v-for="item in accordion" :key="item.id" :title="item.title" :show-animation="item.animation"
+			<sy-collapse-item v-for="item in accordion" :key="item.id" :title="item.title" 
 			 :thumb="item.thumb" :number="item.number" :open='true' class="sy_collapse_item">
 				<view class="xiaoxi_body">
-					<!-- <view class="title">
-						{{titleName}}
-					</view> -->
-					<view class="xiaoxi_list" v-if="titleName == '到货提醒'">
-						<view v-if="xiaoxiListCC.length>0">
-							
-						
-						<view class="item_daohuo" v-for="item in xiaoxiListCC">
-							<view class="time">
-								{{getDateL(item.create_time)}}
-							</view>
-							<view class="box">
-								<view class="c_title">
-									<!-- {{item.goods_info}} -->
-									商品已到货
-								</view>
-								<view class="content_flex" v-if="item.goods_info">
-									<image :src="item.goods_info.thumb" class="c_img" mode=""></image>
-									<view class="content">
-										{{item.goods_info.name}}
+					<view class="" v-if="titleName == '到货提醒'">
+						<view class="xiaoxi_list" v-if="xiaoxiListCC2.length > 0">
+							<view >
+								<view class="item_daohuo" v-for="item in xiaoxiListCC2">
+									<view class="time">
+										{{getDateL(item.create_time)}}
+									</view>
+									<view class="box">
+										<view class="c_title">
+											<!-- {{item.goods_info}} -->
+											商品已到货
+										</view>
+										<view class="content_flex" v-if="item.goods_info">
+											<image :src="item.goods_info.thumb" class="c_img" mode=""></image>
+											<view class="content">
+												{{item.goods_info.name}}
+											</view>
+										</view>
 									</view>
 								</view>
 							</view>
 						</view>
+					</view>
+					<view class="" v-if=" titleName == '订单消息' && xiaoxiListCC1.length > 0">
+						<view class="xiaoxi_list">
+							<view class="item" v-for="item in xiaoxiListCC1">
+								<view class="time">
+									{{getDateL(item.create_time)}}
+								</view>
+								<view class="box">
+									<view class="c_title">
+										{{item.title}}
+									</view>
+									<view class="content">
+										{{item.content}}
+									</view>
+								</view>
+							</view>
 						</view>
 					</view>
-					<view class="xiaoxi_list" v-if="titleName == '系统消息' || titleName == '订单消息'">
-						<view class="item" v-for="item in xiaoxiListCC">
-							<view class="time">
-								{{getDateL(item.create_time)}}
-							</view>
-							<view class="box">
-								<view class="c_title">
-									{{item.title}}
+					<view class="" v-if="titleName == '系统消息' && xiaoxiListCC3.length > 0">
+						<view class="xiaoxi_list">
+							<view class="item" v-for="item in xiaoxiListCC3">
+								<view class="time">
+									{{getDateL(item.create_time)}}
 								</view>
-								<view class="content">
-									{{item.content}}
+								<view class="box">
+									<view class="c_title">
+										{{item.title}}
+									</view>
+									<view class="content">
+										{{item.content}}
+									</view>
 								</view>
 							</view>
 						</view>
@@ -55,11 +71,11 @@
 	export default {
 		data() {
 			return {
-				xiaoxiListCC:[],  //展示消息
+				xiaoxiListCC1: [], //展示消息
+				xiaoxiListCC2: [], //展示消息
+				xiaoxiListCC3: [], //展示消息
 				firstTitle: "系统消息",
-				xiaoxiList: [{
-					time: ""
-				}],
+				xiaoxiList: [],
 				accordion: [{
 						id: 1,
 						title: '订单消息',
@@ -85,28 +101,28 @@
 						number: 0
 					}
 				],
-				titleName:"",
-				weiduMsg:{}
+				titleName: "",
+				weiduMsg: {}
 			};
 		},
 		mounted() {
 			this.changeItem([2]);
 		},
 		onShow() {
-			
+
 			this.getMsgNum();
 		},
 		onPullDownRefresh() {
 			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
 			let this_ = this;
 			setTimeout(function() {
-				if(this_.titleName == "订单消息"){
+				if (this_.titleName == "订单消息") {
 					this_.changeItem([0]);
-				}else
-				if(this_.titleName == "到货提醒"){
+				} else
+				if (this_.titleName == "到货提醒") {
 					this_.changeItem([1]);
-				}else
-				if(this_.titleName == "系统消息"){
+				} else
+				if (this_.titleName == "系统消息") {
 					this_.changeItem([2]);
 				}
 				uni.stopPullDownRefresh(); //停止下拉刷新动画
@@ -115,22 +131,25 @@
 		methods: {
 			changeItem(el) {
 				console.log(el)
-				if(el[0] == 0){
+				this.xiaoxiListCC1 = []; //展示消息
+				this.xiaoxiListCC2 = []; //展示消息
+				this.xiaoxiListCC3 = []; 
+				if (el[0] == 0) {
 					this.titleName = "订单消息"
 					this.getMsg(2)
-				}else
-				if(el[0] == 1){
+				} else
+				if (el[0] == 1) {
 					this.titleName = "到货提醒"
 					this.getMsg(3)
-				}else
-				if(el[0] == 2){
+				} else
+				if (el[0] == 2) {
 					this.titleName = "系统消息"
 					this.getMsg(1)
 				}
-				
+
 			},
-			getMsgNum(){
-				this.$getApi('/App/Index/msgNum',{},res=>{
+			getMsgNum() {
+				this.$getApi('/App/Index/msgNum', {}, res => {
 					console.log(res)
 					this.weiduMsg = res.data
 					console.log(this.weiduMsg)
@@ -139,19 +158,38 @@
 					this.accordion[1].number = Number(this.weiduMsg.num3);
 				})
 			},
-			getMsg(type){
-				this.$getApi('/App/Index/myMessage',{type:type},res=>{
-					console.log(res)
-					this.xiaoxiListCC = res.data;
+			getMsg(type) {
+				this.$getApi('/App/Index/myMessage', {
+					type: type
+				}, res => {
+					console.log(res.data)
+					if(type == 2){
+						this.xiaoxiListCC1 = res.data;
+						if(this.xiaoxiListCC1.length == 0){
+							this.$msg("暂无订单消息")
+						}
+					}
+					if(type == 3){
+						this.xiaoxiListCC2 = res.data;
+						if(this.xiaoxiListCC2.length == 0){
+							this.$msg("暂无到货提醒")
+						}
+					}
+					if(type == 1){
+						this.xiaoxiListCC3 = res.data;
+						if(this.xiaoxiListCC3.length == 0){
+							this.$msg("暂无系统消息")
+						}
+					}
+					
 				})
 			},
-			getDateL(date){
-				return this.$getDate(date,'年-月-日',"c")
+			getDateL(date) {
+				return this.$getDate(date, '年-月-日', "c")
 			}
 		}
 	}
 </script>
-
 <style lang="scss" scoped>
 	.sy_collapse_item {
 		background-color: #fff;
@@ -166,46 +204,55 @@
 				font-size: bold;
 				color: #333;
 			}
+
 			.xiaoxi_list {
 				padding: 20upx 26upx;
-				.item_daohuo{
+
+				.item_daohuo {
 					padding-bottom: 30upx;
+
 					.time {
 						color: #666;
 						text-align: center;
 						padding-bottom: 20upx;
 					}
-					
+
 					.box {
 						background-color: #fff;
 						padding: 20upx 26upx 40upx;
 						border-radius: 20upx;
 						color: #666;
-					
+
 						.c_title {
 							font-size: 36upx;
 							text-align: center;
 							padding-bottom: 20upx;
 						}
-						.content_flex{
+
+						.content_flex {
 							display: flex;
 							align-items: center;
-							.c_img{
+
+							.c_img {
 								width: 90upx;
 								height: 90upx;
 								flex-shrink: 0;
 							}
-							.content{
+
+							.content {
 								padding: 0 30upx;
 							}
 						}
+
 						.content {
 							font-size: 30upx;
 						}
 					}
 				}
+
 				.item {
 					padding-bottom: 30upx;
+
 					.time {
 						color: #666;
 						text-align: center;

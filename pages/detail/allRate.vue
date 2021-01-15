@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="pingjia_box_sy2" v-for="itemDetail in pingjiaList">
+		<view class="pingjia_box_sy2" v-for="(itemDetail,pIndex) in pingjiaList">
 			<view class="pingjia_user" >
 				<view class="left">
 					<image :src="itemDetail.avatar" class="img" mode=""></image>
@@ -20,11 +20,14 @@
 				{{itemDetail.content}}
 			</view>
 			<view class="pingjia_img_box">
-				<view class="img_item" :style="'background-image: url('+itemImg+')'" v-for="itemImg in itemDetail.pic"></view>
+				<view class="img_item" :style="'background-image: url('+itemImg+')'" v-for="itemImg in itemDetail.pic" @click="showImg(pIndex)"></view>
 			</view>
 		</view>
-		<view v-show="isLoadMore"> 
-			<uni-load-more :status="loadStatus" ></uni-load-more>
+		<view class="no_foot" v-if="pingjiaList.length == 0">
+			<image src="../../static/img/none.png" class="no_img" mode=""></image>
+			<view class="no_text">
+				暂无评价
+			</view>
 		</view>
 	</view>
 </template>
@@ -59,6 +62,22 @@
 					this.isLoadMore = false;
 					this.pingjiaList = this.pingjiaList.concat(res.data);
 				})
+			},
+			showImg(pindex){
+				let imgs = this.pingjiaList[pindex].pic;
+				console.log(imgs)
+				 uni.previewImage({
+					urls: imgs,
+					longPressActions: {
+						itemList: ['发送给朋友', '保存图片', '收藏'],
+						success: function(data) {
+							console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+						},
+						fail: function(err) {
+							console.log(err.errMsg);
+						}
+					}
+				});
 			}
 		},
 		onReachBottom(){  //上拉触底函数
@@ -73,6 +92,20 @@
 </script>
 
 <style lang="scss" scoped>
+	.no_foot{
+		text-align: center;
+		font-size: 40upx;
+		padding-top: 100upx;
+		.no_img{
+			width: 500upx;
+			height: 500upx;
+		}
+		.no_text{
+			font-size: 40upx;
+			color: #999;
+			padding-top: 60upx;
+		}
+	}
 .pingjia_box_sy2{
 		padding: 0 26upx;
 		margin-bottom: 10upx;

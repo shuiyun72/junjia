@@ -1,7 +1,7 @@
 <template>
 	<view class="appraise">
 		<view class="appraise_body">
-			<view class="item" v-for="item in pingjiaList">
+			<view class="item" v-for="(item,pIndex) in pingjiaList">
 				<view class="a_title">
 					<text class="ping">评</text>
 					<text class="ps">订单编号: </text>
@@ -19,8 +19,8 @@
 				<view class="a_raise">
 					{{item.content}}
 				</view>
-				<view class="img_box">
-					<view class="item_img" :style="'background-image: url('+imgL+');'" v-for="imgL in item.pic">
+				<view class="img_box" >
+					<view class="item_img" :style="'background-image: url('+imgL+');'" v-for="(imgL,index) in item.pic" @click="showImg(pIndex,index)">
 					</view>
 				</view>
 				<view class="foot_l">
@@ -71,6 +71,22 @@
 					   break; //可选
 				    default : return "好评"
 				}
+			},
+			showImg(pindex,index){
+				let imgs = this.pingjiaList[pindex].pic;
+				console.log(imgs)
+				 uni.previewImage({
+					urls: imgs,
+					longPressActions: {
+						itemList: ['发送给朋友', '保存图片', '收藏'],
+						success: function(data) {
+							console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+						},
+						fail: function(err) {
+							console.log(err.errMsg);
+						}
+					}
+				});
 			}
 		}
 	}

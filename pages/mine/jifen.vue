@@ -1,9 +1,9 @@
 <template>
 	<view class="jifen">
 		<view class="header_jifen">
-			<image src="../../static/img/toux.png" class="img" mode=""></image>
+			<image :src="userInfo.avatar" class="img" mode=""></image>
 			<view class="name">
-				俏皮女王
+				{{userInfo.nickname}}
 			</view>
 			<view class="jif">
 				<text>{{allJifen}}</text>积分
@@ -31,6 +31,9 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	import _ from "../../until/lodash";
 	export default {
 		data() {
@@ -45,6 +48,7 @@
 			})
 		},
 		computed:{
+			...mapState(["httpp", "SystemInfo", "userInfo", "hasLogin"]),
 			allJifen(){
 				let allN = 0
 				_.map(this.jifenList,item=>{

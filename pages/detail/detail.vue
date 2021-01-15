@@ -38,32 +38,32 @@
 		</view>
 		<view class="bgf20"></view>
 		<uni-list>
-			<uni-list-item :title="'商品评价('+itemDetail.comment_list.length+')'"  rightText="查看全部" @click="showAllRate"></uni-list-item>
+			<uni-list-item :title="'商品评价('+itemDetail.comment_list.length+')'" rightText="查看全部" @click="showAllRate"></uni-list-item>
 		</uni-list>
 		<view class="" v-if="itemDetail.comment_list.length > 0">
-		<view class="pingjia_box_sy">
-			<view class="pingjia_user" >
-				<view class="left">
-					<image :src="itemDetail.comment_list[0].avatar" class="img" mode=""></image>
-					<view class="name shengluehao">
-						{{itemDetail.comment_list[0].nickname}}
+			<view class="pingjia_box_sy">
+				<view class="pingjia_user">
+					<view class="left">
+						<image :src="itemDetail.comment_list[0].avatar" class="img" mode=""></image>
+						<view class="name shengluehao">
+							{{itemDetail.comment_list[0].nickname}}
+						</view>
+					</view>
+					<view class="time">
+						{{itemDetail.comment_list[0].time}}
 					</view>
 				</view>
-				<view class="time">
-					{{itemDetail.comment_list[0].time}}
+				<view class="rate_pj">
+					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" v-model="itemDetail.comment_list[0].star"></uni-rate>
+				</view>
+
+				<view class="wa_text">
+					{{itemDetail.comment_list[0].content}}
+				</view>
+				<view class="pingjia_img_box">
+					<view class="img_item" :style="'background-image: url('+http+itemImg+')'" v-for="itemImg in itemDetail.comment_list[0].pic"@click.stop="showImg"></view>
 				</view>
 			</view>
-			<view class="rate_pj">
-				<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :size="18" v-model="itemDetail.comment_list[0].star" ></uni-rate>
-			</view>
-			
-			<view class="wa_text">
-				{{itemDetail.comment_list[0].content}}
-			</view>
-			<view class="pingjia_img_box">
-				<view class="img_item" :style="'background-image: url('+http+itemImg+')'" v-for="itemImg in itemDetail.comment_list[0].pic"></view>
-			</view>
-		</view>
 		</view>
 		<view class="bgf20"></view>
 		<!-- 本周上新 -->
@@ -97,9 +97,9 @@
 						</view>
 						<view class="iconfont iconjia1"></view>
 					</view>
-					
+
 				</view>
-		
+
 			</sy-scroll-x>
 		</view>
 		<view class="xingqing_title">
@@ -131,7 +131,7 @@
 						{{carShowNum}}
 					</view>
 				</view>
-			</view>	
+			</view>
 			<view class="btn_blue" v-if="itemDetail.num == 0" @click="foot2Jia">
 				加入购物车
 			</view>
@@ -161,7 +161,7 @@
 	export default {
 		data() {
 			return {
-				value:5,
+				value: 5,
 				itemId: 0,
 				itemFoot: {
 					imgs: [{
@@ -177,7 +177,7 @@
 					}, {
 						img: "gouwc2.png"
 					}],
-					imgs2:[],
+					imgs2: [],
 					// imgs2: [{
 					// 	img: "sp-czxq1.png"
 					// }, {
@@ -199,7 +199,7 @@
 					// }, {
 					// 	img: "sp-czxq10.png"
 					// }],
-					pingjiaImg:[{
+					pingjiaImg: [{
 						img: "img-pingj1.png"
 					}, {
 						img: "img-pingj2.png"
@@ -208,10 +208,10 @@
 					}]
 				},
 				imgsIndex: 0,
-				itemDetail:{},
-				isShoucang:false,
-				tuijianList:[],
-				http:""
+				itemDetail: {},
+				isShoucang: false,
+				tuijianList: [],
+				http: ""
 			};
 		},
 		mounted() {
@@ -219,34 +219,39 @@
 		},
 		onLoad(ph) {
 			this.itemId = ph.id;
-			this.$getApi("/App/Goods/goodsInfo", {id:this.itemId}, res => {
-				console.log(res.data,"商品详情")
+			this.$getApi("/App/Goods/goodsInfo", {
+				id: this.itemId
+			}, res => {
+				console.log(res.data, "商品详情")
 				let itemDetail = res.data;
-				this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
-				
+				this.isShoucang = itemDetail.goodsKeep == 'yes' ? true : false;
+
 				itemDetail.sel = 1;
-				let isBuy = _.filter(this.shopCar,itemQ=>{
+				let isBuy = _.filter(this.shopCar, itemQ => {
 					return itemQ.id == itemDetail.id
 				})
-				if(isBuy.length > 0){
+				if (isBuy.length > 0) {
 					itemDetail.num = isBuy[0].num;
-				}else{
+				} else {
 					itemDetail.num = 0;
 				}
-				this.itemDetail  = itemDetail
+				this.itemDetail = itemDetail
 			})
 			this.$getApi("/App/Goods/getSellingGoodData", {}, res => {
-				console.log(res.data,"大家经常买")
+				console.log(res.data, "大家经常买")
 				let itemDetail = res.data;
-				this.tuijianList  = itemDetail
+				this.tuijianList = itemDetail
 			})
-			this.$getApi("/App/Goods/pingjiaList", {p:1,id:ph.id}, res => {
-				console.log(res.data,"商品评价")
-				
+			this.$getApi("/App/Goods/pingjiaList", {
+				p: 1,
+				id: ph.id
+			}, res => {
+				console.log(res.data, "商品评价")
+
 			})
 		},
-		computed:{
-			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar","classifyId"]),
+		computed: {
+			...mapState(["httpp", "SystemInfo", "userInfo", "shopCar", "classifyId"]),
 			carShowNum() {
 				let carShowNum = 0;
 				_.map(this.shopCar, itemC => {
@@ -257,72 +262,102 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
-			fenxiangF(){
+			showImg() {
+				let imgs = this.itemDetail.comment_list[0].pic;
+				let imgsList = [];
+				_.map(this.itemDetail.comment_list[0].pic,item=>{
+					imgsList.push(this.httpp+item)
+				})
+				console.log(imgsList)
+				uni.previewImage({
+					urls: imgsList,
+					longPressActions: {
+						itemList: ['发送给朋友', '保存图片', '收藏'],
+						success: function(data) {
+							// console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+						},
+						fail: function(err) {
+							console.log(err.errMsg);
+						}
+					}
+				});
+			},
+			fenxiangF() {
 				uni.navigateTo({
-					url:"../mine/fenxiang?fId="+this.itemId
+					url: "../mine/fenxiang?fId=" + this.itemId
 				})
 			},
-			itemClick(item){
+			itemClick(item) {
 				this.itemId = item.id;
-				this.$getApi("/App/Goods/goodsInfo", {id:item.id}, res => {
+				this.$getApi("/App/Goods/goodsInfo", {
+					id: item.id
+				}, res => {
 					let itemDetail = res.data;
-					this.isShoucang = itemDetail.goodsKeep == 'yes'?true:false;
-					
+					this.isShoucang = itemDetail.goodsKeep == 'yes' ? true : false;
+
 					itemDetail.sel = 1;
-					let isBuy = _.filter(this.shopCar,itemQ=>{
+					let isBuy = _.filter(this.shopCar, itemQ => {
 						return itemQ.id == itemDetail.id
 					})
-					if(isBuy.length > 0){
+					if (isBuy.length > 0) {
 						itemDetail.num = isBuy[0].num;
-					}else{
+					} else {
 						itemDetail.num = 0;
 					}
-					this.itemDetail  = itemDetail
+					this.itemDetail = itemDetail
 				})
 			},
 			detailSw(el) {
 				this.imgsIndex = el.detail.current;
 			},
-			showAllRate(){
+			showAllRate() {
 				console.log("dsd")
 				uni.navigateTo({
-					url:"./allRate?id="+this.itemId
+					url: "./allRate?id=" + this.itemId
 				})
 			},
-			handleC(el){
-				if(el == 'shoucang'){	
-					this.$getApi("/App/Goods/collect", {tid:this.itemDetail.id}, res => {
-						console.log(res.data,"shoucang")
-						if(res.data.state == 1){
+			handleC(el) {
+				if (el == 'shoucang') {
+					this.$getApi("/App/Goods/collect", {
+						tid: this.itemDetail.id
+					}, res => {
+						console.log(res.data, "shoucang")
+						if (res.data.state == 1) {
 							this.isShoucang = true
-						}else{
+						} else {
 							this.isShoucang = false
 						}
 					})
 				}
-				if(el == 'car'){
+				if (el == 'car') {
 					uni.switchTab({
-						url:"../shopCar/shopCar"
+						url: "../shopCar/shopCar"
 					})
 				}
 			},
 			foot2Jia() {
 				let item = this.itemDetail;
-				console.log("foot2Jia",item)
-				++item.num;
+				console.log("foot2Jia", item)
+					++item.num;
 				console.log(item.num)
-				if(item.num == 1){
+				if (item.num == 1) {
 					// App/Goods/add_car
-					this.$getApi("/App/Goods/add_car", {goods_id:item.id,num:item.num}, resCar => {
+					this.$getApi("/App/Goods/add_car", {
+						goods_id: item.id,
+						num: item.num
+					}, resCar => {
 						this.jiaCar(item)
 					})
-				}else{
+				} else {
 					this.$getApi("/App/Goods/shop_car", {}, resCar => {
-						console.log(resCar.data,item.id,"item.id")
-						let carId = _.filter(resCar.data,itemC=>{
+						console.log(resCar.data, item.id, "item.id")
+						let carId = _.filter(resCar.data, itemC => {
 							return itemC.id == item.id
 						})[0].cart_id;
-						this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+						this.$getApi("/App/Goods/change_car_num", {
+							id: carId,
+							num: item.num
+						}, res => {
 							this.jiaCar(item)
 						})
 					})
@@ -330,27 +365,32 @@
 			},
 			foot2Jian() {
 				let item = this.itemDetail;
-				console.log("foot2Jian",item)
+				console.log("foot2Jian", item)
 				item.num--;
-				if(item.num == 0){
+				if (item.num == 0) {
 					// App/Goods/add_car
 					this.$getApi("/App/Goods/shop_car", {}, resCar => {
-						console.log(resCar,item,"1212")
-				
-						let carId = _.filter(resCar.data,itemC=>{
+						console.log(resCar, item, "1212")
+
+						let carId = _.filter(resCar.data, itemC => {
 							return itemC.id == item.id
 						})[0].cart_id;
-						
-						this.$getApi("/App/Goods/del_car", {ids:carId}, resCar => {
+
+						this.$getApi("/App/Goods/del_car", {
+							ids: carId
+						}, resCar => {
 							this.jianCar(item)
 						})
 					})
-				}else{
+				} else {
 					this.$getApi("/App/Goods/shop_car", {}, resCar => {
-						let carId = _.filter(resCar.data,itemC=>{
+						let carId = _.filter(resCar.data, itemC => {
 							return itemC.id == item.id
 						})[0].cart_id;
-						this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
+						this.$getApi("/App/Goods/change_car_num", {
+							id: carId,
+							num: item.num
+						}, res => {
 							this.jianCar(item)
 						})
 					})
@@ -361,40 +401,46 @@
 </script>
 
 <style lang="scss" scoped>
-	.bottom_btn_group_sy{
+	.bottom_btn_group_sy {
 		display: flex;
-		position:fixed;
+		position: fixed;
 		width: 750upx;
 		bottom: 0;
 		left: 0;
 		z-index: 10;
-		
+
 		justify-content: space-between;
 		box-sizing: border-box;
 		padding-left: 10upx;
 		background-color: #fff;
 		align-items: center;
-		.left{
+
+		.left {
 			display: flex;
-			.item{
+
+			.item {
 				text-align: center;
 				color: #999;
 				width: 120upx;
-				.iconfont{
+
+				.iconfont {
 					font-size: 44upx;
-					position:relative;
-					top:8upx;
+					position: relative;
+					top: 8upx;
 				}
-				&.active{
+
+				&.active {
 					color: $uni-or;
 				}
 			}
-			.car{
-				position:relative;
-				.sm_text{
+
+			.car {
+				position: relative;
+
+				.sm_text {
 					background-color: #f00;
 					color: #fff;
-					position:absolute;
+					position: absolute;
 					width: 50upx;
 					height: 50upx;
 					top: -14upx;
@@ -407,7 +453,8 @@
 				}
 			}
 		}
-		.btn_blue{
+
+		.btn_blue {
 			height: 100upx;
 			line-height: 100upx;
 			width: 330upx;
@@ -416,62 +463,73 @@
 			background-color: $uni-bl;
 			color: #fff;
 		}
-		.btn_group{
+
+		.btn_group {
 			display: flex;
-			
+
 			color: #fff;
 			height: 100upx;
 			width: 330upx;
-			.btn{
+
+			.btn {
 				width: 33%;
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
 				opacity: 0.9;
 				background-color: $uni-bl;
-				&.num{
+
+				&.num {
 					opacity: 1;
 				}
 			}
 		}
 	}
-	.pingjia_box_sy{
+
+	.pingjia_box_sy {
 		padding: 0 26upx;
-		.pingjia_user{
+
+		.pingjia_user {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
 			color: #666;
 			padding-right: 20upx;
-			.left{
+
+			.left {
 				display: inline-flex;
 				align-items: center;
-				
-				.img{
+
+				.img {
 					width: 80upx;
 					height: 80upx;
 				}
-				.name{
+
+				.name {
 					font-size: 30upx;
 					margin-left: 20upx;
 					max-width: 420upx;
 				}
 			}
 		}
-		.rate_pj{
+
+		.rate_pj {
 			padding: 30upx 0 30upx;
 		}
-		.wa_text{
+
+		.wa_text {
 			font-size: 30upx;
 			color: #666;
 			padding-bottom: 20upx;
 		}
-		.pingjia_img_box{
+
+		.pingjia_img_box {
 			// padding: 0 26upx;
 			height: 230upx;
 			padding-bottom: 30upx;
 			display: flex;
-			.img_item{
+
+			.img_item {
 				width: 226upx;
 				height: 226upx;
 				background: no-repeat center center;
@@ -480,6 +538,7 @@
 			}
 		}
 	}
+
 	.detail {
 		font-size: 26upx;
 
@@ -612,69 +671,75 @@
 				}
 			}
 		}
+
 		.weke_new {
 			padding: 30upx 0 10upx;
+
 			.weke_new_header_sy {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				padding-bottom: 10upx;
-		
+
 				.left {
 					display: inline-flex;
 					align-items: center;
-		
+
 					.t_img {
 						width: 30upx;
 						height: 30upx;
 					}
-		
+
 					.title1 {
 						font-size: 30upx;
 						margin: 0 20upx;
 						font-weight: bold;
 					}
-		
+
 					.title2 {
 						color: #999;
 					}
 				}
-		
+
 				.right {
 					display: inline-flex;
 					align-items: center;
 					color: #999;
 				}
 			}
-		
-		
+
+
 			.weke_box_item {
 				width: 170upx;
 				margin-right: 20upx;
+
 				.t_img {
 					width: 170upx;
 					height: 170upx;
 				}
-		
+
 				.title1 {
 					color: #666;
 					padding: 12upx 0 4upx;
 				}
-				.zhuijia{
+
+				.zhuijia {
 					display: flex;
 					justify-content: space-between;
 					padding: 10upx 0;
+
 					.m {
 						font-weight: bold;
 					}
-					.iconjia1{
+
+					.iconjia1 {
 						color: $uni-bl;
 					}
 				}
-				
+
 			}
-		
+
 		}
-		
+
 	}
 </style>

@@ -123,9 +123,29 @@
 				this.$refs.btPop.open()
 			},
 			fenxiang(){
-		
-				
-				
+			// #ifndef MP
+			
+			
+				uni.share({
+				    provider: "weixin",
+				    scene: "WXSceneSession",
+				    type: 0,
+				    href: "https://www.baidu.com",
+				    title: "君佳优选",
+				    summary: "我在君佳优选购物，赶紧跟我一起来体验！",
+				    imageUrl: "http://www.junjiayouxuan.com/Uploads/admin/Guang/banner/2021-01-15/1610677453_7149006226000fccdd30b2.png",
+				    success: function (res) {
+				        console.log("success:" + JSON.stringify(res));
+						uni.navigateBack({
+							delta:1
+						})
+				    },
+				    fail: function (err) {
+				        console.log("fail:" + JSON.stringify(err));
+				    }
+				});
+			// #endif
+				// #ifdef MP
 				uni.share({
 				    provider: "weixin",
 				    scene: "WXSceneSession",
@@ -138,7 +158,7 @@
 				        console.log("fail:" + JSON.stringify(err));
 				    }
 				});
-		
+				// #endif
 			}
 			
 		}
