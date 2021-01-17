@@ -24,7 +24,6 @@
 				 <text>微信授权登录</text>
 				</button>
 			<!-- #endif -->
-			
 		</view>
 		<view class="s_bz_s">
 			登录即代表同意平台<text class="blue" @click="toNav('xieyi')">《用户协议》</text>和<text class="blue" @click="toNav('yinsi')">《用户隐私》</text>
@@ -47,13 +46,16 @@
 		
 		},
 		methods: {
+			getPhoneNumber(val){
+				console.log(val)
+			},
 			loginInWX(){
 				let this_ = this;
 				uni.login({
 					provider: 'weixin',
 					success: function(loginRes) {
 						console.log(loginRes, "微信权限信息");
-						// 弹出正在登录的弹框
+						// 弹出加载中,请稍等的弹框
 						
 						this_.$getApi("/App/Public/getOpenid", {
 							code: loginRes.code
@@ -72,7 +74,7 @@
 									            console.log('用户点击确定');
 												uni.showLoading({
 													mask:true,
-													title: '正在登录···',
+													title: '加载中,请稍等···',
 													complete:()=>{}
 												});
 												let dataLogin = {
@@ -94,8 +96,11 @@
 														// this_.lunboList = res.data
 														let carInfo = resCarC.data == "" ? [] : resCarC.data;
 														this_.$store.commit("setReCar",carInfo)
-														uni.switchTab({
-															url:"../home/home"
+														// uni.switchTab({
+														// 	url:"./home/home"
+														// })
+														uni.navigateTo({
+															url:"./bangPhone?uid="+carInfo.id
 														})
 													})
 												},"false")
@@ -132,7 +137,7 @@
 						uni.login({
 							provider: 'weixin',
 							success: (loginRes) => {
-								// 弹出正在登录的弹框
+								// 弹出加载中,请稍等的弹框
 								
 								uni.getUserInfo({
 									provider: 'weixin',
@@ -153,7 +158,7 @@
 													}
 													uni.showLoading({
 														mask:true,
-														title: '正在登录···',
+														title: '加载中,请稍等···',
 														complete:()=>{}
 													});
 													this_.$getApi("/App/Public/thirdLogin",dataLogin, res => {
@@ -167,8 +172,11 @@
 															let carInfo = resCarC.data == "" ? [] : resCarC.data;
 															this_.$store.commit("setReCar",carInfo)
 															
-															uni.switchTab({
-																url:"../home/home"
+															// uni.switchTab({
+															// 	url:"./home/home"
+															// })
+															uni.navigateTo({
+																url:"./bangPhone?uid="+carInfo.id
 															})
 														})
 														console.log(res.data)

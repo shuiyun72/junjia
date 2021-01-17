@@ -34,9 +34,13 @@
 		methods: {
 			//获取验证码
 			getYZM(){
+				if(!this.phone){
+					this.$msg("请输入手机号")
+					return false;
+				}
 				let data = {
 					phone:this.phone,
-					type: 2
+					type: "2"
 				}
 				this.timeout = 60;
 				let interL = setInterval(()=>{

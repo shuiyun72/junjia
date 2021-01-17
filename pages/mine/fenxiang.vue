@@ -105,9 +105,13 @@
 			    summary: this_.fenxiangText,
 			    success: function (res) {
 			        console.log("success:" + JSON.stringify(res));
-					uni.navigateTo({
-						url:"./jifen"
-					})
+					this_.$msg("完成分享")
+					setTimeout(()=>{
+						uni.navigateBack({
+							delta:1
+						})
+					},500)
+					
 			    },
 			    fail: function (err) {
 			        console.log("fail:" + JSON.stringify(err));
@@ -124,9 +128,12 @@
 			    summary: this_.fenxiangText,
 			    success: function (res) {
 			        console.log("success:" + JSON.stringify(res));
-					uni.navigateTo({
-						url:"./jifen"
-					})
+					this_.$msg("完成分享")
+					setTimeout(()=>{
+						uni.navigateBack({
+							delta:1
+						})
+					},500)
 			    },
 			    fail: function (err) {
 			        console.log("fail:" + JSON.stringify(err));
@@ -152,15 +159,18 @@
 				    provider: "weixin",
 				    scene: "WXSceneSession",
 				    type: 0,
-				    href: "https://www.baidu.com",
+				    href: "https://www.junjiayouxuan.com/DownloadPackage ",
 				    title: "君佳优选",
 				    summary: this_.fenxiangText,
 				    imageUrl: this_.fenxiangImg,
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));
-						uni.navigateTo({
-							url:"./jifen"
-						})
+						this_.$msg("完成分享")
+						setTimeout(()=>{
+							uni.navigateBack({
+								delta:1
+							})
+						},500)
 				    },
 				    fail: function (err) {
 				        console.log("fail:" + JSON.stringify(err));
@@ -175,9 +185,12 @@
 				    summary: this_.fenxiangText,
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));
-						uni.navigateTo({
-							url:"./jifen"
-						})
+						this_.$msg("完成分享")
+						setTimeout(()=>{
+							uni.navigateBack({
+								delta:1
+							})
+						},500)
 				    },
 				    fail: function (err) {
 				        console.log("fail:" + JSON.stringify(err));

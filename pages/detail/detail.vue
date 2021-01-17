@@ -282,10 +282,24 @@
 					}
 				});
 			},
-			fenxiangF() {
-				uni.navigateTo({
-					url: "../mine/fenxiang?fId=" + this.itemId
-				})
+			fenxiangF(){
+				let this_ = this;
+				uni.share({
+				    provider: "weixin",
+				    scene: "WXSceneSession",
+				    type: 0,
+				    href: "https://www.junjiayouxuan.com/DownloadPackage",
+				    title: "君佳优选",
+				    summary: this_.itemDetail.name,
+				    imageUrl: this_.itemDetail.thumb,
+				    success: function (res) {
+				        console.log("success:" + JSON.stringify(res));
+						this_.$msg("完成分享")
+				    },
+				    fail: function (err) {
+				        console.log("fail:" + JSON.stringify(err));
+				    }
+				});
 			},
 			itemClick(item) {
 				this.itemId = item.id;

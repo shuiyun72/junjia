@@ -20,7 +20,7 @@
 				{{item.receive_address}}{{item.address}}
 			</view>
 			<view class="part2" v-if="pageTitle != '地址选择'">
-				<view class="left">
+				<view class="left" @click.stop="setDefault(item,index)">
 					<view class="iconfont iconyduizhengqueshixin"></view>
 					<view class="ccl">
 						默认发货地址
@@ -74,6 +74,14 @@
 		// 	return true; 
 		// },
 		methods: {
+			setDefault(item,index){
+				console.log(item)
+				this.$getApi("/App/User/setDefaultAddress", {id:item.id}, res => {
+					console.log(res)
+					this.$msg("默认地址修改成功")
+					this.dataSel = index;
+				});
+			},
 			addAdd() {
 				if (this.pageTitle == "地址选择") {
 					uni.navigateTo({
@@ -87,7 +95,7 @@
 
 			},
 			selAddress(item, index) {
-				this.dataSel = index;
+				
 				if (this.pageTitle == '地址选择') {
 					console.log(item)
 					this.$store.commit("setAddress", item)
@@ -121,9 +129,6 @@
 				this.$getApi("/App/User/getUserAddress", {}, res => {
 					console.log(res)
 					this.dataList = res.data;
-					// uni.navigateTo({
-					// 	url:'../mine/addAddress'
-					// })
 				});
 			},
 			editP(item) {

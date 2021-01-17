@@ -6,7 +6,8 @@
 					<image :src="userInfo.avatar" class="user_img" mode=""></image>
 					<view class="name_c">
 						<view class="name">{{userInfo.nickname}}</view>
-						<view class="name2" v-if="userInfo.mobile">{{userInfo.mobile}}</view>
+						<view class="name2" v-if="userInfo.phone">{{userInfo.phone}}</view>
+						<view class="name2 btn" v-if="!userInfo.phone" @click.stop="bangdingPhone">绑定手机号</view>
 					</view>
 				</view>
 				<view class="right_set">
@@ -183,6 +184,10 @@
 					console.log(res.data, "获取系统配置信息")
 					this.xitongMsg = res.data
 				})
+				this.$getApi('/App/User/userInfo', {}, res => {
+					console.log(res.data, "获取用户信息")
+					this.$store.commit("login", res.data)
+				})
 				this.$getApi('/App/Index/getTipsNum', {
 					type: 3
 				}, res => {
@@ -204,6 +209,11 @@
 
 		},
 		methods: {
+			bangdingPhone(){
+				uni.navigateTo({
+					url:"../login/bangPhone?uid="+this.userInfo.id
+				})
+			},
 			toOrder(ins) {
 				uni.navigateTo({
 					url: "../order/order?ins=" + ins
@@ -449,7 +459,6 @@
 
 			.left_info {
 				display: flex;
-
 				.user_img {
 					width: 120upx;
 					height: 120upx;
@@ -463,13 +472,20 @@
 					display: inline-flex;
 					justify-content: space-between;
 					flex-direction: column;
-
+					padding-bottom: 10upx;
 					.name {
 						font-size: 40upx;
 					}
 
 					.name2 {
 						color: #ddd;
+						border: 1upx solid transparent;
+						
+						&.btn{
+							border: 1upx solid #f0f0f0;
+							padding: 4upx 10upx ;
+							border-radius: 10upx;
+						}
 					}
 
 				}

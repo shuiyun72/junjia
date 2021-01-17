@@ -167,6 +167,10 @@
 		onShow() {
 			this.shopList = this.shopCar || [];
 			this.initShopCar();
+			this.$getApi('/App/User/getUserDefaultAddress',{},res=>{
+				console.log(res.data,"获取用户默认地址")
+				this.$store.commit("setAddress", res.data)
+			})
 		},
 		watch: {
 			shopList: {
