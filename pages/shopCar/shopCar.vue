@@ -259,12 +259,12 @@
 				if (numb > 0) {
 					let numbStr = numb.toString();
 					uni.setTabBarBadge({
-						index: 2,
+						index: 3,
 						text: numbStr
 					})
 				} else {
 					uni.removeTabBarBadge({
-						index: 2
+						index: 3
 					})
 				}
 			},

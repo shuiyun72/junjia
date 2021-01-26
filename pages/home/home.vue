@@ -65,7 +65,7 @@
 			<uni-notice-bar :scrollable="true" :single="true" :text="bobaoText" class="bobao_text" background-color="#fff" color="#333" />
 		</view>
 		<!-- 酒水区 -->
-		<!-- <view class="jiushui_qu_sy">
+		<view class="jiushui_qu_sy">
 			<view class="ab_img">
 				<image src="../../static/img/home/img-bt.png" class="img" mode=""></image>
 			</view>
@@ -84,9 +84,9 @@
 					</view>
 				</swiper-item>
 			</swiper>
-		</view> -->
+		</view>
 		<!-- 限时抢购 -->
-		<view class="time_limit_sy m26" v-if="qiaogouTime">
+		<view class="time_limit_sy m26" v-if="qiaogouTimeEnd">
 			<view class="" @click="turnTo({name:'限时抢购'})">
 				<view class="pt1">
 					<view class="iconfont iconshijian1"></view>
@@ -187,7 +187,7 @@
 					<image src="../../static/img/home/banner2.png" class="img" mode=""></image>
 				</view>
 				<view class="shop_list_c">
-					<sy-foot2 v-for="item in shuiguoList" :item="item" @click="foot2Click">
+					<sy-foot2 v-for="item in shuiguoList" :item="item" @click="foot2Click(item)">
 						<view class="num_add_sy">
 							<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
 							<view class="n" v-if="item.num > 0">{{ item.num }}</view>
@@ -199,16 +199,17 @@
 					查看全部<text class="iconfont iconjiantou"></text>
 				</view>
 			</view>
+			<!-- 新鲜蔬菜 -->
 			<view class="new_foot_box m26">
 				<view class="title_img">
 					<image src="../../static/img/home/banner3.png" class="img" mode=""></image>
 				</view>
 				<view class="shop_list_c">
-					<sy-foot2 v-for="item in shucaiList" :item="item" @click="foot2Click">
+					<sy-foot2 v-for="item in shucaiList" :item="item" @click="foot2Click(item)">
 						<view class="num_add_sy">
-							<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2iJian(item)"></view>
+							<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2scJian(item)"></view>
 							<view class="n" v-if="item.num > 0">{{ item.num }}</view>
-							<view class="iconfont iconjia show" @click.stop="foot2iJia(item)"></view>
+							<view class="iconfont iconjia show" @click.stop="foot2scJia(item)"></view>
 						</view>
 					</sy-foot2>
 				</view>
@@ -336,6 +337,7 @@
 				page: 1,
 				qiaogouTimeList: [],
 				qiaogouTime: "",
+				qiaogouTimeEnd:"",
 				maiyisongyiList: [],
 				tuangouList: [],
 				qiangouList: [],
@@ -343,7 +345,8 @@
 				isCeshi:false,
 				lingQ:true,
 				yindaoPop:true,
-				yindaoImg:""
+				yindaoImg:"",
+				timer:true
 			};
 		},
 		//发送给朋友
@@ -419,9 +422,6 @@
 			firstNavList2() {
 				return _.slice(this.classifyList, 10)
 			},
-			firstNavList2() {
-
-			},
 			SystemInfoL() {
 				// #ifdef MP
 				return JSON.parse(this.SystemInfo)
@@ -451,10 +451,10 @@
 			console.log("cccc")
 			this.closePopup();
 			clearInterval(this.timer)
-			uni.pageScrollTo({
-				scrollTop: 0,
-				duration: 100,
-			});
+			// uni.pageScrollTo({
+			// 	scrollTop: 0,
+			// 	duration: 100,
+			// });
 			this.page = 1;
 		},
 		onShow() {
@@ -589,7 +589,13 @@
 					// })
 					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"水果",
 					p:1}, res => {
-						this_.shuiguoList = res.data.slice(0, 3)
+						let shucaiL =  [];
+						_.map(res.data,item=>{
+							item.num = 0;
+							item.sel = 1;
+							shucaiL.push(item)
+						})
+						this_.shuiguoList = shucaiL.slice(0, 3)
 					})
 					this_.shucaiId = _.filter(this_.classifyList, item => {
 						return item.name.includes('蔬菜')
@@ -603,8 +609,20 @@
 					// })
 					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"蔬菜",
 					p:1}, res => {
-						this_.shucaiList = res.data.slice(0, 3)
+						let shucaiL =  [];
+						_.map(res.data,item=>{
+							item.num = 0;
+							item.sel = 1;
+							shucaiL.push(item)
+						})
+						this_.shucaiList = shucaiL.slice(0, 3)
 					})
+					
+					// 酒类专区
+					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"酒"}, res => {
+						console.log(res.data, "酒类专区")
+						this.jiuleiList = res.data;
+					},"false")
 
 				})
 				// 获取商品列表
@@ -644,7 +662,6 @@
 				}, res => {
 					console.log(res.data, "本周新品")
 					this.benzhouList = res.data ? res.data : []
-					// this_.shuiguoList  = res.data.slice(0,3)
 				})
 				// 获取抢购时间
 				this_.$getApi("/App/Goods/getShoppingTypes", {}, res => {
@@ -657,11 +674,7 @@
 					this.qiaogouTimeList = res.data;
 				})
 				
-				// 酒类专区
-				this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"酒"}, res => {
-					console.log(res.data, "酒类专区")
-					this.jiuleiList = res.data;
-				},"false")
+				
 				this.jingxuanFoot()
 			},
 			jingxuanFoot(more) {
@@ -711,12 +724,12 @@
 				if (numb > 0) {
 					let numbStr = numb.toString();
 					uni.setTabBarBadge({
-						index: 2,
+						index: 3,
 						text: numbStr
 					})
 				} else {
 					uni.removeTabBarBadge({
-						index: 2
+						index: 3
 					})
 				}
 			},
@@ -999,6 +1012,9 @@
 								}
 							})
 							this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
+							
+							this.qiaogouTimeEnd = this.qiaogouTimeList[itTime].end_time;
+							console.log(this.qiaogouTimeEnd)
 							let toTime = timeDate + " " + this.qiaogouTime;
 							this.toTime = this.$lastDate(toTime, "s:s:s")
 
@@ -1068,6 +1084,9 @@
 			foot2JiaJs(item) {
 				this.foot2JiaItem(item, 3)
 			},
+			foot2scJia(item) {
+				this.foot2JiaItem(item, 4)
+			},
 			foot2Jian(item) {
 				this.foot2JianItem(item, 1)
 			},
@@ -1077,7 +1096,15 @@
 			foot2JianJs(item) {
 				this.foot2JianItem(item, 3)
 			},
+			foot2scJian(item) {
+				this.foot2JianItem(item, 4)
+			},
 			foot2JiaItem(item, el) {
+				if(this.timer){
+				this.timer = false;
+				setTimeout(()=>{
+					this.timer = true;
+				},500)
 				let list = [];
 				if (el == 1) {
 					list = this.shuiguoList
@@ -1088,6 +1115,9 @@
 				if (el == 3) {
 					list = this.footPb
 				}
+				if (el == 4) {
+					list = this.shucaiList
+				}
 				_.map(list, fil => {
 					if (fil.id == item.id) {
 						item.num++;
@@ -1097,6 +1127,7 @@
 								goods_id: item.id,
 								num: item.num
 							}, resCar => {
+								this.timer = true;
 								this.jiaCar(item)
 							})
 						} else {
@@ -1109,14 +1140,21 @@
 									id: carId,
 									num: item.num
 								}, res => {
+									this.timer = true;
 									this.jiaCar(item)
 								})
 							})
 						}
 					}
 				})
+				}
 			},
 			foot2JianItem(item, el) {
+				if(this.timer){
+				this.timer = false;
+				setTimeout(()=>{
+					this.timer = true;
+				},500)
 				let list = [];
 				if (el == 1) {
 					list = this.shuiguoList
@@ -1126,6 +1164,9 @@
 				} else
 				if (el == 3) {
 					list = this.footPb
+				}
+				if (el == 4) {
+					list = this.shucaiList
 				}
 				_.map(list, fil => {
 					if (fil.id == item.id) {
@@ -1142,6 +1183,7 @@
 								this.$getApi("/App/Goods/del_car", {
 									ids: carId
 								}, resCar => {
+									this.timer = true;
 									this.jianCar(item)
 								})
 							})
@@ -1154,12 +1196,14 @@
 									id: carId,
 									num: item.num
 								}, res => {
+									this.timer = true;
 									this.jianCar(item)
 								})
 							})
 						}
 					}
 				})
+				}
 			}
 		}
 	}

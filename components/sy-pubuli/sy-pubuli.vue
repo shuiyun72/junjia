@@ -4,9 +4,9 @@
 			<view class="it_img_case" v-if="moneyText == '新人价'">
 				新人
 			</view>
-			<image src="../../static/img/home/or.png" class="img" mode=""></image>
+			<image :src="item.thumb" class="img" mode=""></image>
 		</view>
-		<view class="title">
+		<view class="title" @click="clickC">
 			{{item.name}}
 		</view>
 		<view class="t2">

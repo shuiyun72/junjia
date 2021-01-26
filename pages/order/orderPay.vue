@@ -53,7 +53,8 @@
 			return {
 				radio: "A",
 				orderItem: "",
-				orderId: 0
+				orderId: 0,
+				timer:true
 			};
 		},
 		onLoad(ph) {
@@ -74,6 +75,9 @@
 		methods: {
 			toNav(el) {
 				let this_ = this;
+				uni.showLoading({
+				    title: '支付中'
+				});
 				if (el == 'pay') {
 					// let dataL = {
 					// 	id: this.orderId,
@@ -132,7 +136,7 @@
 							// #ifdef MP
 							thisPayType = "xxwepay"
 							// #endif	
-
+							
 							if (thisPayType == "wepay") {
 								console.log("wepay")
 								console.log(JSON.stringify(orderMsgL))
@@ -144,10 +148,11 @@
 										uni.navigateTo({
 											url: "../home/msg?title=付款成功"
 										})
+										uni.hideLoading()
 									},
 									fail: function(err) {
-										console.log('fail:' + JSON.stringify(err));
-										this_.$msg(JSON.stringify(err))
+										this_.$msg("支付未成功,请重新支付")
+										uni.hideLoading()
 									}
 								});
 							} else
@@ -160,10 +165,11 @@
 										uni.navigateTo({
 											url: "../home/msg?title=付款成功"
 										})
-										console.log('success:' + JSON.stringify(res));
+										uni.hideLoading()
 									},
 									fail: function(err) {
-										console.log('fail:' + JSON.stringify(err));
+										this_.$msg("支付未成功,请重新支付")
+										uni.hideLoading()
 									}
 								});
 							} else
@@ -191,9 +197,11 @@
 												})
 											}, 600)
 										}
+										uni.hideLoading()
 									},
 									fail: function(err) {
-										console.log('fail:' + JSON.stringify(err));
+										this_.$msg("支付未成功,请重新支付")
+										uni.hideLoading()
 									}
 								});
 							}

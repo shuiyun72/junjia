@@ -27,9 +27,10 @@
 						添加图片
 					</view>
 				</view>
-				<view v-for="item in imgList">
+				<view v-for="(item,index) in imgList">
 					<view class="item_l" :style="'background-image: url('+httpp+item+');'">
-				</view>
+						<view class="iconfont iconyduicuowushixin" @click="delItemImg(index)"></view>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -72,6 +73,13 @@ export default {
 			this.star = star+1
 		},
 		nativeTo(){
+			uni.showLoading({
+			    title: '加载中,请稍后'
+			});
+			if(!this.textT){
+				this.$msg("请填写评价内容")
+				return;
+			}
 			let imgList = this.imgList.length > 0 ?this.imgList.join(";"):""
 			let data = {
 				order_id:this.orderItem.id,
@@ -82,14 +90,17 @@ export default {
 			}
 			this.$getApi("/App/Goods/addComment", data, res => {
 				console.log(res.data,"ccccc3161")
-				setTimeout(()=>{
-					uni.navigateTo({
-						url:"../home/msg?title=评价成功"
-					})
-				},1000)
-				
+				uni.hideLoading()
+				uni.navigateTo({
+					url:"../home/msg?title=评价成功"
+				})
 			})
 			
+		},
+		delItemImg(index){
+			console.log(index)
+			this.imgList.splice(index,1)
+			this.$msg("图片删除成功")
 		},
 		upImg(){
 			let this_ = this;
@@ -154,6 +165,13 @@ export default {
 			background: no-repeat center center;
 			background-size: 120upx auto;
 			margin-right: 20upx;
+			position:relative;
+			.iconfont{
+				position:absolute;
+				top:-10upx;
+				right:-10upx;
+				color: $uni-red;
+			}
 		}
 		.item{
 			width: 120upx;

@@ -385,6 +385,9 @@
 				})
 			},
 			jiesuanOrder(){
+				uni.showLoading({
+				    title: '支付中'
+				});
 				console.log(this.timeText)
 				let timeText = ""
 				if (this.timeText.indexOf('尽快送达') != -1) {
@@ -463,7 +466,7 @@
 						// #ifdef MP
 						thisPayType = "xxwepay"
 						// #endif	
-				
+						
 						if (thisPayType == "wepay") {
 							console.log("wepay")
 							console.log(JSON.stringify(orderMsgL))
@@ -471,13 +474,15 @@
 								provider: 'wxpay',
 								orderInfo: orderMsgL, //微信、支付宝订单数据
 								success: function(res) {
+									uni.hideLoading()
 									uni.navigateTo({
 										url: "../home/msg?title=付款成功"
 									})
 								},
 								fail: function(err) {
+									uni.hideLoading()
 									console.log('fail:' + JSON.stringify(err));
-									this_.$msg(JSON.stringify(err))
+									this_.$msg("支付未成功,请重新支付")
 								}
 							});
 						} else
@@ -486,12 +491,15 @@
 								provider: 'alipay',
 								orderInfo: resbuy.data, //微信、支付宝订单数据
 								success: function(res) {
+									uni.hideLoading()
 									uni.navigateTo({
 										url: "../home/msg?title=付款成功"
 									})
 									console.log('success:' + JSON.stringify(res));
 								},
 								fail: function(err) {
+									uni.hideLoading()
+									this_.$msg("支付未成功,请重新支付")
 									console.log('fail:' + JSON.stringify(err));
 								}
 							});
@@ -506,11 +514,14 @@
 								signType: resbuy.data.signType,
 								paySign: resbuy.data.paySign,
 								success: function(res) {
+									uni.hideLoading()
 									uni.navigateTo({
 										url: "../home/msg?title=付款成功"
 									})
 								},
 								fail: function(err) {
+									uni.hideLoading()
+									this_.$msg("支付未成功,请重新支付")
 									console.log('fail:' + JSON.stringify(err));
 								}
 							});

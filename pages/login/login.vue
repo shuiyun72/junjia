@@ -88,7 +88,7 @@
 												this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
 													console.log(res, "登录")
 													uni.hideLoading();
-													this_.$msg("登录成功")
+													this_.$msg("登录成功",res.data)
 													// 判断 this_.openP()
 													this_.$store.commit("login", res.data)
 													this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
@@ -96,12 +96,16 @@
 														// this_.lunboList = res.data
 														let carInfo = resCarC.data == "" ? [] : resCarC.data;
 														this_.$store.commit("setReCar",carInfo)
-														// uni.switchTab({
-														// 	url:"./home/home"
-														// })
-														uni.navigateTo({
-															url:"./bangPhone?uid="+carInfo.id
-														})
+														console.log(res.data.phone)
+														if(res.data.phone){
+															uni.switchTab({
+																url:"../home/home"
+															})
+														}else{
+															uni.navigateTo({
+																url:"./bangPhone?uid="+carInfo.id
+															})
+														}
 													})
 												},"false")
 									        } else if (resLL.cancel) {

@@ -56,8 +56,11 @@
 	} from "vuex";
 	import _ from "../../until/lodash";
 	export default {
-		
 		onLoad(ph) {
+			this.ph = ph;
+		},
+		onShow(){
+			let ph  = this.ph;
 			// 来自分类
 			if (ph.fromType == 'classify') {
 				uni.setNavigationBarTitle({
@@ -249,7 +252,8 @@
 				page:1,
 				phFromType:"",
 				phSearchId:"",
-				phKeyword:""
+				phKeyword:"",
+				ph:""
 			};
 		},
 		onPageScroll() {
@@ -265,12 +269,12 @@
 					if (numb > 0) {
 						let numbStr = numb.toString();
 						uni.setTabBarBadge({
-							index: 2,
+							index: 3,
 							text: numbStr
 						})
 					} else {
 						uni.removeTabBarBadge({
-							index: 2
+							index: 3
 						})
 					}
 				},

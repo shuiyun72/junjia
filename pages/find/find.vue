@@ -11,7 +11,7 @@
 			<view class="left_box">
 				<view class="item_pl_sy"  @click.stop="itemDetail(item)" v-for="(item,index) in arrtL">
 					<view class="it_img">
-						<image src="../../static/img/home/or.png" class="img" mode=""></image>
+						<image :src="item.pic" class="img" mode=""></image>
 					</view>
 					<view class="title">
 						{{item.title}}
