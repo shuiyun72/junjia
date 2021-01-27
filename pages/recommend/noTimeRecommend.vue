@@ -14,51 +14,58 @@
 					</view>
 					<view class="btn">
 						<!-- {{index == noTimeSel?'抢购中': index < noTimeSel ? '已结束' : '即将开始'}} -->
-						{{calcNavState(index,noTimeSel)}}
+						{{calcNavState(index,selIndexTime)}}
 					</view>
 				</view>
 			</view>
 		</view>
 		<view class="scroll_fixed" :class="{'fixed':isFixed}">
-			<view class="dao_jishi" v-if="daojishi == 1">
+			<view class="dao_jishi">
 				<view class="text">
-					离本场结束 :
+					{{daojishiState == 'start' ? '距离下一场开始':'离本场结束'}} :
 				</view>
 				<view class="btn_or">
-					{{haveTime.shi}}
+					{{daojiTime[0]}}
 				</view>
 				<view class="case">
 					:
 				</view>
 				<view class="btn_or">
-					{{haveTime.fen}}
+					{{daojiTime[1]}}
 				</view>
 				<view class="case">
 					:
 				</view>
 				<view class="btn_or">
-					{{haveTime.miao}}
+					{{daojiTime[2]}}
 				</view>
 			</view>
-			<view class="dao_jishi" v-if="daojishi == 0">
+			<!-- 			<view class="dao_jishi" v-if="daojishi == 0">
 				<view class="text">
 					本场已结束
 				</view>
-			</view>
+			</view> -->
 			<view class="scroll_foots" ref="scrollFoots" :style="{'height':isFixed?'1140upx':'920upx'}">
 				<view>
 					<view class="title_recommend"></view>
-					<view class="rec_body_sy">
+					<view class="rec_body_sy" v-if="shopList.length > 0">
 						<sy-foot2 v-for="item in shopList" :item="item" @click="foot2Click">
 							<!-- <view class="num_add_sy">
 								<view class="iconfont iconjian" v-if="item.num > 0" @click.stop="foot2Jian(item)"></view>
 								<view class="n" v-if="item.num > 0">{{ item.num }}</view>
 								<view class="iconfont iconjia show" @click.stop="foot2Jia(item)"></view>
 							</view> -->
-							<view class="btn_qiang" v-if="item.state == 3" @click.stop="foot2Jia(item)">
+							<view class="btn_qiang" @click.stop="foot2Jia(item)">
 								立即抢
 							</view>
 						</sy-foot2>
+						
+					</view>
+				</view>
+				<view class="no_foot" v-if="shopList.length == 0">
+					<image src="../../static/img/none.png" class="no_img" mode=""></image>
+					<view class="no_text">
+						暂无可抢购商品
 					</view>
 				</view>
 			</view>
@@ -83,8 +90,6 @@
 					fen: "00",
 					miao: "00"
 				},
-				isStart: false,
-				
 				ceshi: [1, 2, 3],
 				itddd: 0,
 				isFixed: false,
@@ -106,11 +111,16 @@
 				],
 				classifyIndex: 0,
 				shopList: [],
-				timer:"",
-				qiaogouTimeList:[],
-				qiaogouTime:"",
+				timer: "",
+				qiaogouTimeList: [],
+				qiaogouTime: "",
 				noTimeSel: -1,
-				daojishi:""
+				daojishi: "",
+				daojishiState: "",
+				haveTime: "",
+				daojiTime: "",
+				selIndexTime: "",
+				timerCC: true
 			};
 		},
 		watch: {
@@ -140,7 +150,7 @@
 			}
 		},
 		onShow() {
-			
+
 			//抢购时间
 			this.$getApi("/App/Goods/getShoppingTypes", {}, res => {
 				let qiaogouTimeList = res.data;
@@ -149,94 +159,111 @@
 				// ,{start_time:"02:43:20",end_time:"02:44:00"}
 				// ,{start_time:"15:44:30",end_time:"15:45:00"}
 				// ]
-				_.map(qiaogouTimeList,item=>{
-					item.sel = 0
-				})
+				// let qiaogouTimeList = [{
+				// 	start_time: "15:27:00",
+				// 	end_time: "15:27:20"
+				// }, {
+				// 	start_time: "15:27:30",
+				// 	end_time: "15:27:40"
+				// }, {
+				// 	start_time: "15:40:00",
+				// 	end_time: "15:40:50"
+				// }]
+
 				this.qiaogouTimeList = qiaogouTimeList;
-			})
-			_.map(this.shopList, itemL => {
-				_.map(this.shopCar, itemC => {
-					if (itemL.id == itemC.id) {
-						itemL.num = itemC.num
-					}
+				// let resTime = ["2:00-4:00","5:00-6:00","7:00-8:00"];
+				let newT = this.$getDate("", "s-s-s");
+				console.log(newT)
+				let timeList = [];
+				_.map(qiaogouTimeList, resTim => {
+					// let s_e_time = resTim.split("-");
+					timeList.push(newT + " " + resTim.start_time)
+					timeList.push(newT + " " + resTim.end_time)
 				})
+				setInterval(() => {
+					this.calcHaveTime(timeList);
+				}, 1000)
+
+
 			})
-			this.isStart = true;
-			this.calcTimeNo()
-			let this_ = this;
-			this.timer = setInterval(()=>{
-				console.log("定时器")
-				this.calcTimeNo()
-			},1000)
+
+			// this.calcTimeNo()
+			// let this_ = this;
+			// this.timer = setInterval(()=>{
+			// 	console.log("定时器")
+			// 	this.calcTimeNo()
+			// },1000)
 		},
 		onHide() {
-			this.isStart = false;
 			clearInterval(this.timer)
 		},
 		beforeDestroy() {
-			this.isStart = false;
 			clearInterval(this.timer)
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar"]),
-			calcTimeNo() {
-				if(this.qiaogouTimeList.length > 0){
-					let timeDate = this.$getDate("","s-s-s")
-					let thisDateTime = new Date().getTime();
-					for(let itTime = 0 ; itTime < this.qiaogouTimeList.length;itTime++) { 
-						let startTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
-						let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
-						let lastEndTime = new Date(timeDate + " " + this.qiaogouTimeList[this.qiaogouTimeList.length-1].end_time)
-						if(thisDateTime  > startTime &&  thisDateTime  < endTime) { 
-							this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
-							let toTime = timeDate + " " + this.qiaogouTime;
-							this.toTime = this.$lastDate(toTime, "s:s:s")	
-							if(itTime != this.noTimeSel){
-								this.$getApi("/App/Goods/getShoppingGoods", {time:this.qiaogouTime}, res => {
-									console.log(res,"抢购")
-									this.shopList = res.data
-									// this.clacCar(res.data)
-								})
+			calcHaveTime(timeList) {
+				let currentTime = new Date();
+				if (new Date(timeList[0]) > currentTime) {
+					this.daojishiState = "start";
+					this.selIndexTime = -1;
+					this.haveTime = timeList[0];
+				} else
+				if (new Date(timeList[timeList.length - 1]) < currentTime) {
+					this.daojishiState = "";
+					this.selIndexTime = timeList.length + 1;
+					this.haveTime = "";
+				} else {
+					for (let i = 0; i < timeList.length; i++) {
+						if (new Date(timeList[i]) < currentTime && new Date(timeList[i + 1]) > currentTime) {
+							this.selIndexTime = i;
+							if (i % 2 == 1) {
+								this.daojishiState = "start";
+								this.shopList = [];
+							} else {
+								this.daojishiState = "doing"
+								this.getGoodsList(timeList[i])
 							}
-							this.noTimeSel = itTime;
-							let haveTime = endTime.getTime() - thisDateTime;
-							if(haveTime>0){
-								let second = Math.floor(haveTime / 1000);
-								let hr = Math.floor(second / 3600 % 24);
-								let min = Math.floor(second / 60 % 60);
-								let sec = Math.floor(second % 60);
-								hr = hr < 10 ? '0' + hr : hr;
-								min = min < 10 ? '0' + min : min;
-								sec = sec < 10 ? '0' + sec : sec;
-								this.haveTime = {
-									shi: hr,
-									fen: min,
-									miao: sec
-								}
-								this.daojishi = 1;
-							}else{
-								this.haveTime = {
-									shi: "00",
-									fen: "00",
-									miao: "00"
-								}
-								this.daojishi = 0;
-							}
-							break; 
-						}else
-						if(thisDateTime  < startTime){
-							console.log(startTime,itTime)
-							this.noTimeSel = itTime-1
-							this.daojishi = 0;
-							break; 
-						}else
-						if(thisDateTime  > lastEndTime){
-							this.noTimeSel = this.qiaogouTimeList.length + 2
-							this.daojishi = 0;
-							break; 
+							this.haveTime = timeList[i + 1];
+
+							break;
 						}
-					} 
+					}
 				}
+				let thisDateTime = new Date().getTime();
+				let haveTime = new Date(this.haveTime).getTime() - thisDateTime;
+				console.log(haveTime > 0)
+				let second = Math.floor(haveTime / 1000);
+				let hr = Math.floor(second / 3600 % 24);
+				let min = Math.floor(second / 60 % 60);
+				let sec = Math.floor(second % 60);
+				hr = hr < 10 ? '0' + hr : hr;
+				min = min < 10 ? '0' + min : min;
+				sec = sec < 10 ? '0' + sec : sec;
+				if (haveTime > 0) {
+					this.daojiTime = [hr, min, sec]
+				} else {
+					this.daojiTime = ["已", "结", "束"]
+				}
+			},
+			getGoodsList(qiaogouTime) {
+				console.log(qiaogouTime)
+				this.$getApi("/App/Goods/getShoppingGoods", {
+					time: qiaogouTime.split(" ")[1]
+				}, res => {
+					console.log(res, "抢购")
+					let shopList = res.data;
+					_.map(shopList, itemL => {
+						_.map(this.shopCar, itemC => {
+							if (itemL.id == itemC.id) {
+								itemL.num = itemC.num
+							}else{
+								itemL.num = 0
+							}
+						})
+					})
+					this.shopList  = shopList;
+				})
 			},
 			erNav(item, index) {
 				this.classifyIndex = index;
@@ -279,13 +306,42 @@
 			},
 			foot2Jia(item) {
 				console.log("111111111")
-				_.map(this.shopList, fil => {
-					console.log(item)
-					if (fil.id == item.id) {
-						item.num++;
-						this.jiaCar(item)
-					}
-				})
+				if (this.timerCC) {
+					this.timerCC = false;
+					setTimeout(() => {
+						this.timerCC = true;
+					}, 500)
+					_.map(this.shopList, fil => {
+						console.log(item)
+						if (fil.id == item.id) {
+							item.num++;
+							if (item.num == 1) {
+								// App/Goods/add_car
+								this.$getApi("/App/Goods/add_car", {
+									goods_id: item.id,
+									num: item.num
+								}, resCar => {
+									this.timerCC = true;
+									this.jiaCar(item)
+								})
+							} else {
+								this.$getApi("/App/Goods/shop_car", {}, resCar => {
+									console.log(resCar.data, item.id, "item.id")
+									let carId = _.filter(resCar.data, itemC => {
+										return itemC.id == item.id
+									})[0].cart_id;
+									this.$getApi("/App/Goods/change_car_num", {
+										id: carId,
+										num: item.num
+									}, res => {
+										this.timerCC = true;
+										this.jiaCar(item)
+									})
+								})
+							}
+						}
+					})
+				}
 			},
 			foot2Jian(item) {
 				console.log("2222222222")
@@ -293,23 +349,57 @@
 				_.map(this.shopList, fil => {
 					if (fil.id == item.id) {
 						item.num--;
-						this.jianCar(item)
+						if (item.num == 0) {
+							// App/Goods/add_car
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								console.log(resCar, item, "1212")
+						
+								let carId = _.filter(resCar.data, itemC => {
+									return itemC.id == item.id
+								})[0].cart_id;
+						
+								this.$getApi("/App/Goods/del_car", {
+									ids: carId
+								}, resCar => {
+									this.timer = true;
+									this.jianCar(item)
+								})
+							})
+						} else {
+							this.$getApi("/App/Goods/shop_car", {}, resCar => {
+								let carId = _.filter(resCar.data, itemC => {
+									return itemC.id == item.id
+								})[0].cart_id;
+								this.$getApi("/App/Goods/change_car_num", {
+									id: carId,
+									num: item.num
+								}, res => {
+									this.timer = true;
+									this.jianCar(item)
+								})
+							})
+						}
 					}
 				})
 			},
-			calcNavState(index,noTimeSel){
-				if(index == noTimeSel){
-					if(this.daojishi == 0 ){
-						return "已结束"
-					}else{
-						return "抢购中"
-					}
-					
-				}else
-				if(index < noTimeSel){
+			calcNavState(index, noTimeSel) {
+				console.log(noTimeSel)
+				let Cindex = (index + 1) * 2 - 1;
+				if (noTimeSel == (this.qiaogouTimeList.length * 2 + 1)) {
 					return "已结束"
-				}else{
+				} else
+				if (noTimeSel == -1) {
 					return "即将开始"
+				} else {
+					if (Cindex == (noTimeSel + 1)) {
+						return "抢购中"
+					} else
+					if (Cindex > (noTimeSel + 1)) {
+						return "即将开始"
+					} else
+					if (Cindex < noTimeSel || Cindex * 2 <= noTimeSel || Cindex == noTimeSel) {
+						return "已结束"
+					}
 				}
 			}
 		}
@@ -317,6 +407,7 @@
 </script>
 
 <style lang="scss" scoped>
+	
 	.num_add_sy {
 		display: inline-flex;
 
@@ -382,7 +473,20 @@
 		background-color: #f0f0f0;
 		min-height: 100vh;
 		padding-bottom: 200upx;
-
+		.no_foot{
+			text-align: center;
+			font-size: 40upx;
+			padding-top: 100upx;
+			.no_img{
+				width: 500upx;
+				height: 500upx;
+			}
+			.no_text{
+				font-size: 40upx;
+				color: #999;
+				padding-top: 60upx;
+			}
+		}
 		.scroll_fixed {
 			padding: 0 26upx;
 			position: relative;

@@ -61,7 +61,8 @@
 					{{itemDetail.comment_list[0].content}}
 				</view>
 				<view class="pingjia_img_box">
-					<view class="img_item" :style="'background-image: url('+http+itemImg+')'" v-for="itemImg in itemDetail.comment_list[0].pic"@click.stop="showImg"></view>
+					<view class="img_item" :style="'background-image: url('+http+itemImg+')'" v-for="itemImg in itemDetail.comment_list[0].pic"
+					 @click.stop="showImg"></view>
 				</view>
 			</view>
 		</view>
@@ -211,7 +212,8 @@
 				itemDetail: {},
 				isShoucang: false,
 				tuijianList: [],
-				http: ""
+				http: "",
+				timerCC: true
 			};
 		},
 		mounted() {
@@ -265,8 +267,8 @@
 			showImg() {
 				let imgs = this.itemDetail.comment_list[0].pic;
 				let imgsList = [];
-				_.map(this.itemDetail.comment_list[0].pic,item=>{
-					imgsList.push(this.httpp+item)
+				_.map(this.itemDetail.comment_list[0].pic, item => {
+					imgsList.push(this.httpp + item)
 				})
 				console.log(imgsList)
 				uni.previewImage({
@@ -282,23 +284,23 @@
 					}
 				});
 			},
-			fenxiangF(){
+			fenxiangF() {
 				let this_ = this;
 				uni.share({
-				    provider: "weixin",
-				    scene: "WXSceneSession",
-				    type: 0,
-				    href: "https://www.junjiayouxuan.com/DownloadPackage",
-				    title: "君佳优选",
-				    summary: this_.itemDetail.name,
-				    imageUrl: this_.itemDetail.thumb,
-				    success: function (res) {
-				        console.log("success:" + JSON.stringify(res));
+					provider: "weixin",
+					scene: "WXSceneSession",
+					type: 0,
+					href: "https://www.junjiayouxuan.com/DownloadPackage",
+					title: "君佳优选",
+					summary: this_.itemDetail.name,
+					imageUrl: this_.itemDetail.thumb,
+					success: function(res) {
+						console.log("success:" + JSON.stringify(res));
 						this_.$msg("完成分享")
-				    },
-				    fail: function (err) {
-				        console.log("fail:" + JSON.stringify(err));
-				    }
+					},
+					fail: function(err) {
+						console.log("fail:" + JSON.stringify(err));
+					}
 				});
 			},
 			itemClick(item) {
@@ -350,64 +352,81 @@
 				}
 			},
 			foot2Jia() {
-				let item = this.itemDetail;
-				console.log("foot2Jia", item)
-					++item.num;
-				console.log(item.num)
-				if (item.num == 1) {
-					// App/Goods/add_car
-					this.$getApi("/App/Goods/add_car", {
-						goods_id: item.id,
-						num: item.num
-					}, resCar => {
-						this.jiaCar(item)
-					})
-				} else {
-					this.$getApi("/App/Goods/shop_car", {}, resCar => {
-						console.log(resCar.data, item.id, "item.id")
-						let carId = _.filter(resCar.data, itemC => {
-							return itemC.id == item.id
-						})[0].cart_id;
-						this.$getApi("/App/Goods/change_car_num", {
-							id: carId,
+				if (this.timerCC) {
+					this.timerCC = false;
+					setTimeout(() => {
+						this.timerCC = true;
+					}, 500)
+
+					let item = this.itemDetail;
+					console.log("foot2Jia", item)
+						++item.num;
+					console.log(item.num)
+					if (item.num == 1) {
+						// App/Goods/add_car
+						this.$getApi("/App/Goods/add_car", {
+							goods_id: item.id,
 							num: item.num
-						}, res => {
+						}, resCar => {
 							this.jiaCar(item)
+							this.timerCC = true;
 						})
-					})
+					} else {
+						this.$getApi("/App/Goods/shop_car", {}, resCar => {
+							console.log(resCar.data, item.id, "item.id")
+							let carId = _.filter(resCar.data, itemC => {
+								return itemC.id == item.id
+							})[0].cart_id;
+							this.$getApi("/App/Goods/change_car_num", {
+								id: carId,
+								num: item.num
+							}, res => {
+								this.jiaCar(item)
+								this.timerCC = true;
+							})
+						})
+					}
 				}
 			},
 			foot2Jian() {
-				let item = this.itemDetail;
-				console.log("foot2Jian", item)
-				item.num--;
-				if (item.num == 0) {
-					// App/Goods/add_car
-					this.$getApi("/App/Goods/shop_car", {}, resCar => {
-						console.log(resCar, item, "1212")
+				if (this.timerCC) {
+					this.timerCC = false;
+					setTimeout(() => {
+						this.timerCC = true;
+					}, 500)
+					let item = this.itemDetail;
+					console.log("foot2Jian", item)
+					item.num--;
+					if (item.num == 0) {
+						// App/Goods/add_car
+						this.$getApi("/App/Goods/shop_car", {}, resCar => {
+							console.log(resCar, item, "1212")
 
-						let carId = _.filter(resCar.data, itemC => {
-							return itemC.id == item.id
-						})[0].cart_id;
+							let carId = _.filter(resCar.data, itemC => {
+								return itemC.id == item.id
+							})[0].cart_id;
 
-						this.$getApi("/App/Goods/del_car", {
-							ids: carId
-						}, resCar => {
-							this.jianCar(item)
+							this.$getApi("/App/Goods/del_car", {
+								ids: carId
+							}, resCar => {
+								this.jianCar(item)
+								this.timerCC = true;
+							})
 						})
-					})
-				} else {
-					this.$getApi("/App/Goods/shop_car", {}, resCar => {
-						let carId = _.filter(resCar.data, itemC => {
-							return itemC.id == item.id
-						})[0].cart_id;
-						this.$getApi("/App/Goods/change_car_num", {
-							id: carId,
-							num: item.num
-						}, res => {
-							this.jianCar(item)
+					} else {
+						this.$getApi("/App/Goods/shop_car", {}, resCar => {
+							let carId = _.filter(resCar.data, itemC => {
+								return itemC.id == item.id
+							})[0].cart_id;
+							this.$getApi("/App/Goods/change_car_num", {
+								id: carId,
+								num: item.num
+							}, res => {
+								this.jianCar(item)
+								this.timerCC = true;
+							})
 						})
-					})
+					}
 				}
 			}
 		}
