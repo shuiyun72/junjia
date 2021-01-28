@@ -17,7 +17,7 @@ let hasLogin = (uni.getStorageSync("userInfo") && uni.getStorageSync("userInfo")
 // 	key: 'userInfo',
 // 	data: {
 // 	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/yZqkeEoAQPtODibCibdYWpcrXxZ4kCCRRUdffOmdjDkK39m9986eibEdVvEVBKYG7QcYw0MJRiaDQgEaWG4rAbmGgw/132",
-// 	id: "18",
+// 	id: "1",
 // 	nickname: "林海",
 // 	status: "1",
 // 	phone:""

@@ -130,11 +130,8 @@
 		},
 		onPullDownRefresh() {
 			let this_ = this;
-			this.getOrederList(this.tabSel)
+			this.getOrederList(this.tabSel,"","isPull")
 			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
-			setTimeout(function() {
-				uni.stopPullDownRefresh(); //停止下拉刷新动画
-			}, 1000);
 		},
 		onShow() {
 			this.getOrederList(this.tabSel)
@@ -169,7 +166,7 @@
 					return "已取消"
 				}
 			},
-			getOrederList(fromNum,more){
+			getOrederList(fromNum,more,isPull){
 				let getState  = ""
 				if(fromNum == 0){
 					getState = ""
@@ -185,6 +182,9 @@
 				}
 				this.$getApi("/App/User/userOrder", {status:getState,page:this.page}, res => {
 					console.log(res.data,"ccccc3161")
+					if(isPull == "isPull"){
+						uni.stopPullDownRefresh(); //停止下拉刷新动画
+					}
 					if(more == "more"){
 						this.orderList  = this.orderList.concat(res.data) 
 					}else{

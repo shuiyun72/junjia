@@ -530,8 +530,8 @@
 					
 				}
 				.msg1_img {
-					width: 60upx;
-					height: 60upx;
+					width: 50upx;
+					height: 50upx;
 					margin-left: 40upx;
 				}
 			}
