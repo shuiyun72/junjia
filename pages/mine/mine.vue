@@ -11,7 +11,14 @@
 					</view>
 				</view>
 				<view class="right_set">
-					<image src="../../static/img/mine/xiaox.png" class="msg1_img" mode="" @click="navsTo('xiaoxi')"></image>
+					
+					<view class="msgPoint">
+						<view class="point" if="xiaoxNum > 0">
+							{{xiaoxNum}}
+						</view>
+						<image src="../../static/img/mine/xiaox.png" class="msg1_img" mode="" @click="navsTo('xiaoxi')"></image>
+					</view>
+					
 					<image src="../../static/img/mine/shez.png" class="msg1_img" mode="" @click="navsTo('set')"></image>
 
 				</view>
@@ -145,7 +152,8 @@
 						text: "意见反馈"
 					}
 				],
-				xitongMsg: []
+				xitongMsg: [],
+				xiaoxNum:0
 			};
 		},
 		computed: {
@@ -196,6 +204,14 @@
 					this.orderList[1].num = res.data.order_num2;
 					this.orderList[2].num = res.data.order_num3;
 					// this.xitongMsg = res.data
+				})
+				this.$getApi('/App/Index/msgNum', {}, res => {
+					console.log(res);
+					let xiaoxNum = 0;
+					xiaoxNum = xiaoxNum + Number(res.data.num1);
+					xiaoxNum = xiaoxNum + Number(res.data.num2);
+					xiaoxNum = xiaoxNum + Number(res.data.num3);
+					this.xiaoxNum = xiaoxNum;
 				})
 			}
 
@@ -493,9 +509,29 @@
 			}
 
 			.right_set {
+				display: inline-flex;
+				.msgPoint{
+					position:relative;
+					.point{
+						width: 30upx;
+						height: 30upx;
+						text-align: center;
+						line-height: 30upx;
+						background-color: $uni-red;
+						color: #fff;
+						padding: 6upx;
+						z-index:1;
+						position:absolute;
+						top:-10upx;
+						right:-15upx;
+						border-radius: 50%;
+						transform: scale(.7);
+					}
+					
+				}
 				.msg1_img {
-					width: 40upx;
-					height: 40upx;
+					width: 60upx;
+					height: 60upx;
 					margin-left: 40upx;
 				}
 			}

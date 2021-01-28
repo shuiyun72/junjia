@@ -343,7 +343,6 @@
 				qiangouList: [],
 				jiuleiList:[],
 				isCeshi:false,
-				lingQ:true,
 				yindaoPop:true,
 				yindaoImg:"",
 				timer:true
@@ -461,9 +460,7 @@
 			
 			this.page = 1;
 			console.log(this.page,"this.page")
-			if(uni.getStorageSync('lingquQ') == 1){
-				this.lingQ = false;
-			}
+
 			let this_ = this;
 			if(!this.hasLogin){
 				// #ifdef MP
@@ -480,10 +477,14 @@
 					this.setReCar(carInfo)
 				})
 				
-				if(this.userInfo.status == 1 && this.lingQ){
+				if(this.userInfo.status == 1 && Number(this.userInfo.newVip) == 0 ){
 					this.openP()
 				}else{
-					this.closePopup();
+					try{
+						this.closePopup();
+					}catch(e){
+						//TODO handle the exception
+					}
 				}
 			}
 			this.init();
@@ -812,10 +813,15 @@
 																	this_.setReCar(carInfo)
 																})
 																console.log(res.data)
-																if(res.data.status == 1 &&  this_.lingQ){
+																if(res.data.status == 1 &&  Number(this.userInfo.newVip) != 1){
 																	this_.openP()
 																}else{
-																	this_.closePopup();
+																	try{
+																		this_.closePopup();
+																	}catch(e){
+																		//TODO handle the exception
+																	}
+																	
 																}
 																
 															})
@@ -901,12 +907,6 @@
 
 			},
 			closePopup() {
-				try{
-					this.$refs.showimage.close();
-					this.lingQ = false;
-				}catch(e){
-					//TODO handle the exception
-				}
 				
 			},
 			openP() {

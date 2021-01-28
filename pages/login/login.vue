@@ -103,7 +103,7 @@
 															})
 														}else{
 															uni.navigateTo({
-																url:"./bangPhone?uid="+carInfo.id
+																url:"./bangPhone?uid="+res.data.id
 															})
 														}
 													})
@@ -175,13 +175,15 @@
 															// this_.lunboList = res.data
 															let carInfo = resCarC.data == "" ? [] : resCarC.data;
 															this_.$store.commit("setReCar",carInfo)
-															
-															// uni.switchTab({
-															// 	url:"./home/home"
-															// })
-															uni.navigateTo({
-																url:"./bangPhone?uid="+carInfo.id
-															})
+															if(res.data.phone){
+																uni.switchTab({
+																	url:"../home/home"
+																})
+															}else{
+																uni.navigateTo({
+																	url:"./bangPhone?uid="+res.data.id
+																})
+															}
 														})
 														console.log(res.data)
 													},"false")

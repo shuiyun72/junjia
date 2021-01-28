@@ -6,7 +6,7 @@
 			</view>
 			<image :src="item.thumb" class="img" mode=""></image>
 		</view>
-		<view class="title" @click="clickC">
+		<view class="title">
 			{{item.name}}
 		</view>
 		<view class="t2">
