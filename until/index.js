@@ -12,7 +12,14 @@ Vue.prototype.$getApi = function(url, data, callsuc, token,err) {
 	data = data ? data : {};
 	// console.log("token", token);
 	let userInfo = this.$store.state.userInfo; 
-	if (token && userInfo) {
+	
+	let userInfoId = ""
+	 try{
+	 	userInfoId = this.$store.state.userInfo.id;
+	 }catch(e){
+	 	//TODO handle the exception
+	 }
+	if (token && userInfoId) {
 		data.uid = userInfo.id;
 	}
 	uni.request({
