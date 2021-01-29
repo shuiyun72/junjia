@@ -32,6 +32,17 @@
 						x{{item.num}}
 					</view>
 				</view>
+				<!-- <view class="o_item" v-if="parent.change_goods_info">
+					<view class="left">
+						<image :src="parent.change_goods_info.thumb" class="img_c" mode=""></image>
+						<view class="title shengluehao">
+							{{parent.change_goods_info.name}}
+						</view>
+					</view>
+					<view class="right">
+						x1
+					</view>
+				</view> -->
 				<view class="last_money">
 					<view class="left">
 						

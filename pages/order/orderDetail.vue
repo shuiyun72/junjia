@@ -101,6 +101,22 @@
 					x{{item.num}}
 				</view>
 			</view>
+			<view class="i_item" v-if="orderItem.change_goods_info">
+				<view class="left">
+					<image :src="orderItem.change_goods_info.thumb" class="img_m" mode=""></image>
+					<view class="info_cc">
+						<view class="in1 shengluehao">
+							{{orderItem.change_goods_info.name}}
+						</view>
+						<view class="in2">
+							x <text>{{orderItem.change_goods_info.change_price}}</text> (赠品价)
+						</view>
+					</view>
+				</view>
+				<view class="right">
+					x1
+				</view>
+			</view>
 		</view>
 		<view class="user_msg">
 			<view class="title">

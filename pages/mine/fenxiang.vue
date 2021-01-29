@@ -161,7 +161,7 @@
 				    type: 0,
 				    href: "https://www.junjiayouxuan.com/DownloadPackage ",
 				    title: "君佳优选",
-				    summary: this_.fenxiangText,
+				    summary: "欢迎来到君佳优选,安装app快来和我们一下抢购商品吧",
 				    imageUrl: this_.fenxiangImg,
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));

@@ -28,9 +28,16 @@
 						剩余{{itemDetail.stock}}件
 					</view>
 				</view>
+				<!-- #ifdef MP -->
+				<button class="right"open-type="share">
+					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image><text>推荐给好友</text>
+				</button>
+				<!-- #endif -->
+				<!-- #ifndef MP -->
 				<view class="right" @click="fenxiangF">
 					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image><text>推荐给好友</text>
 				</view>
+				<!-- #endif -->
 			</view>
 			<view class="t_title">
 				{{itemDetail.name}}
@@ -292,7 +299,7 @@
 					type: 0,
 					href: "https://www.junjiayouxuan.com/DownloadPackage",
 					title: "君佳优选",
-					summary: this_.itemDetail.name,
+					summary: "欢迎来到君佳优选,安装app快来和我们一下抢购商品吧",
 					imageUrl: this_.itemDetail.thumb,
 					success: function(res) {
 						console.log("success:" + JSON.stringify(res));

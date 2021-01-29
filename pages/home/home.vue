@@ -870,8 +870,10 @@
 					}, res => {
 						console.log(res, "领取优惠券")
 						this_.$msg('领取成功')
-						this_.closePopup()
 					})
+					setTimeout(()=>{
+						this_.closePopup()
+					},500)
 				}
 				// #endif
 				// #ifdef MP

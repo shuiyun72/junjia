@@ -158,6 +158,7 @@
 			this.$getApi('/App/Index/getSysConfig',{},res=>{
 				console.log(res.data,"获取系统配置信息")
 				this.xitongMsg = res.data;
+				// this.huangou  = 0.02;
 				this.huangou  = _.filter(this.xitongMsg,item=>{
 					return item.remark.indexOf("换购门槛") != -1
 				})[0].value;
