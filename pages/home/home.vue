@@ -86,7 +86,7 @@
 			</swiper>
 		</view>
 		<!-- 限时抢购 -->
-		<view class="time_limit_sy m26" v-if="qiaogouTimeEnd">
+		<view class="time_limit_sy m26" v-if="daojiTime[0] != '已'">
 			<view class="" @click="turnTo({name:'限时抢购'})">
 				<view class="pt1">
 					<view class="iconfont iconshijian1"></view>
@@ -95,7 +95,7 @@
 					</view>
 					<view class="iconfont iconjiantou"></view>
 				</view>
-				<view class="pt2_time_sy">
+				<!-- <view class="pt2_time_sy">
 					<view class="start_time">
 						{{qiaogouTime}}
 					</view>
@@ -105,10 +105,23 @@
 					<view class="to_time red">
 						距离开始: {{toTime}}
 					</view>
+				</view> -->
+				<view class="dao_jishi">
+					<text class="dao_text">{{qiangTime}} </text>
+					
+					<view class="text">
+						{{daojishiState == 'start' ? '即将开始':'即将结束'}} 
+					</view>
+					<view class="btn_or">
+						<text class="cc">
+							{{daojishiState == 'start' ? '距离开始':'距离结束'}} 
+						</text>
+						{{daojiTime[0]}}:{{daojiTime[1]}}:{{daojiTime[2]}}
+					</view>
 				</view>
 			</view>
 			<view class="time_limit_box">  
-				<view class="item" v-for="item in qiangouList" @click="itemClick(item)">
+				<view class="item" v-for="item in shopList" @click="itemClick(item)">
 					<view class="img_box">
 						<image :src="item.thumb" class="img" mode=""></image>
 					</view>
@@ -340,12 +353,15 @@
 				qiaogouTimeEnd:"",
 				maiyisongyiList: [],
 				tuangouList: [],
-				qiangouList: [],
+				shopList: [],
 				jiuleiList:[],
 				isCeshi:false,
 				yindaoPop:true,
 				yindaoImg:"",
-				timer:true
+				timer:true,
+				daojiTime:[],
+				daojishiState: "",
+				qiangTime:""
 			};
 		},
 		//发送给朋友
@@ -667,12 +683,36 @@
 				// 获取抢购时间
 				this_.$getApi("/App/Goods/getShoppingTypes", {}, res => {
 					console.log(res.data,"获取抢购时间")
-					// this.qiaogouTimeList = [
-					// {start_time:"14:00",end_time:"15:00"}
-					// ,{start_time:"15:43",end_time:"16:44"}
-					// ,{start_time:"16:44",end_time:"17:45"}
+					let qiaogouTimeList = res.data;
+					// let qiaogouTimeList = [
+					// {start_time:"01:00:00",end_time:"02:00:00"}
+					// ,{start_time:"02:43:20",end_time:"02:44:00"}
+					// ,{start_time:"15:44:30",end_time:"15:45:00"}
 					// ]
-					this.qiaogouTimeList = res.data;
+					// let qiaogouTimeList = [{
+					// 	start_time: "15:27:00",
+					// 	end_time: "15:27:20"
+					// }, {
+					// 	start_time: "15:27:30",
+					// 	end_time: "15:27:40"
+					// }, {
+					// 	start_time: "15:40:00",
+					// 	end_time: "15:40:50"
+					// }]
+					
+					this.qiaogouTimeList = qiaogouTimeList;
+					// let resTime = ["2:00-4:00","5:00-6:00","7:00-8:00"];
+					let newT = this.$getDate("", "s-s-s");
+					console.log(newT)
+					let timeList = [];
+					_.map(qiaogouTimeList, resTim => {
+						// let s_e_time = resTim.split("-");
+						timeList.push(newT + " " + resTim.start_time)
+						timeList.push(newT + " " + resTim.end_time)
+					})
+					setInterval(() => {
+						this.calcHaveTime(timeList);
+					}, 1000)
 				})
 				
 				
@@ -980,51 +1020,122 @@
 			},
 			startTime() {
 				let this_ = this;
-				this_.toLastTime()
+				// this_.toLastTime()
 				
 				this_.timer = setInterval(() => {
 					if (this.toTime != '00:00:00') {
-						this_.toLastTime()
+						// this_.toLastTime()
 					}
 				}, 1000)
 			},
-			toLastTime() {
-				// console.log("888----------------",this.qiaogouTimeList)
-				let this_ = this;
-				if (this.qiaogouTimeList.length > 0) {
-					let timeDate = this.$getDate("", "s-s-s")
-					let thisDateTime = new Date().getTime();
-					for (let itTime = 0; itTime < this.qiaogouTimeList.length; itTime++) {
-						// console.log(itTime,"894")
-						let startTimeLL = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
-						let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
-						if (thisDateTime < startTimeLL && thisDateTime < endTime) {
-							console.log(itTime)
-							let stTime = this.qiaogouTimeList[itTime].start_time;
-							console.log(stTime, "121212")
-							// 抢购商品
-							this_.$getApi("/App/Goods/getShoppingGoods", {
-								time: stTime
-							}, res => {
-								console.log(res.data, "抢购商品")
-								if (res.data.length > 0) {
-									this.qiangouList = res.data.slice(0, 8);
-								} else {
-									this.qiangouList = []
-								}
-							})
-							this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
+			getGoodsList(qiaogouTime) {
+				console.log(qiaogouTime)
+				this.$getApi("/App/Goods/getShoppingGoods", {
+					time: qiaogouTime.split(" ")[1]
+				}, res => {
+					console.log(res, "抢购")
+					let shopList = res.data;
+					_.map(shopList, itemL => {
+						_.map(this.shopCar, itemC => {
+							if (itemL.id == itemC.id) {
+								itemL.num = itemC.num
+							}else{
+								itemL.num = 0
+							}
+						})
+					})
+					this.shopList  = shopList;
+				})
+			},
+			calcHaveTime(timeList) {
+				let currentTime = new Date();
+				if (new Date(timeList[0]) > currentTime) {
+					this.daojishiState = "start";
+					this.selIndexTime = -1;
+					this.haveTime = timeList[0];
+					this.getGoodsList(timeList[0])
+				} else
+				if (new Date(timeList[timeList.length - 1]) < currentTime) {
+					this.daojishiState = "";
+					this.selIndexTime = timeList.length + 1;
+					this.haveTime = "";
+					this.shopList = [];
+				} else {
+					for (let i = 0; i < timeList.length; i++) {
+						if (new Date(timeList[i]) < currentTime && new Date(timeList[i + 1]) > currentTime) {
+							this.selIndexTime = i;
 							
-							this.qiaogouTimeEnd = this.qiaogouTimeList[itTime].end_time;
-							console.log(this.qiaogouTimeEnd)
-							let toTime = timeDate + " " + this.qiaogouTime;
-							this.toTime = this.$lastDate(toTime, "s:s:s")
+							
+							if (i % 2 == 1) {
+								this.daojishiState = "start";
+								this.shopList = [];
 
+							} else {
+								this.daojishiState = "doing"
+								this.getGoodsList(timeList[i])
+							}
+							this.haveTime = timeList[i + 1];
 							break;
 						}
 					}
+					// if(this.daojishiState == "start"){
+					// 	this.getGoodsList(timeList[i])
+					// }
+				}
+				let thisDateTime = new Date().getTime();
+				let haveTime = new Date(this.haveTime).getTime() - thisDateTime;
+				console.log(haveTime > 0)
+				let second = Math.floor(haveTime / 1000);
+				let hr = Math.floor(second / 3600 % 24);
+				let min = Math.floor(second / 60 % 60);
+				let sec = Math.floor(second % 60);
+				hr = hr < 10 ? '0' + hr : hr;
+				min = min < 10 ? '0' + min : min;
+				sec = sec < 10 ? '0' + sec : sec;
+				if (haveTime > 0) {
+					this.daojiTime = [hr, min, sec];
+					this.qiangTime = this.haveTime.split(" ")[1]
+				} else {
+					this.daojiTime = ["已", "结", "束"]
 				}
 			},
+			// toLastTime() {
+			// 	// console.log("888----------------",this.qiaogouTimeList)
+			// 	let this_ = this;
+			// 	if (this.qiaogouTimeList.length > 0) {
+			// 		let timeDate = this.$getDate("", "s-s-s")
+			// 		let thisDateTime = new Date().getTime();
+			// 		for (let itTime = 0; itTime < this.qiaogouTimeList.length; itTime++) {
+			// 			// console.log(itTime,"894")
+			// 			let startTimeLL = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
+			// 			let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
+			// 			if (thisDateTime < startTimeLL && thisDateTime < endTime) {
+			// 				console.log(itTime)
+			// 				let stTime = this.qiaogouTimeList[itTime].start_time;
+			// 				console.log(stTime, "121212")
+			// 				// 抢购商品
+			// 				this_.$getApi("/App/Goods/getShoppingGoods", {
+			// 					time: stTime
+			// 				}, res => {
+			// 					console.log(res.data, "抢购商品")
+			// 					if (res.data.length > 0) {
+			// 						this.qiangouList = res.data.slice(0, 8);
+			// 					} else {
+			// 						this.qiangouList = []
+			// 					}
+			// 				})
+			// 				this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
+							
+			// 				this.qiaogouTimeEnd = this.qiaogouTimeList[itTime].end_time;
+			// 				console.log(this.qiaogouTimeEnd)
+			// 				let toTime = timeDate + " " + this.qiaogouTime;
+			// 				this.toTime = this.$lastDate(toTime, "s:s:s")
+
+			// 				break;
+			// 			}
+			// 		}
+			// 	}
+			// },
 			turnTo(item) {
 				console.log(item)
 				if (item.name == '新品推荐') {
@@ -1239,7 +1350,46 @@
 			z-index: 10;
 		}
 	}
-
+	.home{
+	.dao_jishi {
+	
+		
+		padding: 10upx 10upx 10upx;
+		border-radius: 30upx 30upx 0 0;
+		box-sizing: border-box;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		.dao_text{
+			color: #fff;
+			margin-right: 20upx;
+		}
+		.text {
+			font-size: 28upx;
+			color: #f0f0f0;
+			
+		}
+	
+		.btn_or {
+			.cc{
+				margin-right: 10upx;
+			}
+			background-color: rgba(255,255,255,.5);
+			text-align: center;
+		
+			border-radius: 30upx;
+			padding: 0 20upx;
+			color: #f00;
+			margin: 0 10upx;
+			
+		}
+	
+		.case {
+			color: $uni-or;
+			font-weight: bold;
+		}
+	}
+	}
 	.item_nav1 {
 		width: 170upx;
 		flex-shrink: 0;

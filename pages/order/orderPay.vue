@@ -54,7 +54,7 @@
 				radio: "A",
 				orderItem: "",
 				orderId: 0,
-				timer:true
+				timer: true
 			};
 		},
 		onLoad(ph) {
@@ -68,30 +68,35 @@
 		},
 		computed: {
 			allMoney() {
-				return Number(this.orderItem.credit) 
+				return Number(this.orderItem.credit)
 				// + Number(this.orderItem.fee)
 			}
 		},
 		methods: {
 			toNav(el) {
-				let this_ = this;
-				uni.showLoading({
-				    title: '支付中'
-				});
-				if (el == 'pay') {
-					// let dataL = {
-					// 	id: this.orderId,
-					// 	remark: this.orderItem.remark,
-					// 	user_name: this.orderItem.address.user_name,
-					// 	user_phone: this.orderItem.address.user_phone,
-					// 	user_address: this.orderItem.user_address,
-					// 	receive_time: this.orderItem.receive_time,
-					// 	coupon_id: this.orderItem.youhuiquan.coupon_id != 0 ? this.orderItem.youhuiquan.coupon_id : "",
-					// 	credit: this.orderItem.allMoney,
-					// 	lat: this.orderItem.lat,
-					// 	lng: this.orderItem.lng
-					// }
-					// this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
+				if (this.timer) {
+					this.timer = false;
+					setTimeout(() => {
+						this.timer = true;
+					}, 1000)
+					let this_ = this;
+					uni.showLoading({
+						title: '支付中'
+					});
+					if (el == 'pay') {
+						// let dataL = {
+						// 	id: this.orderId,
+						// 	remark: this.orderItem.remark,
+						// 	user_name: this.orderItem.address.user_name,
+						// 	user_phone: this.orderItem.address.user_phone,
+						// 	user_address: this.orderItem.user_address,
+						// 	receive_time: this.orderItem.receive_time,
+						// 	coupon_id: this.orderItem.youhuiquan.coupon_id != 0 ? this.orderItem.youhuiquan.coupon_id : "",
+						// 	credit: this.orderItem.allMoney,
+						// 	lat: this.orderItem.lat,
+						// 	lng: this.orderItem.lng
+						// }
+						// this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
 						let payType = 0;
 						// #ifndef MP
 						payType = this.radio == "A" ? 1 : 2;
@@ -105,10 +110,10 @@
 							id: this.orderId
 						}
 						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
-							
+
 							console.log(resbuy, "payOrder1111")
 
-							
+
 							let thisPayType = ""
 
 							// #ifndef MP
@@ -136,7 +141,7 @@
 							// #ifdef MP
 							thisPayType = "xxwepay"
 							// #endif	
-							
+
 							if (thisPayType == "wepay") {
 								console.log("wepay")
 								console.log(JSON.stringify(orderMsgL))
@@ -206,7 +211,8 @@
 								});
 							}
 						});
-					// })
+						// })
+					}
 				}
 			},
 			RadioChange(el) {

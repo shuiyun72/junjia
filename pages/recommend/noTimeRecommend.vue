@@ -22,7 +22,7 @@
 		<view class="scroll_fixed" :class="{'fixed':isFixed}">
 			<view class="dao_jishi">
 				<view class="text">
-					{{daojishiState == 'start' ? '距离下一场开始':'离本场结束'}} :
+					{{daojishiState == 'start' ? '距离下一场开始':'离本场结束'}} 
 				</view>
 				<view class="btn_or">
 					{{daojiTime[0]}}
@@ -553,7 +553,6 @@
 				}
 			}
 		}
-
 		.dao_jishi {
 
 			background-color: rgba(255, 255, 255, 1);
@@ -585,7 +584,6 @@
 				font-weight: bold;
 			}
 		}
-
 		.title_recommend {
 			display: flex;
 			justify-content: center;
