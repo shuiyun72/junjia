@@ -489,6 +489,9 @@
 										uni.hideLoading()
 										console.log('fail:' + JSON.stringify(err));
 										this_.$msg("支付未成功,请重新支付")
+										uni.switchTab({
+											url:"../mine/mine"
+										})
 									}
 								});
 							} else
@@ -507,6 +510,9 @@
 										uni.hideLoading()
 										this_.$msg("支付未成功,请重新支付")
 										console.log('fail:' + JSON.stringify(err));
+										uni.switchTab({
+											url:"../mine/mine"
+										})
 									}
 								});
 							} else
@@ -529,6 +535,9 @@
 										uni.hideLoading()
 										this_.$msg("支付未成功,请重新支付")
 										console.log('fail:' + JSON.stringify(err));
+										uni.switchTab({
+											url:"../mine/mine"
+										})
 									}
 								});
 							}

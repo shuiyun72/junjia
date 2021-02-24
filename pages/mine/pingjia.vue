@@ -24,7 +24,7 @@
 					</view>
 				</view>
 				<view class="foot_l">
-					<image :src="item.goods_thumb" class="foot_img" mode=""></image>
+					<image :src="item.goods_thumb" class="foot_img" mode="" @click="showDetail(item.goods_id)"></image>
 					<view class="text_cc">
 						{{item.name}}
 					</view>
@@ -55,6 +55,11 @@
 			}
 		},
 		methods:{
+			showDetail(id){
+				uni.navigateTo({
+					url:"../detail/detail?id="+id
+				})
+			},
 			gitData(){
 				
 			},

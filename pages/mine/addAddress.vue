@@ -82,8 +82,11 @@
 		},
 		methods: {
 			back() {
-				uni.switchTab({
-					url: "../mine/mine"
+				// uni.switchTab({
+				// 	url: "../mine/mine"
+				// })
+				uni.navigateBack({
+					delta:1
 				})
 				return true;
 			},
