@@ -1,7 +1,7 @@
 <template>
 	<view class="huangou">
 		<view class="ke_hg" v-if="allMoney < isCanNum">
-			<text class="or">再购买{{isCanNum - allMoney}}元,</text><text>可换购以下商品</text>
+			<text class="or">再购买{{isCanNum - allMoney}}元</text><text>可换购以下商品</text>
 		</view>
 		<view class="ke_hg" v-if="allMoney >= isCanNum">
 			<text class="or">已满{{isCanNum}}元,</text><text>可换购以下商品(最多可换购1件)</text>
@@ -57,35 +57,55 @@
 		data() {
 			return {
 				selN: 0,
-				allMoney: 90,
 				selItem: "",
-				isCanNum: 88,
-				huanhouList: [{
-					id: 1,
-					price: 1,
-					num: 0,
-					sel: 0
-				}, {
-					id: 2,
-					price: 2,
-					num: 0,
-					sel: 0
-				}]
+				isCanNum: 0,
+				huanhouList: [],
+				shopList: [],
+				xitongMsg:[],
+				huangou:0
 			};
 		},
 		computed: {
 			...mapState(["httpp", "shopCar", "itemHg"]),
+			
+			allMoney() {
+				let money = 0;
+				_.map(this.shopList, item => {
+					if (item.sel == 1) {
+						money += (item.price * 1000 * item.num)
+					}
+					console.log(money)
+				})
+				return money / 1000
+			},
 			isCanSel() {
 				if (this.allMoney >= this.isCanNum) {
 					return true
 				} else {
 					return false
 				}
-			}
+			},
+		},
+		onShow() {
+			this.shopList = this.shopCar || [];
+			
+			
 		},
 		mounted() {
+			this.$getApi('/App/Index/getSysConfig',{},res=>{
+				console.log(res.data,"获取系统配置信息")
+				this.xitongMsg = res.data;
+				// this.huangou  = 0.02;
+				this.isCanNum  = _.filter(this.xitongMsg,item=>{
+					return item.remark.indexOf("换购门槛") != -1
+				})[0].value;
+				console.log(this.isCanNum)
+			})
 			this.$getApi("/App/Goods/changeGoods", {}, res => {
 				console.log(res,"换购商品")
+				_.map(res.data,item=>{
+					item.sel = 0
+				})
 				this.huanhouList = res.data
 			})
 			

@@ -69,7 +69,7 @@
 						<view class="iconfont sel_s" :class="item.sel == 1?'iconyduizhengqueshixin':'sel_c'"  @click="selItem(item,index)"></view>
 						<view class="right_info">
 							<view class="">
-								<image :src="item.thumb" class="img" mode=""></image>
+								<image :src="item.thumb" class="img" mode="" @click="showDetail(item)"></image>
 							</view>
 							<view class="text">
 								<view class="title">
@@ -252,6 +252,12 @@
 		},
 		methods: {
 			...mapMutations(["jiaCar", "jianCar", "delCar","setOrderTrueFoot","setItemHg"]),
+			showDetail(item){
+				console.log(item)
+				uni.navigateTo({
+					url:"../detail/detail?id="+item.id
+				})
+			},
 			initShopCar() {
 				let numb = 0;
 				_.map(this.shopCar, item => {
@@ -445,13 +451,16 @@
 			},
 			toNav(el){
 				if(el == 'huangou'){
-					if(this.allMoney >= this.huangou){
-						uni.navigateTo({
-							url:"./huangou"
-						})
-					}else{
-						this.$msg('满'+this.huangou+'元,可参加换购商品')
-					}
+					// if(this.allMoney >= this.huangou){
+					// 	uni.navigateTo({
+					// 		url:"./huangou"
+					// 	})
+					// }else{
+					// 	this.$msg('满'+this.huangou+'元,可参加换购商品')
+					// }
+					uni.navigateTo({
+						url:"./huangou"
+					})
 					
 				}
 			}
