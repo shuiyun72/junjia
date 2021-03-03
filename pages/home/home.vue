@@ -507,7 +507,7 @@
 			this.initShopCar();
 			clearInterval(this.timer)
 			this.startTime();
-			this.footPbL();
+			// this.footPbL();
 			console.log(this.shopCar)
 			_.map(this.shuiguoList, itemL => {
 				_.map(this.shopCar, (itemC, index) => {
@@ -949,7 +949,7 @@
 
 			},
 			closePopup() {
-				
+				this.$refs.showimage.close()
 			},
 			openP() {
 				this.$getApi("/App/lincoupon/get_coupon_lists", {}, res => {
@@ -1006,7 +1006,7 @@
 				let arrtL = [];
 				let arrtR = [];
 				_.map(footPbList, (item, index) => {
-					console.log(item, index)
+					// console.log(item, index)
 					if (index % 2 == 0) {
 						arrtL.push(item)
 					} else {

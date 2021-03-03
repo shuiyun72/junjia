@@ -105,7 +105,7 @@
 						this.itemL.state = 0
 					}
 				}
-				console.log(this.itemL)
+				// console.log(this.itemL)
 				return this.itemL;
 			}
 		},
