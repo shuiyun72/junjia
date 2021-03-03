@@ -88,6 +88,12 @@
 				this.msgShow = ph.msgShow
 			}
 		},
+		onBackPress(e){
+		  uni.switchTab({
+		  	url: './home'
+		  })
+		  return true;
+		},
 		methods: {
 			back() {
 				if (this.barTitle == '付款成功') {

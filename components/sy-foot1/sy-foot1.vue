@@ -25,7 +25,7 @@
 					￥<text>{{item.old_price}}</text>
 				</view>
 			</view>
-			<view class="iconfont iconjia1"></view>
+			<view class="iconfont iconjia1" @click.stop="addFoot(item)" v-if="!isAdd"></view>
 		</view>
 	</view>
 </template>
@@ -40,10 +40,13 @@
 		beforeMount() {
 			this.httpp = this.$apiUrl
 		},
-		props:["item","isTuan","isTuangou"],
+		props:["item","isTuan","isTuangou","isAdd"],
 		methods:{
 			handleClick(item){
 				this.$emit('click',item)
+			},
+			addFoot(item){
+				this.$emit('addClick',item)
 			}
 		}
 	}
@@ -83,6 +86,7 @@
 
 			.iconjia1 {
 				color: $uni-bl;
+				font-size: 52upx;
 			}
 		}
 	}

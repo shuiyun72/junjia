@@ -24,7 +24,7 @@
 		<view class="caipu_foot">
 			<view class="shop_case_box">
 				<view class="shop_auto">
-					<sy-foot1 :isTuan='true' @click="part1Num" :item="item" v-for="item in catryItem.goods_list"></sy-foot1>
+					<sy-foot1 :isTuan='true' :isAdd='true' @click="part1Num" :item="item" v-for="item in catryItem.goods_list"></sy-foot1>
 				</view>
 			</view>
 		</view>

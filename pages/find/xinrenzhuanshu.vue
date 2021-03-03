@@ -58,14 +58,10 @@
 					price: 7.9,
 					sel: 1
 				}],
-				pageTitle:""
+				pageTitle:"",
+				timer:true
 				
 			};
-		},
-		mounted() {
-			
-			
-			
 		},
 		onLoad(ph) {
 			if(ph.title == "新人专属"){
@@ -79,6 +75,15 @@
 					// let allClass = [{name:"全部"}]
 					// this.findList = allClass.concat(res.data)
 				})
+			}
+		},
+		watch: {
+			shopCar: {
+				handler: function(newVal, oldVal) {
+					this.initShopCar()
+				},
+				deep: true,
+				immediate: true
 			}
 		},
 		onShow() {
@@ -95,7 +100,8 @@
 			}
 		},
 		methods:{
-			...mapMutations(["jiaCar", "jianCar", "setLocation","setClassify"]),
+			...mapMutations(["jiaCar", "jianCar", "setLocation","setClassify","setReCar"]),
+			
 			getFootList(footList){
 				_.map(footList, itemL => {
 					_.map(this.shopCar, (itemC, index) => {
@@ -124,6 +130,11 @@
 				console.log(arrtL)
 				console.log(arrtR)
 			},
+			toShopCar() {
+				uni.switchTab({
+					url: "../shopCar/shopCar"
+				})
+			},
 			foot2Click(item) {
 				console.log(item)
 				uni.navigateTo({
@@ -137,64 +148,109 @@
 				console.log(item)
 				this.foot2JiaItem(item)
 			},
-			foot2JiaItem(item) {
-				_.map(this.footList, fil => {
-					if (fil.id == item.id) {
-						item.num++;
-						if(item.num == 1){
-							// App/Goods/add_car
-							this.$getApi("/App/Goods/add_car", {goods_id:item.id,num:item.num}, resCar => {
-								this.jiaCar(item)
-							})
-						}else{
-							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								console.log(resCar.data,item.id,"item.id")
-								let carId = _.filter(resCar.data,itemC=>{
-									return itemC.id == item.id
-								})[0].cart_id;
-								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
-									this.jiaCar(item)
-								})
-							})
-						}
+			initShopCar() {
+				this.computList(this.footList)
+				let numb = 0;
+				_.map(this.shopCar, item => {
+					numb += item.num
+				})
+				if (numb > 0) {
+					let numbStr = numb.toString();
+					uni.setTabBarBadge({
+						index: 3,
+						text: numbStr
+					})
+				} else {
+					uni.removeTabBarBadge({
+						index: 3
+					})
+				}
+			},
+			computList(list) {
+				_.map(list, item => {
+					if (this.shopCar.length > 0) {
+						_.map(this.shopCar, itemCar => {
+							if (item.id == itemCar.id) {
+								item.num = itemCar.num
+							}
+						})
+					} else {
+						item.num = 0
 					}
 				})
 			},
-			foot2JianItem(item) {
-				_.map(this.footList, fil => {
-					if (fil.id == item.id) {
-						item.num--;
-						if(item.num == 0){
-							// App/Goods/add_car
-							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								console.log(resCar,item,"1212")
-						
-								let carId = _.filter(resCar.data,itemC=>{
-									return itemC.id == item.id
-								})[0].cart_id;
-								
-								this.$getApi("/App/Goods/del_car", {ids:carId}, resCar => {
-									this.jianCar(item)
+			foot2JiaItem(item, el) {
+				console.log(item)
+				if (this.timer) {
+					this.timer = false;
+					this.$getApi("/App/Goods/shop_car", {}, resCar1 => {
+						let idCarId = _.filter(resCar1.data, itemC => {
+							return itemC.id == item.id
+						});
+						if (idCarId.length == 0) {
+							this.$getApi("/App/Goods/add_car", {
+								goods_id: item.id,
+								num: 1
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
+									this.timer = true;
 								})
 							})
-						}else{
-							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								let carId = _.filter(resCar.data,itemC=>{
-									return itemC.id == item.id
-								})[0].cart_id;
-								this.$getApi("/App/Goods/change_car_num", {id:carId,num:item.num}, res => {
-									this.jianCar(item)
+						} else {
+							let carId = idCarId[0].cart_id;
+							this.$getApi("/App/Goods/change_car_num", {
+								id: carId,
+								num: (item.num + 1)
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
+									this.timer = true;
 								})
 							})
 						}
-					}
-				})
+			
+					})
+					setTimeout(()=>{
+						this.timer = true;
+					},1000)
+				}
 			},
-			toShopCar() {
-				uni.switchTab({
-					url: "../shopCar/shopCar"
-				})
-			},
+			foot2JianItem(item, el) {
+				if (this.timer) {
+					this.timer = false;
+					this.$getApi("/App/Goods/shop_car", {}, resCar1 => {
+						let idCarId = _.filter(resCar1.data, itemC => {
+							return itemC.id == item.id
+						})[0];
+						if (idCarId.num == 1) {
+							this.$getApi("/App/Goods/del_car", {
+								ids: idCarId.cart_id
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
+									item.num = 0;
+									this.timer = true;
+								})
+							})
+						} else {
+							this.$getApi("/App/Goods/change_car_num", {
+								id: idCarId.cart_id,
+								num: (item.num - 1)
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
+									this.timer = true;
+								})
+							})
+						}
+			
+					})
+					setTimeout(()=>{
+						this.timer = true;
+					},1000)
+				}
+			}
 			
 		}
 	}

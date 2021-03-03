@@ -2,7 +2,8 @@
 	<view class="home">
 
 		<view class="guodu_header" :style="{'padding-top':SystemInfoL.menu.top+75+'px',
-					'background-image':'linear-gradient(to bottom, '+lunboList[lunboIndex].color+' 0%, '+lunboList[lunboIndex].color+' 30%, #fff 100%)'}" v-if="lunboList.length>0">
+					'background-image':'linear-gradient(to bottom, '+lunboList[lunboIndex].color+' 0%, '+lunboList[lunboIndex].color+' 30%, #fff 100%)'}"
+		 v-if="lunboList.length>0">
 			<view class="h_fixed" :class="{'fixed':isFixed}" :style="{'padding-top':SystemInfoL.menu.top+'px'}">
 				<view class="msg_info m26 zindex10" :style="{ 'line-height': (SystemInfoL.menu.bottom - SystemInfoL.menu.top) + 'px'}">
 					<view class="address">
@@ -108,19 +109,19 @@
 				</view> -->
 				<view class="dao_jishi">
 					<text class="dao_text">{{qiangTime}} </text>
-					
+
 					<view class="text">
-						{{daojishiState == 'start' ? '即将开始':'即将结束'}} 
+						{{daojishiState == 'start' ? '即将开始':'即将结束'}}
 					</view>
 					<view class="btn_or">
 						<text class="cc">
-							{{daojishiState == 'start' ? '距离开始':'距离结束'}} 
+							{{daojishiState == 'start' ? '距离开始':'距离结束'}}
 						</text>
 						{{daojiTime[0]}}:{{daojiTime[1]}}:{{daojiTime[2]}}
 					</view>
 				</view>
 			</view>
-			<view class="time_limit_box">  
+			<view class="time_limit_box">
 				<view class="item" v-for="item in shopList" @click="itemClick(item)">
 					<view class="img_box">
 						<image :src="item.thumb" class="img" mode=""></image>
@@ -171,20 +172,20 @@
 				<sy-header1 @click="turnTo({name:'买一送一'})" :item="title1"></sy-header1>
 				<view class="shop_case_box">
 					<view class="shop_auto">
-						<sy-foot1 @click="part1Num" :item="item" v-for="item in maiyisongyiList"></sy-foot1>
+						<sy-foot1 @click="part1Num" @addClick="foot2JiaItem" :item="item" v-for="item in maiyisongyiList"></sy-foot1>
 					</view>
-				</view>
+				</view>  
 			</view>
 
 			<view class="hont_find2 m26">
 				<sy-header1 @click="turnTo({name:'团购产品'})" :item="title2"></sy-header1>
 				<view class="shop_case_box">
 					<view class="shop_auto">
-						<sy-foot1 :isTuan='true' @click="part1Num" :isTuangou="true" :item="item" v-for="item in tuangouList"></sy-foot1>
+						<sy-foot1 :isTuan='true' @click="part1Num" @addClick="foot2JiaItem" :isTuangou="true" :item="item" v-for="item in tuangouList"></sy-foot1>
 					</view>
 				</view>
 			</view>
-			<sy-scroll-x class="p26">  
+			<sy-scroll-x class="p26">
 				<view class="item_nav1" v-for="(item,index) in firstNavList1" :class="{'active':index == nav2dex}" @click="toClassify(item)">
 					<view class="title1">
 						限量抢购
@@ -208,7 +209,7 @@
 						</view>
 					</sy-foot2>
 				</view>
-				<view class="more"  @click="toNavAll('水果')">
+				<view class="more" @click="toNavAll('水果')">
 					查看全部<text class="iconfont iconjiantou"></text>
 				</view>
 			</view>
@@ -227,7 +228,7 @@
 					</sy-foot2>
 				</view>
 				<view class="more" @click="toNavAll('蔬菜')">
-					查看全部<text class="iconfont iconjiantou" ></text>
+					查看全部<text class="iconfont iconjiantou"></text>
 				</view>
 			</view>
 			<!-- 底部商品 -->
@@ -350,18 +351,18 @@
 				page: 1,
 				qiaogouTimeList: [],
 				qiaogouTime: "",
-				qiaogouTimeEnd:"",
+				qiaogouTimeEnd: "",
 				maiyisongyiList: [],
 				tuangouList: [],
 				shopList: [],
-				jiuleiList:[],
-				isCeshi:false,
-				yindaoPop:true,
-				yindaoImg:"",
-				timer:true,
-				daojiTime:[],
+				jiuleiList: [],
+				isCeshi: false,
+				yindaoPop: true,
+				yindaoImg: "",
+				timer: true,
+				daojiTime: [],
 				daojishiState: "",
-				qiangTime:""
+				qiangTime: ""
 			};
 		},
 		//发送给朋友
@@ -369,56 +370,56 @@
 			let userInfoId = this.userInfo.id;
 			// 此处的distSource为分享者的部分信息，需要传递给其他人
 			uni.share({
-			    provider: "weixin",
-			    scene: "WXSceneSession",
-			    type: 1,
-			    summary: "欢迎使用君佳优选商城！",
-			    success: function (res) {
-			        console.log("success:" + JSON.stringify(res));
-			    },
-			    fail: function (err) {
-			        console.log("fail:" + JSON.stringify(err));
-			    }
+				provider: "weixin",
+				scene: "WXSceneSession",
+				type: 1,
+				summary: "欢迎使用君佳优选商城！",
+				success: function(res) {
+					console.log("success:" + JSON.stringify(res));
+				},
+				fail: function(err) {
+					console.log("fail:" + JSON.stringify(err));
+				}
 			});
 		},
 		mounted() {
 			let this_ = this;
 			uni.getLocation({
-			    type: 'wgs84',
-				geocode:true,
-			    success: function (res) {
-					
+				type: 'wgs84',
+				geocode: true,
+				success: function(res) {
+
 					let position = {};
 					// "address":{"country":"中国","province":"河南省","city":"郑州市","district":"中原区","street":"药厂街","streetNum":"154号","poiName":"河南省国家大学科技园西区","cityCode":"0371"}
 					position.name = res.address.poiName;
-					position.address = res.address.province+res.address.city+res.address.district+res.address.street;
+					position.address = res.address.province + res.address.city + res.address.district + res.address.street;
 					this_.setLocation(position)
 					console.log('当前位置：' + JSON.stringify(res));
-			        console.log('当前位置的经度：' + res.longitude);
-			        console.log('当前位置的纬度：' + res.latitude);
-			    }
+					console.log('当前位置的经度：' + res.longitude);
+					console.log('当前位置的纬度：' + res.latitude);
+				}
 			});
 		},
 		//分享到朋友圈
 		onShareTimeline(res) {
 			uni.share({
-			    provider: "weixin",
-			    scene: "WXSenceTimeline",
-			    type: 1,
-			    summary: "欢迎使用君佳优选商城！",
-			    success: function (res) {
-			        console.log("success:" + JSON.stringify(res));
-			    },
-			    fail: function (err) {
-			        console.log("fail:" + JSON.stringify(err));
-			    }
+				provider: "weixin",
+				scene: "WXSenceTimeline",
+				type: 1,
+				summary: "欢迎使用君佳优选商城！",
+				success: function(res) {
+					console.log("success:" + JSON.stringify(res));
+				},
+				fail: function(err) {
+					console.log("fail:" + JSON.stringify(err));
+				}
 			});
 		},
 		onReachBottom() { //上拉触底函数
 			console.log("more")
 			this.jingxuanFoot("more")
 		},
-		
+
 		watch: {
 			shopCar: {
 				handler: function(newVal, oldVal) {
@@ -429,7 +430,7 @@
 			}
 		},
 		computed: {
-			...mapState(["hasLogin","httpp", "SystemInfo", "userInfo", "shopCar", "location"]),
+			...mapState(["hasLogin", "httpp", "SystemInfo", "userInfo", "shopCar", "location"]),
 
 			firstNavList1() {
 				return _.take(this.classifyList, 10)
@@ -458,9 +459,9 @@
 
 			}
 		},
-		onReachBottom(){  //上拉触底函数
+		onReachBottom() { //上拉触底函数
 			this.page++;
-			this.jingxuanFoot("more")	  
+			this.jingxuanFoot("more")
 		},
 		onHide() {
 			console.log("cccc")
@@ -473,38 +474,41 @@
 			this.page = 1;
 		},
 		onShow() {
-			
+			this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+				console.log(resCar2, resCar2.data)
+				this.setReCar(resCar2.data)
+			})
 			this.page = 1;
-			console.log(this.page,"this.page")
+			console.log(this.page, "this.page")
 
 			let this_ = this;
-			if(!this.hasLogin){
+			if (!this.hasLogin) {
 				// #ifdef MP
 				this.weappLogin()
 				// #endif
 				// #ifndef MP
 				this_.openP()
 				// #endif
-			}else{
+			} else {
 				// 获取购物车
 				this.$getApi("/App/Goods/shop_car", {}, res => {
 					console.log(res.data, "获取购物车")
 					let carInfo = res.data == "" ? [] : res.data;
 					this.setReCar(carInfo)
 				})
-				
-				if(this.userInfo.status == 1 && Number(this.userInfo.newVip) == 0 ){
+
+				if (this.userInfo.status == 1 && Number(this.userInfo.newVip) == 0) {
 					this.openP()
-				}else{
-					try{
+				} else {
+					try {
 						this.closePopup();
-					}catch(e){
+					} catch (e) {
 						//TODO handle the exception
 					}
 				}
 			}
 			this.init();
-			this.initShopCar();
+
 			clearInterval(this.timer)
 			this.startTime();
 			// this.footPbL();
@@ -531,9 +535,9 @@
 					}
 				})
 			})
-			try{
+			try {
 				uni.hideLoading();
-			}catch(e){
+			} catch (e) {
 				//TODO handle the exception
 			}
 
@@ -555,31 +559,31 @@
 			}
 		},
 		methods: {
-			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify","setReCar"]),
-			tiaozhuan(item){
-				if(item.url){
+			...mapMutations(["jiaCar", "jianCar", "setLocation", "setClassify", "setReCar"]),
+			tiaozhuan(item) {
+				if (item.url) {
 					window.location.href = item.url
-				}else{
+				} else {
 					this.$msg("没有跳转链接")
 				}
 			},
-			toNavAll(el){
+			toNavAll(el) {
 				console.log(el)
 				let this_ = this;
 				let shuiguoId = {};
-				if(el == "水果"){
+				if (el == "水果") {
 					shuiguoId = _.filter(this_.classifyList, item => {
 						return item.name.includes('水果')
 					})[0];
 				}
-				if(el == "蔬菜"){
+				if (el == "蔬菜") {
 					shuiguoId = _.filter(this_.classifyList, item => {
 						return item.name.includes('蔬菜')
 					})[0];
 				}
 				console.log(shuiguoId)
 				uni.navigateTo({
-					url:"../home/searchResult?fromType=more&searchName="+shuiguoId.name
+					url: "../home/searchResult?fromType=more&searchName=" + shuiguoId.name
 				})
 			},
 			init() {
@@ -596,50 +600,45 @@
 					this_.shuiguoId = _.filter(this_.classifyList, item => {
 						return item.name.includes('水果')
 					})[0].id;
-					
-					// 获取水果
-					// this_.$getApi("/App/Goods/getGoodsList", {
-					// 	category_id: this_.shuiguoId
-					// }, res => {
-					// 	console.log(res.data, "获取水果")
-					// 	this_.shuiguoList = res.data.slice(0, 3)
-					// })
-					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"水果",
-					p:1}, res => {
-						let shucaiL =  [];
-						_.map(res.data,item=>{
+
+					this_.$getApi("/App/Goods/getGoodsListByCate", {
+						keyword: "水果",
+						p: 1
+					}, res => {
+						let shucaiL = [];
+						_.map(res.data, item => {
 							item.num = 0;
 							item.sel = 1;
 							shucaiL.push(item)
 						})
 						this_.shuiguoList = shucaiL.slice(0, 3)
+						this.initShopCar();
 					})
 					this_.shucaiId = _.filter(this_.classifyList, item => {
 						return item.name.includes('蔬菜')
 					})[0].id;
-					// 获取蔬菜
-					// this_.$getApi("/App/Goods/getGoodsList", {
-					// 	category_id: this_.shucaiId
-					// }, res => {
-					// 	console.log(res.data, "获取蔬菜")
-					// 	this_.shucaiList = res.data.slice(0, 3)
-					// })
-					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"蔬菜",
-					p:1}, res => {
-						let shucaiL =  [];
-						_.map(res.data,item=>{
+
+					this_.$getApi("/App/Goods/getGoodsListByCate", {
+						keyword: "蔬菜",
+						p: 1
+					}, res => {
+						let shucaiL = [];
+						_.map(res.data, item => {
 							item.num = 0;
 							item.sel = 1;
 							shucaiL.push(item)
 						})
 						this_.shucaiList = shucaiL.slice(0, 3)
+						this.initShopCar();
 					})
-					
+
 					// 酒类专区
-					this_.$getApi("/App/Goods/getGoodsListByCate", {keyword:"酒"}, res => {
+					this_.$getApi("/App/Goods/getGoodsListByCate", {
+						keyword: "酒"
+					}, res => {
 						console.log(res.data, "酒类专区")
 						this.jiuleiList = res.data;
-					},"false")
+					}, "false")
 
 				})
 				// 获取商品列表
@@ -647,7 +646,7 @@
 					console.log(res.data, "ccccc3")
 					// this_.classifyList  =res.data
 				})
-				//maiyisongyiList
+
 				// 获取商品列表买一送一
 				this_.$getApi("/App/Goods/getGoodsList", {
 					on_sale: 1
@@ -682,7 +681,7 @@
 				})
 				// 获取抢购时间
 				this_.$getApi("/App/Goods/getShoppingTypes", {}, res => {
-					console.log(res.data,"获取抢购时间")
+					console.log(res.data, "获取抢购时间")
 					let qiaogouTimeList = res.data;
 					// let qiaogouTimeList = [
 					// {start_time:"01:00:00",end_time:"02:00:00"}
@@ -699,7 +698,7 @@
 					// 	start_time: "15:40:00",
 					// 	end_time: "15:40:50"
 					// }]
-					
+
 					this.qiaogouTimeList = qiaogouTimeList;
 					// let resTime = ["2:00-4:00","5:00-6:00","7:00-8:00"];
 					let newT = this.$getDate("", "s-s-s");
@@ -714,8 +713,8 @@
 						this.calcHaveTime(timeList);
 					}, 1000)
 				})
-				
-				
+
+
 				this.jingxuanFoot()
 			},
 			jingxuanFoot(more) {
@@ -725,14 +724,14 @@
 				}, res => {
 					console.log(res.data, "精选好物")
 					let resData = res.data ? res.data : [];
-					if(more == "more"){
+					if (more == "more") {
 						this.footPb = this.footPb.concat(resData)
-					}else{
+					} else {
 						this.footPb = resData
 					}
-					
-					if(this.footPb.length > 0 && this.shopCar.length>0){
-						_.map(this.footPb, (itemL,indexL) => {
+
+					if (this.footPb.length > 0 && this.shopCar.length > 0) {
+						_.map(this.footPb, (itemL, indexL) => {
 							_.map(this.shopCar, (itemC, index) => {
 								if (itemL.id == itemC.id) {
 									this.$set(this.footPb[indexL], "num", itemC.num)
@@ -757,7 +756,28 @@
 				})
 
 			},
+			computList(list) {
+				_.map(list, item => {
+					if (this.shopCar.length > 0) {
+						_.map(this.shopCar, itemCar => {
+							if (item.id == itemCar.id) {
+								item.num = itemCar.num
+							}
+						})
+					} else {
+						item.num = 0
+					}
+				})
+			},
 			initShopCar() {
+				console.log("799", this.shuiguoList)
+				this.computList(this.shuiguoList)
+				this.computList(this.shopList2)
+				this.computList(this.footPb)
+				this.computList(this.shucaiList)
+				this.computList(this.tuangouList)
+				this.computList(this.maiyisongyiList)
+				  
 				let numb = 0;
 				_.map(this.shopCar, item => {
 					numb += item.num
@@ -774,12 +794,12 @@
 					})
 				}
 			},
-			async isNoLogin(){
-				if(!this.hasLogin){
+			async isNoLogin() {
+				if (!this.hasLogin) {
 					// #ifndef APP-PLUS
 					this.closePopup();
 					uni.navigateTo({
-						url:"../login/login"
+						url: "../login/login"
 					})
 					// #endif
 					// #ifdef MP
@@ -797,23 +817,23 @@
 						if (!resShouquan.authSetting['scope.userInfo']) {
 							//这里调用授权
 							console.log("当前未授权");
-							if(isLoginC == 'login'){
+							if (isLoginC == 'login') {
 								uni.navigateTo({
-									url:"../login/login"
+									url: "../login/login"
 								})
-							}else{
+							} else {
 								this_.openP()
 							}
-							
+
 						} else {
 							//用户已经授权过了
 							console.log("当前已授权");
-							
+
 							uni.login({
 								provider: 'weixin',
 								success: function(loginRes) {
 									// 弹出正在登录的弹框
-									
+
 									console.log(loginRes, "微信权限信息");
 									this_.$getApi("/App/Public/getOpenid", {
 										code: loginRes.code
@@ -824,7 +844,7 @@
 										// 	title: '正在登录···',
 										// 	complete: () => {}
 										// });
-										
+
 										uni.getUserInfo({
 											provider: 'weixin',
 											success: (info) => { //这里请求接口
@@ -833,7 +853,7 @@
 													open_id: resOpen.data.openid,
 													nickname: info.userInfo.nickName,
 													avatar: info.userInfo.avatarUrl,
-													type:"3"
+													type: "3"
 												}
 												console.log(dataLogin)
 												// uni.showModal({
@@ -842,29 +862,29 @@
 												//     success: function (res) {
 												//         if (res.confirm) {
 												//             console.log('用户点击确定');
-															this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
-																console.log(res, "登录")
-																// uni.hideLoading();
-																this_.$store.commit("login", res.data)
-																// 获取购物车
-																this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
-																	console.log(resCarC.data, "获取购物车")
-																	let carInfo = resCarC.data == "" ? [] : resCarC.data;
-																	this_.setReCar(carInfo)
-																})
-																console.log(res.data)
-																if(res.data.status == 1 &&  Number(this.userInfo.newVip) != 1){
-																	this_.openP()
-																}else{
-																	try{
-																		this_.closePopup();
-																	}catch(e){
-																		//TODO handle the exception
-																	}
-																	
-																}
-																
-															})
+												this_.$getApi("/App/Public/thirdLogin", dataLogin, res => {
+													console.log(res, "登录")
+													// uni.hideLoading();
+													this_.$store.commit("login", res.data)
+													// 获取购物车
+													this_.$getApi("/App/Goods/shop_car", {}, resCarC => {
+														console.log(resCarC.data, "获取购物车")
+														let carInfo = resCarC.data == "" ? [] : resCarC.data;
+														this_.setReCar(carInfo)
+													})
+													console.log(res.data)
+													if (res.data.status == 1 && Number(this.userInfo.newVip) != 1) {
+														this_.openP()
+													} else {
+														try {
+															this_.closePopup();
+														} catch (e) {
+															//TODO handle the exception
+														}
+
+													}
+
+												})
 												//         } else if (res.cancel) {
 												//             console.log('用户点击取消');
 												// 			this_.$msg("取消登录")
@@ -872,7 +892,7 @@
 												//         }
 												//     }
 												// });
-												
+
 											},
 											fail: () => {
 												// uni.showToast({
@@ -883,7 +903,7 @@
 											}
 										})
 									})
-			
+
 								}
 							});
 						}
@@ -894,12 +914,12 @@
 				let this_ = this;
 				this.closePopup();
 				// #ifndef MP
-				if(!this.hasLogin){
-					
+				if (!this.hasLogin) {
+
 					uni.navigateTo({
-						url:"../login/login"
+						url: "../login/login"
 					})
-				}else{
+				} else {
 					let youhuiArr = [];
 					_.map(this_.youhuiquanList, item => {
 						youhuiArr.push(item.id)
@@ -911,9 +931,9 @@
 						console.log(res, "领取优惠券")
 						this_.$msg('领取成功')
 					})
-					setTimeout(()=>{
+					setTimeout(() => {
 						this_.closePopup()
-					},500)
+					}, 500)
 				}
 				// #endif
 				// #ifdef MP
@@ -960,7 +980,7 @@
 			},
 			toSearch() {
 				console.log("ccc1")
-				if(!this.isCeshi){
+				if (!this.isCeshi) {
 					console.log("ccc2")
 					this.isNoLogin()
 					console.log("ccc3")
@@ -998,13 +1018,11 @@
 				setTimeout(() => {
 					this.lunboIndex = el.detail.current;
 				}, 1000)
-
-				// opacity
-				// this.$refs.isGdref.style = "opacity:0";
 			},
 			footPbL(footPbList) {
 				let arrtL = [];
 				let arrtR = [];
+				this.initShopCar();
 				_.map(footPbList, (item, index) => {
 					// console.log(item, index)
 					if (index % 2 == 0) {
@@ -1021,7 +1039,7 @@
 			startTime() {
 				let this_ = this;
 				// this_.toLastTime()
-				
+
 				this_.timer = setInterval(() => {
 					if (this.toTime != '00:00:00') {
 						// this_.toLastTime()
@@ -1039,12 +1057,12 @@
 						_.map(this.shopCar, itemC => {
 							if (itemL.id == itemC.id) {
 								itemL.num = itemC.num
-							}else{
+							} else {
 								itemL.num = 0
 							}
 						})
 					})
-					this.shopList  = shopList;
+					this.shopList = shopList;
 				})
 			},
 			calcHaveTime(timeList) {
@@ -1064,8 +1082,8 @@
 					for (let i = 0; i < timeList.length; i++) {
 						if (new Date(timeList[i]) < currentTime && new Date(timeList[i + 1]) > currentTime) {
 							this.selIndexTime = i;
-							
-							
+
+
 							if (i % 2 == 1) {
 								this.daojishiState = "start";
 								this.shopList = [];
@@ -1099,43 +1117,6 @@
 					this.daojiTime = ["已", "结", "束"]
 				}
 			},
-			// toLastTime() {
-			// 	// console.log("888----------------",this.qiaogouTimeList)
-			// 	let this_ = this;
-			// 	if (this.qiaogouTimeList.length > 0) {
-			// 		let timeDate = this.$getDate("", "s-s-s")
-			// 		let thisDateTime = new Date().getTime();
-			// 		for (let itTime = 0; itTime < this.qiaogouTimeList.length; itTime++) {
-			// 			// console.log(itTime,"894")
-			// 			let startTimeLL = new Date(timeDate + " " + this.qiaogouTimeList[itTime].start_time);
-			// 			let endTime = new Date(timeDate + " " + this.qiaogouTimeList[itTime].end_time);
-			// 			if (thisDateTime < startTimeLL && thisDateTime < endTime) {
-			// 				console.log(itTime)
-			// 				let stTime = this.qiaogouTimeList[itTime].start_time;
-			// 				console.log(stTime, "121212")
-			// 				// 抢购商品
-			// 				this_.$getApi("/App/Goods/getShoppingGoods", {
-			// 					time: stTime
-			// 				}, res => {
-			// 					console.log(res.data, "抢购商品")
-			// 					if (res.data.length > 0) {
-			// 						this.qiangouList = res.data.slice(0, 8);
-			// 					} else {
-			// 						this.qiangouList = []
-			// 					}
-			// 				})
-			// 				this.qiaogouTime = this.qiaogouTimeList[itTime].start_time;
-							
-			// 				this.qiaogouTimeEnd = this.qiaogouTimeList[itTime].end_time;
-			// 				console.log(this.qiaogouTimeEnd)
-			// 				let toTime = timeDate + " " + this.qiaogouTime;
-			// 				this.toTime = this.$lastDate(toTime, "s:s:s")
-
-			// 				break;
-			// 			}
-			// 		}
-			// 	}
-			// },
 			turnTo(item) {
 				console.log(item)
 				if (item.name == '新品推荐') {
@@ -1213,109 +1194,75 @@
 				this.foot2JianItem(item, 4)
 			},
 			foot2JiaItem(item, el) {
-				if(this.timer){
-				this.timer = false;
-				setTimeout(()=>{
-					this.timer = true;
-				},500)
-				let list = [];
-				if (el == 1) {
-					list = this.shuiguoList
-				} else
-				if (el == 2) {
-					list = this.shopList2
-				} else
-				if (el == 3) {
-					list = this.footPb
-				}
-				if (el == 4) {
-					list = this.shucaiList
-				}
-				_.map(list, fil => {
-					if (fil.id == item.id) {
-						item.num++;
-						if (item.num == 1) {
-							// App/Goods/add_car
+				console.log(item)
+				if (this.timer) {
+					this.timer = false;
+					this.$getApi("/App/Goods/shop_car", {}, resCar1 => {
+						let idCarId = _.filter(resCar1.data, itemC => {
+							return itemC.id == item.id
+						});
+						if (idCarId.length == 0) {
 							this.$getApi("/App/Goods/add_car", {
 								goods_id: item.id,
-								num: item.num
-							}, resCar => {
-								this.timer = true;
-								this.jiaCar(item)
+								num: 1
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
+									this.timer = true;
+								})
 							})
 						} else {
-							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								console.log(resCar.data, item.id, "item.id")
-								let carId = _.filter(resCar.data, itemC => {
-									return itemC.id == item.id
-								})[0].cart_id;
-								this.$getApi("/App/Goods/change_car_num", {
-									id: carId,
-									num: item.num
-								}, res => {
+							let carId = idCarId[0].cart_id;
+							this.$getApi("/App/Goods/change_car_num", {
+								id: carId,
+								num: (item.num + 1)
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
 									this.timer = true;
-									this.jiaCar(item)
 								})
 							})
 						}
-					}
-				})
+
+					})
+					setTimeout(()=>{
+						this.timer = true;
+					},1000)
 				}
 			},
 			foot2JianItem(item, el) {
-				if(this.timer){
-				this.timer = false;
-				setTimeout(()=>{
-					this.timer = true;
-				},500)
-				let list = [];
-				if (el == 1) {
-					list = this.shuiguoList
-				} else
-				if (el == 2) {
-					list = this.shopList2
-				} else
-				if (el == 3) {
-					list = this.footPb
-				}
-				if (el == 4) {
-					list = this.shucaiList
-				}
-				_.map(list, fil => {
-					if (fil.id == item.id) {
-						item.num--;
-						if (item.num == 0) {
-							// App/Goods/add_car
-							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								console.log(resCar, item, "1212")
-
-								let carId = _.filter(resCar.data, itemC => {
-									return itemC.id == item.id
-								})[0].cart_id;
-
-								this.$getApi("/App/Goods/del_car", {
-									ids: carId
-								}, resCar => {
+				if (this.timer) {
+					this.timer = false;
+					this.$getApi("/App/Goods/shop_car", {}, resCar1 => {
+						let idCarId = _.filter(resCar1.data, itemC => {
+							return itemC.id == item.id
+						})[0];
+						if (idCarId.num == 1) {
+							this.$getApi("/App/Goods/del_car", {
+								ids: idCarId.cart_id
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
+									item.num = 0;
 									this.timer = true;
-									this.jianCar(item)
 								})
 							})
 						} else {
-							this.$getApi("/App/Goods/shop_car", {}, resCar => {
-								let carId = _.filter(resCar.data, itemC => {
-									return itemC.id == item.id
-								})[0].cart_id;
-								this.$getApi("/App/Goods/change_car_num", {
-									id: carId,
-									num: item.num
-								}, res => {
+							this.$getApi("/App/Goods/change_car_num", {
+								id: idCarId.cart_id,
+								num: (item.num - 1)
+							}, resItem => {
+								this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
+									this.setReCar(resCar2.data)
 									this.timer = true;
-									this.jianCar(item)
 								})
 							})
 						}
-					}
-				})
+
+					})
+					setTimeout(()=>{
+						this.timer = true;
+					},1000)
 				}
 			}
 		}
@@ -1350,46 +1297,51 @@
 			z-index: 10;
 		}
 	}
-	.home{
-	.dao_jishi {
-	
-		
-		padding: 10upx 10upx 10upx;
-		border-radius: 30upx 30upx 0 0;
-		box-sizing: border-box;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		.dao_text{
-			color: #fff;
-			margin-right: 20upx;
-		}
-		.text {
-			font-size: 28upx;
-			color: #f0f0f0;
-			
-		}
-	
-		.btn_or {
-			.cc{
-				margin-right: 10upx;
+
+	.home {
+		.dao_jishi {
+
+
+			padding: 10upx 10upx 10upx;
+			border-radius: 30upx 30upx 0 0;
+			box-sizing: border-box;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			.dao_text {
+				color: #fff;
+				margin-right: 20upx;
 			}
-			background-color: rgba(255,255,255,.5);
-			text-align: center;
-		
-			border-radius: 30upx;
-			padding: 0 20upx;
-			color: #f00;
-			margin: 0 10upx;
-			
-		}
-	
-		.case {
-			color: $uni-or;
-			font-weight: bold;
+
+			.text {
+				font-size: 28upx;
+				color: #f0f0f0;
+
+			}
+
+			.btn_or {
+				.cc {
+					margin-right: 10upx;
+				}
+
+				background-color: rgba(255, 255, 255, .5);
+				text-align: center;
+
+				border-radius: 30upx;
+				padding: 0 20upx;
+				color: #f00;
+				margin: 0 10upx;
+
+			}
+
+			.case {
+				color: $uni-or;
+				font-weight: bold;
+			}
 		}
 	}
-	}
+
 	.item_nav1 {
 		width: 170upx;
 		flex-shrink: 0;
@@ -1497,6 +1449,7 @@
 				border-radius: 16upx;
 				margin-bottom: 16upx;
 				margin-left: 2%;
+
 				.img_box {
 
 					.img {
@@ -1615,6 +1568,7 @@
 	}
 
 	.home {
+
 		// padding-bottom: 50upx;
 		// background-color: #f0f0f0;
 		.mine_title {
