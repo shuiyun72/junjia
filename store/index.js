@@ -13,16 +13,17 @@ let hasLogin = (uni.getStorageSync("userInfo") && uni.getStorageSync("userInfo")
 // 	status: "1"
 // 	}
 // })
-uni.setStorage({ //缓存用户登陆状态
-	key: 'userInfo',
-	data: {
-	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/yZqkeEoAQPtODibCibdYWpcrXxZ4kCCRRUdffOmdjDkK39m9986eibEdVvEVBKYG7QcYw0MJRiaDQgEaWG4rAbmGgw/132",
-	id: "18",
-	nickname: "林海",
-	status: "1",
-	phone:""
-	}
-})
+// uni.setStorage({ //缓存用户登陆状态
+// 	key: 'userInfo',
+// 	data: {
+// 	avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/yZqkeEoAQPtODibCibdYWpcrXxZ4kCCRRUdffOmdjDkK39m9986eibEdVvEVBKYG7QcYw0MJRiaDQgEaWG4rAbmGgw/132",
+// 	id: "5",
+// 	//id: "18",
+// 	nickname: "林海",
+// 	status: "1",
+// 	phone:""
+// 	}
+// })
 
 console.log("111", hasLogin)
 const store = new Vuex.Store({
@@ -42,7 +43,8 @@ const store = new Vuex.Store({
 		classify:"",
 		orderTrueFoot:[],
 		address:"",
-		youhuiquan:{}
+		youhuiquan:{},
+		waitC:0
 	},
 	mutations: {
 		login(state, provider) {
@@ -58,6 +60,9 @@ const store = new Vuex.Store({
 			state.shopCar = [];
 			uni.setStorageSync('shopCar',state.shopCar)
 			state.youhuiquan = {};
+		},
+		setWait(state,items){
+			state.waitC = items;
 		},
 		setReCar(state,items){
 			state.shopCar = items;

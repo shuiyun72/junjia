@@ -163,6 +163,7 @@
 		bottom: 0;
 		width: 750upx;
 		box-sizing: border-box;
+		background-color: #fff;
 		.shuoming{
 			display: flex;
 			padding-bottom: 36upx;
@@ -170,6 +171,7 @@
 			color: #666;
 			font-size: 36upx;
 			align-items: center;
+			padding-top: 16upx;
 			.iconshouye_shugang_shijiantixing{
 				margin: 0 10upx;
 				position:relative;

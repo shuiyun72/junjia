@@ -72,7 +72,7 @@
 								<image :src="item.thumb" class="img" mode="" @click="showDetail(item)"></image>
 							</view>
 							<view class="text">
-								<view class="title">
+								<view class="title" @click="showDetail(item)">
 									<view class="maiyisong" v-if="item.on_sale == 1">买一送一</view> <view>{{item.name}}</view>
 								</view>
 								<view class="money_num">

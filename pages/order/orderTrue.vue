@@ -179,7 +179,9 @@
 				peisong: 0,
 				mianPeisong: 28,
 				phStrCode: "",
-				timer: true
+				timer: true,
+				isPay:1,
+				historyPay:0
 			};
 		},
 		computed: {
@@ -222,7 +224,8 @@
 		onShow() {
 			console.log("orderTrueFoot", this.orderTrueFoot)
 			console.log(this.itemHg)
-			this.$store.commit("setYouhuiquan", {})
+			
+			console.log(this.youhuiquan)
 		},
 		onLoad(ph) {
 
@@ -386,11 +389,17 @@
 			},
 			jiesuanOrder() {
 				if (this.timer) {
+					
 					this.timer = false;
+					
 					setTimeout(() => {
 						this.timer = true;
 					}, 1000)
-
+					if(this.historyPay == 1){
+						uni.switchTab({
+							url:"../mine/mine"
+						})
+					}
 					uni.showLoading({
 						title: '支付中'
 					});
@@ -416,6 +425,19 @@
 					}
 					let user_address = this.address.address ? this.address.address : "";
 					console.log("cc2", this.order_id)
+					if(this.isPay == 1){
+						this.isPay ++
+					}else
+					if(this.isPay > 1){
+						this.$msg("重新支付请,请进入待付款订单,正在为您跳转我的订单...")
+						this.$store.commit("setWait",1)
+						setTimeout(()=>{
+							uni.switchTab({
+								url:"../mine/mine"
+							})
+						},700)
+						return false;
+					}
 					let dataL = {
 						id: this.order_id,
 						remark: this.beizhuC,
@@ -430,7 +452,7 @@
 					}
 					console.log(dataL)
 					this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
-
+						this.$store.commit("setYouhuiquan", {})
 						let payType = 0;
 						// #ifndef MP
 						payType = this.radio == "A" ? 1 : 2;
@@ -472,7 +494,7 @@
 							// #ifdef MP
 							thisPayType = "xxwepay"
 							// #endif	
-
+							this.historyPay = 1;
 							if (thisPayType == "wepay") {
 								console.log("wepay")
 								console.log(JSON.stringify(orderMsgL))

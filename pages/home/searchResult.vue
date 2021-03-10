@@ -447,7 +447,7 @@
 			},
 			searchResult(el,more){
 				el = el || "";
-				this.$getApi("/App/Goods/getGoodsListByCate", {keyword:el,p:this.page}, res => {
+				this.$getApi("/App/Goods/searchKey", {keyword:el}, res => {
 					console.log(res.data,"ccccc3")
 					if(more == "more"){
 						let shopList = this.shopList.concat(res.data)

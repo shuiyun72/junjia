@@ -261,7 +261,7 @@
 				</view>
 			</view>
 		</view>
-		<uni-popup type="center" ref="showimage">
+		<uni-popup type="center" ref="showimage" :maskClick="false">
 			<view class="pop_youhui">
 
 				<image src="../../static/img/ts3.png" class="quan_img1" mode=""></image>

@@ -29,13 +29,15 @@
 					</view>
 				</view>
 				<!-- #ifdef MP -->
-				<button class="right"open-type="share">
-					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image><text>推荐给好友</text>
+				<button class="right" open-type="share">
+					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image>
+					<text>推荐给好友</text>
 				</button>
 				<!-- #endif -->
 				<!-- #ifndef MP -->
 				<view class="right" @click="fenxiangF">
-					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image><text>推荐给好友</text>
+					<image src="../../static/img/liucheng/sp-fenx.png" mode="" class="liucheng_img"></image>
+					<text>推荐给好友</text>
 				</view>
 				<!-- #endif -->
 			</view>
@@ -45,7 +47,8 @@
 		</view>
 		<view class="bgf20"></view>
 		<uni-list>
-			<uni-list-item :title="'商品评价('+itemDetail.comment_list.length+')'" rightText="查看全部" @click="showAllRate"></uni-list-item>
+			<uni-list-item :title="'商品评价('+itemDetail.comment_list.length+')'" rightText="查看全部" @click="showAllRate">
+			</uni-list-item>
 		</uni-list>
 		<view class="" v-if="itemDetail.comment_list.length > 0">
 			<view class="pingjia_box_sy">
@@ -61,15 +64,16 @@
 					</view>
 				</view>
 				<view class="rate_pj">
-					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :disabled="true" :size="18" v-model="itemDetail.comment_list[0].star"></uni-rate>
+					<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :disabled="true" :size="18"
+						v-model="itemDetail.comment_list[0].star"></uni-rate>
 				</view>
 
 				<view class="wa_text">
 					{{itemDetail.comment_list[0].content}}
 				</view>
 				<view class="pingjia_img_box">
-					<view class="img_item" :style="'background-image: url('+http+itemImg+')'" v-for="itemImg in itemDetail.comment_list[0].pic"
-					 @click.stop="showImg"></view>
+					<view class="img_item" :style="'background-image: url('+http+itemImg+')'"
+						v-for="itemImg in itemDetail.comment_list[0].pic" @click.stop="showImg"></view>
 				</view>
 			</view>
 		</view>

@@ -235,7 +235,7 @@
 			left: 0;
 			width: 750upx;
 			align-items: center;
-
+			background-color: #fff;
 			.btn1 {
 				flex: 1;
 				display: inline-flex;

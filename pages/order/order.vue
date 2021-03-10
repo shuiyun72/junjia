@@ -11,7 +11,7 @@
 				暂无订单
 			</view>
 		</view>
-		<view class="order_list">
+		<view class="order_list" @touchmove.stop="noChange" @touch.stop="noChange" @touchstart.stop="noChange">
 			<view class="order_box" v-for="parent in orderList" @click="toDetail(parent)">
 				<view class="title_c">
 					<view class="left" :class="parent.status == -1 ?'or':parent.status == 1?'blue':parent.status == 2 ?'blue2':''">
@@ -139,16 +139,20 @@
 			this.page++;
 			this.getOrederList(this.tabSel,"more")
 		},
-		onPullDownRefresh() {
-			let this_ = this;
-			this.getOrederList(this.tabSel,"","isPull")
-			//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
-		},
+		// onPullDownRefresh() {
+		// 	let this_ = this;
+		// 	this.getOrederList(this.tabSel,"","isPull")
+		// 	//监听下拉刷新动作的执行方法，每次手动下拉刷新都会执行一次
+		// },
 		onShow() {
+			this.$store.commit("setWait",0)
 			this.getOrederList(this.tabSel)
 			this.page = 1;
 		},
 		methods: {
+			noChange(){
+				
+			},
 			back(){
 				uni.switchTab({
 					url:"../home/home"
@@ -266,6 +270,8 @@
 	}
 	.order_list{
 		padding: 0upx 26upx 20upx;
+		height: calc(100vh - 280upx);
+		overflow-y:auto;
 		.order_box{
 			background-color: #fff;
 			padding: 20upx;

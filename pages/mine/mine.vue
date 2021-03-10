@@ -13,7 +13,7 @@
 				<view class="right_set">
 					
 					<view class="msgPoint">
-						<view class="point" if="xiaoxNum > 0">
+						<view class="point" v-if="xiaoxNum > 0">
 							{{xiaoxNum}}
 						</view>
 						<image src="../../static/img/mine/xiaox.png" class="msg1_img" mode="" @click="navsTo('xiaoxi')"></image>
@@ -157,7 +157,7 @@
 			};
 		},
 		computed: {
-			...mapState(["httpp", "SystemInfo", "userInfo", "hasLogin"]),
+			...mapState(["httpp", "SystemInfo", "userInfo", "hasLogin","waitC"]),
 			SystemInfoL() {
 				// #ifdef MP
 				return JSON.parse(this.SystemInfo)
@@ -179,6 +179,11 @@
 			}
 		},
 		onShow() {
+			if(this.waitC == 1){
+				uni.navigateTo({
+					url: "../order/order?ins=1"
+				})
+			}
 			if (this.hasLogin == false) {
 				this.$msg('您还没有登录,请登录')
 				setTimeout(() => {

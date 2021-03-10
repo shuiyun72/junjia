@@ -145,9 +145,17 @@
 		},
 		methods:{
 			back(){
-				uni.navigateBack({
-					delta:1
-				})
+				let pages = getCurrentPages() // 获取栈实例
+				let prevPage = pages[pages.length - 2]
+				if(prevPage){
+					uni.navigateBack({
+						delta:1
+					})
+				}else{
+					uni.switchTab({
+						url:"../home/home"
+					})
+				}
 			},
 			yaoqing(){
 				this.$refs.btPop.open()
