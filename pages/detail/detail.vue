@@ -71,7 +71,7 @@
 				<view class="wa_text">
 					{{itemDetail.comment_list[0].content}}
 				</view>
-				<view class="pingjia_img_box">
+				<view class="pingjia_img_box" v-if="itemDetail.comment_list[0].pic.length > 0">
 					<view class="img_item" :style="'background-image: url('+http+itemImg+')'"
 						v-for="itemImg in itemDetail.comment_list[0].pic" @click.stop="showImg"></view>
 				</view>
@@ -120,6 +120,9 @@
 				商品详情
 			</view>
 			<view class="v"></view>
+		</view>
+		<view class="v_content_cc" v-html="itemDetailContent">
+			
 		</view>
 		<view class="img_bg_box">
 			<view class="img_c" v-for="item in itemFoot.imgs2">
@@ -190,27 +193,6 @@
 						img: "gouwc2.png"
 					}],
 					imgs2: [],
-					// imgs2: [{
-					// 	img: "sp-czxq1.png"
-					// }, {
-					// 	img: "sp-czxq2.png"
-					// }, {
-					// 	img: "sp-czxq3.png"
-					// }, {
-					// 	img: "sp-czxq4.png"
-					// }, {
-					// 	img: "sp-czxq5.png"
-					// }, {
-					// 	img: "sp-czxq6.png"
-					// }, {
-					// 	img: "sp-czxq7.png"
-					// }, {
-					// 	img: "sp-czxq8.png"
-					// }, {
-					// 	img: "sp-czxq9.png"
-					// }, {
-					// 	img: "sp-czxq10.png"
-					// }],
 					pingjiaImg: [{
 						img: "img-pingj1.png"
 					}, {
@@ -271,6 +253,10 @@
 					carShowNum += itemC.num
 				})
 				return carShowNum;
+			},
+			itemDetailContent(){
+
+				return this.itemDetail.content.replace(/<img/g,`<img style='vertical-align: top; width: 100%;' `)			
 			}
 		},
 		methods: {
@@ -301,8 +287,8 @@
 					provider: "weixin",
 					scene: "WXSceneSession",
 					type: 0,
-					href: "https://www.junjiayouxuan.com/DownloadPackage",
-					title: "君佳优选",
+					href: "http://hongyingedu.top/yindaoye/index.html?cid="+this_.itemDetail.id+"&uid="+this.userInfo.id,
+					title: "君佳优选>"+this_.itemDetail.name,
 					summary: "欢迎来到君佳优选,安装app快来和我们一下抢购商品吧",
 					imageUrl: this_.itemDetail.thumb,
 					success: function(res) {
@@ -445,6 +431,9 @@
 </script>
 
 <style lang="scss" scoped>
+	.v_content_cc{
+		padding-bottom: 30px;
+	}
 	.bottom_btn_group_sy {
 		display: flex;
 		position: fixed;

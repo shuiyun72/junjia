@@ -2,6 +2,24 @@
 	import store from './store';
 export default {
 	onLaunch: function() {
+		// #ifndef H5
+		let canshu  =plus.runtime.arguments.split("?")[1];
+		let qureyC = canshu.split("&");
+		let canshuZ = {}
+		for(let i = 0;i< qureyC.length;i++){
+			canshuZ[qureyC[i].split("=")[0]] = qureyC[i].split("=")[1]
+		}	
+		if(canshuZ.cid){
+			uni.navigateTo({
+				url: 'pages/detail/detail?id=' + canshuZ.cid
+			})
+		}
+		if(canshuZ.cname == 'fx'){
+			uni.navigateTo({
+				url: 'pages/mine/fenxiang'
+			})
+		}
+		// #endif
 		// #ifdef MP
 		uni.getSystemInfo({
 			//获取手机的状态栏高度单位px

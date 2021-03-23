@@ -452,7 +452,7 @@
 					}
 					console.log(dataL)
 					this.$getApi("/App/Goods/editOrder", dataL, resEdit => {
-						this.$store.commit("setYouhuiquan", {})
+						
 						let payType = 0;
 						// #ifndef MP
 						payType = this.radio == "A" ? 1 : 2;
@@ -466,6 +466,7 @@
 							id: this.order_id
 						}
 						this.$getApi("/App/Goods/payOrder", dataPay, resbuy => {
+							this.$store.commit("setYouhuiquan", {})
 							console.log(resbuy, "payOrder1111")
 							let thisPayType = ""
 

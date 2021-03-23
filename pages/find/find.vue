@@ -11,7 +11,7 @@
 			<view class="left_box">
 				<view class="item_pl_sy"  @click.stop="itemDetail(item)" v-for="(item,index) in arrtL">
 					<view class="it_img">
-						<image :src="item.pic" class="img" mode=""></image>
+						<image :src="item.pic" class="img" mode="widthFix"></image>
 					</view>
 					<view class="title">
 						{{item.title}}
@@ -24,7 +24,7 @@
 			<view class="right_box">
 				<view class="item_pl_sy"  @click.stop="itemDetail(item)" v-for="(item,index) in arrtR">
 					<view class="it_img">
-						<image src="../../static/img/home/or.png" class="img" mode=""></image>
+						<image :src="item.pic" class="img" mode="widthFix"></image>
 					</view>
 					<view class="title">
 						{{item.title}}
@@ -48,30 +48,10 @@
 		data() {
 			return {
 				itemIndex:0,
-				findList:[{name:"全部",sel:0},{name:"轻视食谱",sel:1},{name:"轻视食1",sel:2},{name:"轻视食谱",sel:3},{name:"轻视食2",sel:4},{name:"轻视食谱",sel:5}],
+				findList:[],
 				arrtL: [],
 				arrtR: [],
-				footPb: [{
-					id: 1001,
-					title: "1新品推荐新品",
-					num: 0,
-					price: 7.9,
-					sel: 1
-				}, {
-					id: 1002,
-					title: "2新品推荐新品推荐新品新品推荐新品",
-					num: 0,
-					price: 7.9,
-					sel: 1
-				}, {
-					id: 1003,
-					title: "2新品推荐新品推荐新品新品推荐新品",
-					num: 0,
-					price: 7.9,
-					sel: 1
-				}],
-				
-				
+				footPb: [],
 			};
 		},
 		onShow() {
@@ -164,6 +144,11 @@
 			.it_img {
 				text-align: center;
 				position:relative;
+				width: 280upx;
+				min-height: 240upx;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 				.it_img_case{
 					position: absolute;
 					top: 0;

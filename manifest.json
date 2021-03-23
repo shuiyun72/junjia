@@ -2,7 +2,7 @@
     "name" : "君佳优选",
     "appid" : "__UNI__E558B90",
     "description" : "君佳优选用户端",
-    "versionName" : "1.0.0",
+    "versionName" : "1.0.2",
     "versionCode" : "100",
     "transformPx" : false,
     "app-plus" : {
@@ -15,9 +15,6 @@
             "Share" : {}
         },
         "distribute" : {
-            "google" : {
-                "schemes" : [ "junjia", "junjiayouxuan" ]
-            },
             "android" : {
                 "permissions" : [
                     "<uses-feature android:name=\"android.hardware.camera\"/>",
@@ -43,10 +40,11 @@
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
                 "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
-                "minSdkVersion" : 18
+                "minSdkVersion" : 18,
+                "schemes" : "ujunjia,ujunjiayouxuan"
             },
             "ios" : {
-                "urltypes" : "junjia,junjiayouxuan",
+                "urltypes" : "ujunjia,ujunjiayouxuan",
                 "UIBackgroundModes" : "location"
             },
             "sdkConfigs" : {

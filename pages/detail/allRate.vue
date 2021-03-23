@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="pingjia_box_sy2" v-for="(itemDetail,pIndex) in pingjiaList">
-			<view class="pingjia_user" >
+			<view class="pingjia_user">
 				<view class="left">
 					<image :src="itemDetail.avatar" class="img" mode=""></image>
 					<view class="name shengluehao">
@@ -13,14 +13,16 @@
 				</view>
 			</view>
 			<view class="rate_pj">
-				<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :disabled="true" :size="18" v-model="itemDetail.star" ></uni-rate>
+				<uni-rate color="#bbb" active-color="#F59005" :readonly="true" :disabled="true" :size="18"
+					v-model="itemDetail.star"></uni-rate>
 			</view>
-			
+
 			<view class="wa_text">
 				{{itemDetail.content}}
 			</view>
-			<view class="pingjia_img_box">
-				<view class="img_item" :style="'background-image: url('+itemImg+')'" v-for="itemImg in itemDetail.pic" @click="showImg(pIndex)"></view>
+			<view class="pingjia_img_box" v-if="itemDetail.pic.length > 0">
+				<view class="img_item" :style="'background-image: url('+itemImg+')'" v-for="itemImg in itemDetail.pic"
+					@click="showImg(pIndex)"></view>
 			</view>
 		</view>
 		<view class="no_foot" v-if="pingjiaList.length == 0">
@@ -36,37 +38,40 @@
 	export default {
 		data() {
 			return {
-				value:5,
-				pingjiaImg:[{
+				value: 5,
+				pingjiaImg: [{
 					img: "img-pingj1.png"
 				}, {
 					img: "img-pingj2.png"
 				}, {
 					img: "img-pingj3.png"
 				}],
-				page:1,
-				pingjiaList:[],
-				thisId:0,
-				loadStatus:'loading',  //加载样式：more-加载前样式，loading-加载中样式，nomore-没有数据样式
-				isLoadMore:false,  //是否加载中
+				page: 1,
+				pingjiaList: [],
+				thisId: 0,
+				loadStatus: 'loading', //加载样式：more-加载前样式，loading-加载中样式，nomore-没有数据样式
+				isLoadMore: false, //是否加载中
 			};
 		},
 		onLoad(ph) {
 			this.thisId = ph.id;
 			this.getData()
 		},
-		methods:{
-			getData(){
-				this.$getApi("/App/Goods/pingjiaList", {p:this.page,id:this.thisId}, res => {
-					console.log(res.data,"商品评价")
+		methods: {
+			getData() {
+				this.$getApi("/App/Goods/pingjiaList", {
+					p: this.page,
+					id: this.thisId
+				}, res => {
+					console.log(res.data, "商品评价")
 					this.isLoadMore = false;
 					this.pingjiaList = this.pingjiaList.concat(res.data);
 				})
 			},
-			showImg(pindex){
+			showImg(pindex) {
 				let imgs = this.pingjiaList[pindex].pic;
 				console.log(imgs)
-				 uni.previewImage({
+				uni.previewImage({
 					urls: imgs,
 					longPressActions: {
 						itemList: ['发送给朋友', '保存图片', '收藏'],
@@ -80,75 +85,88 @@
 				});
 			}
 		},
-		onReachBottom(){  //上拉触底函数
-			  if(!this.isLoadMore){  //此处判断，上锁，防止重复请求
-					this.isLoadMore=true
-					this.page++;
-					this.getData()
-			  }
+		onReachBottom() { //上拉触底函数
+			if (!this.isLoadMore) { //此处判断，上锁，防止重复请求
+				this.isLoadMore = true
+				this.page++;
+				this.getData()
+			}
 		}
-		
+
 	}
 </script>
 
 <style lang="scss" scoped>
-	.no_foot{
+	.no_foot {
 		text-align: center;
 		font-size: 40upx;
 		padding-top: 100upx;
-		.no_img{
+
+		.no_img {
 			width: 500upx;
 			height: 500upx;
 		}
-		.no_text{
+
+		.no_text {
 			font-size: 40upx;
 			color: #999;
 			padding-top: 60upx;
 		}
 	}
-.pingjia_box_sy2{
-		padding: 0 26upx;
+
+	.pingjia_box_sy2 {
+		padding: 20upx 26upx 10upx;
 		margin-bottom: 10upx;
-		.p26{
+		border-top: 1upx solid #f0f0f0;
+		.p26 {
 			padding: 0 26upx;
 		}
-		.pingjia_user{
+
+		.pingjia_user {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
 			color: #666;
 			padding-right: 20upx;
-			.left{
+
+			.left {
 				display: inline-flex;
 				align-items: center;
-				.left2{
+
+				.left2 {
 					margin-left: 20upx;
 				}
-				.img{
+
+				.img {
 					width: 80upx;
 					height: 80upx;
 				}
-				.name{
+
+				.name {
 					font-size: 30upx;
 					margin-left: 20upx;
 					max-width: 420upx;
 				}
 			}
 		}
-		.rate_pj{
+
+		.rate_pj {
 			padding: 30upx 0 30upx;
 		}
-		.wa_text{
+
+		.wa_text {
 			font-size: 30upx;
 			color: #666;
 			padding: 20upx 0;
 		}
-		.pingjia_img_box{
+
+		.pingjia_img_box {
 			// padding: 0 26upx;
 			height: 230upx;
 			padding-bottom: 30upx;
 			display: flex;
-			.img_item{
+
+			.img_item {
 				width: 226upx;
 				height: 226upx;
 				background: no-repeat center center;
@@ -157,5 +175,4 @@
 			}
 		}
 	}
-	
 </style>
