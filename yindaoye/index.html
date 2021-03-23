@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div class="content">
+				<img src="img/junjia.png" class="logo_img" >
+				<div class="huanying">
+					欢迎来到君佳优选
+				</div>
+				
+					<a class="fenxiang_a" :href="hrefL">打开好友分享页面</a>
+				
+				
+				<div class="tishi">
+					若果您还没有下载<br/>赶快点击下载吧
+				</div>
+
+				<a class="fenxiang_a btn" href="http://www.hongyingedu.top/yindaoye/junjiaUser.apk">下载APP</a>
+			</div>
+			<div class="content2" v-if="isWx">
+				<div class="text_cc">
+					点击右上角<br/>打开浏览器<br/>查看分享吧
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var app = new Vue({
+		  el: '#app',
+		  data(){
+			  return {
+				isWx:true,
+				hrefL:"ujunjiayouxuan://www.junjiayouxuan.com/home"
+			  }
+		  },
+		  beforeMount(){
+			let allUrl = window.location.href;
+			this.hrefL = "ujunjiayouxuan://www.junjiayouxuan.com/home?"+allUrl.split("?")[1]
+			// this.hrefL = "hbuilder://www.junjiayouxuan.com/home?"+allUrl.split("?")[1]
+			console.log(allUrl)
+			var ua = navigator.userAgent.toLowerCase();
+			var isWeixin = ua.indexOf('micromessenger') != -1;
+			if (!isWeixin) {
+				// window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=888"
+				this.isWx = false 
+			}
+		  }
+		})
+	</script>
+	<style>
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		#app{
+			position:relative;
+		}
+		.content2{
+			position: absolute;
+			width: 100vw;
+			height: 100vh;
+			background-color: rgba(0,0,0,.5);
+			box-sizing: border-box;
+			top: 0;
+			left: 0;
+		}
+		.text_cc{
+			color: #fff;
+			padding: 16px;
+			text-align: right;
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			box-shadow: 2px 2px 6px #fff;
+			border-radius: 16px 0 16px 16px;
+		}
+		.content{
+			width: 100vw;
+			height: 100vh;
+			background-color: #fff;
+			text-align: center;
+			box-sizing: border-box;
+			padding-top: 20px;
+			background: url(img/bj.jpg) no-repeat center center;
+			background-size: auto 100vh;
+		}
+		.logo_img{
+			border-radius: 10px;
+		}
+		.huanying{
+			font-size: 20px;
+			color: rgb(11, 240, 163);
+			padding-top: 20px;
+		}
+		.fenxiang_a{
+			display: block;
+			width: 60%;
+			height: 36px;
+			line-height: 36px;
+			background-color: rgb(11, 240, 163);
+			color: #fff;
+			margin: 60px auto 0px;
+			border-radius: 6px;
+			text-decoration: none;
+		}
+		.fenxiang_a:hover{
+			text-decoration: none;
+			background-color: rgb(4, 248, 167);
+		}
+		.tishi{
+			padding: 50px 0 20px;
+			color: #666;
+		}
+		.fenxiang_a.btn{
+			margin: 0px auto 0px;
+			background-color: rgb(202, 4, 252);
+		}
+	</style>
+</html>
