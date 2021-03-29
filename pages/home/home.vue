@@ -474,6 +474,26 @@
 			this.page = 1;
 		},
 		onShow() {
+			// #ifndef H5
+			let canshu  =plus.runtime.arguments.split("?")[1];
+			if(canshu){
+				let qureyC = canshu.split("&");
+				let canshuZ = {}
+				for(let i = 0;i< qureyC.length;i++){
+					canshuZ[qureyC[i].split("=")[0]] = qureyC[i].split("=")[1]
+				}	
+				if(canshuZ.cid){
+					uni.navigateTo({
+						url: 'pages/detail/detail?id=' + canshuZ.cid
+					})
+				}
+				if(canshuZ.cname == 'fx'){
+					uni.navigateTo({
+						url: 'pages/mine/fenxiang'
+					})
+				}
+			}
+			// #endif
 			this.$getApi("/App/Goods/shop_car", {}, resCar2 => {
 				console.log(resCar2, resCar2.data)
 				this.setReCar(resCar2.data)
